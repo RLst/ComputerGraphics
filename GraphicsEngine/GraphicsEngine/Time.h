@@ -1,20 +1,21 @@
 #pragma once
 
-//#include "App.h"
-
 namespace pkr
 {
 
 class Time
 {
-	//friend class App;
+	friend class App;
 private:
-	//static double m_dt;
-	
-	//static void		setDeltaTime(double deltaTime);
+	static double	m_dt;
+	static double	m_fdt;
+
+	static void		updateDeltaTime();
+	//static void	updateFixedDeltaTime();
 
 public:
-	static double deltaTime();
+	static double	deltaTime();
+	static double	fixedDeltaTime();
 };
 
 }

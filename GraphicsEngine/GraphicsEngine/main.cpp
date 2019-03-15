@@ -1,17 +1,26 @@
 // Tony Le
 // 14 Mar 2019
 
-#include "Engine.h"
+#include "Game.h"
 
 int main()
 {
-	auto app = new Engine();
+	auto app = new Game();
 
 	auto exitCode = app->Run("Minity", 1440, 900, false);
 
 	delete app;
 
 	return exitCode;
+
+	/*Exitcodes:
+	-1 : glfwInit failed
+	-2 : Window creation failed
+	-3 : OGL load functions failed
+	-4 : Awake failed
+	-5 : Start failed
+	-6 : End failed
+	*/
 }
 
 

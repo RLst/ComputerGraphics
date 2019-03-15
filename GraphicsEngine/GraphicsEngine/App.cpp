@@ -15,25 +15,22 @@ App::App() :
 
 App::~App() {}
 
-bool App::Run(const char * windowTitle, unsigned int width, unsigned int height, bool fullscreen)
+int App::Run(const char * windowTitle, unsigned int width, unsigned int height, bool fullscreen)
 {
-	//Timing
-	double prevTime = glfwGetTime();
-	double nowTime = 0;
-	App::m_time.deltaTime = 0;
+	//Vars
 	unsigned int frames = 0;
 	double fpsInterval = 0;
 
 	//Initialise GLFW
 	if (!glfwInit())
-		return false;
+		return -1;
 
 	//Create window
 	m_window = glfwCreateWindow(width, height, windowTitle, (fullscreen ? glfwGetPrimaryMonitor() : nullptr), nullptr);
 	if (!m_window)
 	{
 		glfwTerminate();
-		return false;
+		return -2;
 	}
 	glfwMakeContextCurrent(m_window);
 
@@ -42,7 +39,7 @@ bool App::Run(const char * windowTitle, unsigned int width, unsigned int height,
 	{
 		glfwDestroyWindow(m_window);
 		glfwTerminate();
-		return false;
+		return -3;
 	}
 
 #ifdef _DEBUG
@@ -53,21 +50,18 @@ bool App::Run(const char * windowTitle, unsigned int width, unsigned int height,
 #endif // _DEBUG
 
 	//USER INITIALISATIONS
-	Awake();
-	Start();
+	if (!Awake()) return -4;
+	if (!Start()) return -5;
 
 	//Game Loop
 	while (!m_terminating)
 	{
 		//Calculate time and fps stuff
-		nowTime = glfwGetTime();
-		App::m_time.deltaTime = nowTime - prevTime;
-		prevTime = nowTime;
-		frames++;
-		fpsInterval += App::m_time.deltaTime;
+		Time::updateDeltaTime();
+		fpsInterval += Time::deltaTime();
 		if (fpsInterval >= 1.0f)
 		{
-			App::m_time.fps = frames;
+			m_fps = frames;
 			frames = 0;
 			fpsInterval -= 1.0f;
 		}
@@ -87,17 +81,23 @@ bool App::Run(const char * windowTitle, unsigned int width, unsigned int height,
 		glfwSwapBuffers(m_window);
 
 		//Check if app is terminating
-		if (glfwWindowShouldClose(m_window) ||
-			glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
+		if (glfwWindowShouldClose(m_window) == GLFW_TRUE ||		//User closes window
+			glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)	//User presses ESC
 			m_terminating = true;
 	}
 
 	//USER SHUTDOWN
-	End();
+	if (!End()) return -6;
 
 	//Shutdown GLFW
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
+	return 0;
+}
+
+unsigned int App::fps() const
+{
+	return m_fps;
 }
 
 unsigned int App::getScreenWidth() const
