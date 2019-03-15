@@ -22,8 +22,15 @@ bool Game::Start()
 {
 	aie::Gizmos::create(10000, 10000, 100, 100);
 
-	m_view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(0, 1, 0));
+	m_view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(1, 1, 0));
 	m_projection = glm::perspective(glm::pi<float>() * 0.3f, 16 / 9.f, 0.01f, 1000.f);
+
+	//Sun
+	m_planets[0].radius = 2.f;
+	m_planets[0].colour = vec4(1, 0.60f, 0, 1);
+	m_planets[0].pos = vec3(0,0,0);
+	m_planets[0].orbital.vel = 1.f / 24;
+	m_planets[0].orbital.angle;
 
 	return true;
 }
@@ -43,15 +50,14 @@ void Game::Draw()
 
 	drawGrid();
 
-	//Draw sun
-	aie::Gizmos::addSphere(vec3(0, 0, 0), 2.f, 32, 32, m_colours.sun);
+	////Draw solar system
+	//increment solar system orbit angle
+	m_ss_angle++;
+	for (int i = 0; i < 10; ++i)
+	{
+		aie::Gizmos::addSphere(m_planets, 2.f, 32, 32, m_colours.sun);
 
-	//Draw mercury
-
-	//Draw venus
-
-	//Draw earth
-
+	}
 
 	///////////////////////////
 	//////// DRAW END ////////
