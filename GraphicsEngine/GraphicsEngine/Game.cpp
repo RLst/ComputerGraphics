@@ -24,6 +24,7 @@ bool Game::Start()
 
 	//Setup camera
 	m_view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(0, 1, 0));
+	m_view = glm::inverse(m_view);
 	m_projection = glm::perspective(glm::pi<float>() * 0.3f, 16 / 9.f, 0.01f, 1000.f);
 	//m_projection = glm::ortho((int)getScreenWidth() / -2, (int)getScreenWidth() / 2, (int)getScreenHeight() / -2, (int)getScreenHeight() / 2, 0, 1000);
 
@@ -50,7 +51,7 @@ void Game::Draw()
 	/////// BEGIN DRAW ///////
 	/////////////////////////
 
-	aie::Gizmos::addTransform(glm::mat4(1));	//TODO what does this do?
+	aie::Gizmos::addTransform(glm::mat4(1));	//Draw the little tri coloured gizmo at the centre
 
 	drawGrid();
 
@@ -76,6 +77,8 @@ void Game::Draw()
 	
 	///////////////////////////
 	//////// DRAW END ////////
+	m_view = 
+
 	aie::Gizmos::draw(m_projection * m_view);
 }
 
@@ -95,6 +98,7 @@ void Game::drawGrid()
 		aie::Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10), i == 10 ? m_colours.white : m_colours.black);
 		aie::Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i), i == 10 ? m_colours.white : m_colours.black);
 	}
+	glm::abs(1234);
 }
 
 bool Game::End()

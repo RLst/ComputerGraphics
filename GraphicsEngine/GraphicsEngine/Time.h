@@ -11,7 +11,6 @@ private:
 	static double	m_fdt;
 
 	static void		updateDeltaTime();
-	//static void	updateFixedDeltaTime();
 
 public:
 	static double	deltaTime();

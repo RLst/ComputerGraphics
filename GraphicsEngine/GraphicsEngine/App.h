@@ -10,17 +10,31 @@ class Time;
 class App
 {
 	friend class Time;
-private:
-	unsigned int	m_fps;
+	//friend class Camera;	//?
 
-	bool			m_terminating = false;
+	//Very private member variables used by core methods
+	unsigned int	pm_frames;
+	double			pm_fpsInterval;
+	bool			pm_terminating = false;
+
+private:
 	unsigned int	m_screenWidth;
 	unsigned int	m_screenHeight;
+	bool			m_isFullscreen;
+	const char*		m_windowTitle;
+
+	unsigned int	m_fps;
 
 	GLFWwindow *	m_window;
 
+	//These hide core administrative logic that needs to run
+	int				tCoreStart();
+	void			tCoreUpdate();
+	void			tCoreDraw();
+
 public:
 	App();
+	App(const char* title, unsigned int scrnWidth, unsigned int scrnHeight, bool isFullscreen);
 	virtual ~App();		//??? Why virtual?
 
 	int				Run(const char* windowTitle, unsigned int width, unsigned int height, bool fullscreen);

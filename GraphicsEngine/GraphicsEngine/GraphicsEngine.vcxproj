@@ -172,6 +172,8 @@
     <ClInclude Include="..\dependencies\aieutilities\Gizmos.h" />
     <ClInclude Include="..\source\gl_core_4_4.h" />
     <ClInclude Include="App.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="FlyCamera.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Vector3.h" />
@@ -180,6 +182,8 @@
     <ClCompile Include="..\dependencies\aieutilities\Gizmos.cpp" />
     <ClCompile Include="..\source\gl_core_4_4.c" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="FlyCamera.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Time.cpp" />
