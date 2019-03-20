@@ -37,16 +37,20 @@ private:
 		float neptune = 5.43f;
 	} speed;
 
-	float m_ss_angle;
+	float m_ss_angVel;
 	struct {
+		//Core settings
 		//const char* name;
 		float radius = 1;
 		vec4 colour = vec4(0.8f, 0.4f, 0, 1);
 
+		//Transforms
+		mat4 transform = mat4();
 		vec3 pos = vec3(0,0,0);
 		struct {
 			float angle = 0;
 			float vel = 0;
+			void setAngle(float inAngle) { angle += inAngle; if (angle > 360) angle - 360.f; else if (angle < 0) angle + 360.f; }
 		} orbital;
 	} m_planets[10];
 
