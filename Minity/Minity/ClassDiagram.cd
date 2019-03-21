@@ -1,0 +1,403 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="FlyCamera" Collapsed="true">
+    <Position X="2.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAABQAgAAAAAAAAAEAAI=</HashCode>
+      <FileName>FlyCamera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYQAAAAACAABoAgACAAAAAAAAyAAQAAAAAAABAAAAA=</HashCode>
+      <FileName>Game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector2" Collapsed="true">
+    <Position X="22.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAIAAAAAAAAAgAAgAA=</HashCode>
+      <FileName>Vector.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector3" Collapsed="true">
+    <Position X="14" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgEAAAACAAAAAAAAAAAAAAAIAAAAAAAAAgAAgAA=</HashCode>
+      <FileName>Vector.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector4" Collapsed="true">
+    <Position X="15.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgEAAAACAAAAAAAAAAAAAAAIAAAAAAAAAgAAgAA=</HashCode>
+      <FileName>Vector.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="aie::Gizmos" Collapsed="true">
+    <Position X="15.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEACgJMECAwBBEAAAZKEgkAAACCCEAggCghAAERoAlY=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\dependencies\aieutilities\Gizmos.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pkr::Time" Collapsed="true">
+    <Position X="21" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAEAAAAAAAEAAAAAAEBAAAAAAA=</HashCode>
+      <FileName>Time.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pkr::App" Collapsed="true">
+    <Position X="5.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CgYAIIgAQDQABgAFAACAjCBQAAABQAAAAiAgAAAwAQI=</HashCode>
+      <FileName>App.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pkr::Camera" Collapsed="true">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAEAGAAARAQAAAACAAQABIEAAAABAAAEAAA=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pkr::Colour" Collapsed="true">
+    <Position X="14" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAQAAECAAAA=</HashCode>
+      <FileName>Colour.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pkr::Random" Collapsed="true">
+    <Position X="19.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IQAAAAAIAAIAAAAAAAAAAAAAAAAABAQAAAIBAAABAAA=</HashCode>
+      <FileName>Random.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pkr::Input" Collapsed="true">
+    <Position X="17.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="ogl_StrToExtMap_s" Collapsed="true">
+    <Position X="7.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAgAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.c</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="PFN_LOADFUNCPOINTERS" Collapsed="true">
+    <Position X="21" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.c</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="ogl_StrToExtMap" Collapsed="true">
+    <Position X="7.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.c</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="int64_t" Collapsed="true">
+    <Position X="7.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="uint64_t" Collapsed="true">
+    <Position X="3.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="int32_t" Collapsed="true">
+    <Position X="19.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLenum" Collapsed="true">
+    <Position X="22.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLboolean" Collapsed="true">
+    <Position X="15.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLbitfield" Collapsed="true">
+    <Position X="14" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLvoid" Collapsed="true">
+    <Position X="17.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLbyte" Collapsed="true">
+    <Position X="17.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLshort" Collapsed="true">
+    <Position X="14" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLint" Collapsed="true">
+    <Position X="11.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLubyte" Collapsed="true">
+    <Position X="22.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLushort" Collapsed="true">
+    <Position X="15.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLuint" Collapsed="true">
+    <Position X="14" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLsizei" Collapsed="true">
+    <Position X="15.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLfloat" Collapsed="true">
+    <Position X="14" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLclampf" Collapsed="true">
+    <Position X="14" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLdouble" Collapsed="true">
+    <Position X="21" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLclampd" Collapsed="true">
+    <Position X="22.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLchar" Collapsed="true">
+    <Position X="19.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLcharARB" Collapsed="true">
+    <Position X="21" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLhandleARB" Collapsed="true">
+    <Position X="21" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLhalfARB" Collapsed="true">
+    <Position X="17.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLhalf" Collapsed="true">
+    <Position X="15.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLfixed" Collapsed="true">
+    <Position X="11.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLintptr" Collapsed="true">
+    <Position X="3.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLsizeiptr" Collapsed="true">
+    <Position X="17.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLint64" Collapsed="true">
+    <Position X="8.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLuint64" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLintptrARB" Collapsed="true">
+    <Position X="22.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLsizeiptrARB" Collapsed="true">
+    <Position X="19.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLint64EXT" Collapsed="true">
+    <Position X="7.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLuint64EXT" Collapsed="true">
+    <Position X="3.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLsync" Collapsed="true">
+    <Position X="21" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLDEBUGPROC" Collapsed="true">
+    <Position X="15.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLDEBUGPROCARB" Collapsed="true">
+    <Position X="19.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLDEBUGPROCAMD" Collapsed="true">
+    <Position X="17.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLhalfNV" Collapsed="true">
+    <Position X="19.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="GLvdpauSurfaceNV" Collapsed="true">
+    <Position X="3.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="ogl_LoadStatus" Collapsed="true">
+    <Position X="19.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>C:\Users\s181335\Development\ComputerGraphics\Minity\source\gl_core_4_4.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="pkr::eFlags" Collapsed="true">
+    <Position X="15.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACIAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>App.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="pkr::eColours" Collapsed="true">
+    <Position X="14" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAcAABAAIACAGAAAAAAAAAAAAAAQAEAAAAgQCAEAA=</HashCode>
+      <FileName>Colour.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="pkr::eInputCodes" Collapsed="true">
+    <Position X="17.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IkgggBMJAEQ3msFEIKApgsWFdLAfxShkAgAAEIQUiEA=</HashCode>
+      <FileName>Input.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,8 +1,13 @@
+//Tony Le
+//21 Mar 2019
+
 #include "Game.h"
 
 #include <iostream>
 
 #include "Gizmos.h"
+#include "FlyCamera.h"
+#include "Vector.h"
 
 using namespace pkr;
 
@@ -14,17 +19,20 @@ Game::~Game()
 }
 
 
-
-
 bool Game::Start()
 {
+	////TEMP - Engineer so that camera is inbuilt into the engine ////
 	//Setup camera
-	m_view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(0, 1, 0));
-	//m_view = glm::inverse(m_view);
-	m_projection = glm::perspective(glm::pi<float>() * 0.3f, 16 / 9.f, 0.01f, 1000.f);
-	//m_projection = glm::ortho((int)getScreenWidth() / -2, (int)getScreenWidth() / 2, (int)getScreenHeight() / -2, (int)getScreenHeight() / 2, 0, 1000);
+	m_camera = new FlyCamera();
+	m_camera->setLookAt(vec3(10, 10, 10), vec3(0, 0.0f, 0), vec3(0,1,0));
+	//m_camera->setProjection(45.f, 16 / 9.f, 0.01f, 1000.f);
+	m_camera->setProjection(glm::pi<float>() * 0.3f, 16 / 9.f, 0.01f, 1000);
 
-	////// USER START START //////
+	m_view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(0, 1, 0));
+	////m_view = glm::inverse(m_view);
+	m_projection = glm::perspective(glm::pi<float>() * 0.3f, 16 / 9.f, 0.01f, 1000.f);
+	////m_projection = glm::ortho((int)getScreenWidth() / -2, (int)getScreenWidth() / 2, (int)getScreenHeight() / -2, (int)getScreenHeight() / 2, 0, 1000);
+	
 	////Init solar system
 	m_ss_angVel = 0.5f;
 	//Sun
@@ -33,20 +41,22 @@ bool Game::Start()
 	m_planets[0].pos = vec3(0,0,0);
 	m_planets[0].orbital.vel = 1.f / 24;
 	m_planets[0].orbital.angle = 0;
-	////// USER START END //////////
-
 
 	return true;
 }
 
 void Game::Update()
 {
+	//Test Time class
 	std::cout << pkr::Time::deltaTime() << std::endl;
+
+	//Move the camera around
+	static int angle;
+	m_camera->update();
 }
 
 void Game::Draw()
 {
-	////// USER DRAW START //////////
 	aie::Gizmos::addTransform(glm::mat4(1));	//Draw the little tri coloured gizmo at the centre
 
 	drawGrid();
@@ -65,8 +75,10 @@ void Game::Draw()
 	tPlanetPos = glm::translate(tPlanetPos, vec3(glm::sin(tOrbitAng) * tOrbitRadius, 0, glm::cos(tOrbitAng) * tOrbitRadius));
 	aie::Gizmos::addSphere(vec3(2,0,2), 1, 20, 20, m_colours.white, &tPlanetPos);
 
-	//////// USER DRAW END ////////
-	aie::Gizmos::draw(m_projection * m_view);
+
+	//// TEMP - Engineer this into the engine so that it is hidden ////
+	//aie::Gizmos::draw(m_projection * m_view);
+	aie::Gizmos::draw(m_camera->getProjectionView());
 }
 
 bool Game::End()

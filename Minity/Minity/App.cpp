@@ -1,3 +1,6 @@
+//Tony Le
+//21 Mar 2019
+
 #include "App.h"
 #include "Time.h"
 
@@ -35,6 +38,31 @@ namespace pkr {
 	}
 
 
+	int App::Run()
+	{
+		//INITIALISE
+		auto initReturnCode = CoreInit();
+		if (initReturnCode != PKR_SUCCESS)
+			return initReturnCode;
+
+		//Game Loop
+		while (!pm_isTerminating)
+		{
+			CoreUpdate();
+			CoreDraw();
+
+			//Check if app is terminating
+			if (glfwWindowShouldClose(m_window) == GLFW_TRUE ||		//User closes window
+				glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)	//User presses ESC
+				pm_isTerminating = true;
+		}
+
+		//SHUTDOWN
+		if (!CoreEnd()) return -5;
+
+		//Successful run
+		return 0;
+	}
 
 	int App::CoreInit()
 	{
@@ -149,32 +177,6 @@ namespace pkr {
 		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		aie::Gizmos::clear();
-	}
-
-	int App::Run()
-	{
-		//INITIALISE
-		auto initReturnCode = CoreInit();
-		if (initReturnCode != PKR_SUCCESS)
-			return initReturnCode;
-
-		//Game Loop
-		while (!pm_isTerminating)
-		{
-			CoreUpdate();
-			CoreDraw();
-
-			//Check if app is terminating
-			if (glfwWindowShouldClose(m_window) == GLFW_TRUE ||		//User closes window
-				glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)	//User presses ESC
-				pm_isTerminating = true;
-		}
-
-		//SHUTDOWN
-		if (!CoreEnd()) return -5;
-
-		//Successful run
-		return 0;
 	}
 
 	unsigned int App::getFPS() const

@@ -1,9 +1,16 @@
+//Tony Le
+//21 Mar 2019
+
 #pragma once
 #include "App.h"
 
 #include "glm/ext.hpp"
 #include "glm/gtc/quaternion.hpp"
 //#include "glm/gtx/quaternion.hpp"
+
+namespace pkr {
+	class Camera;
+}
 
 using glm::vec2;
 using glm::vec3;
@@ -14,6 +21,9 @@ using glm::quat;
 class Game : public pkr::App
 {
 private:
+
+	pkr::Camera* m_camera;
+
 	struct {
 		vec4 lightGrey = vec4(0.1f, 0.1f, 0.1f, 1);
 		vec4 white = vec4(1);

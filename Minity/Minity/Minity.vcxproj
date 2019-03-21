@@ -178,6 +178,7 @@
     <ClInclude Include="Colour.h" />
     <ClInclude Include="FlyCamera.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Vector.h" />
@@ -190,9 +191,13 @@
     <ClCompile Include="Colour.cpp" />
     <ClCompile Include="FlyCamera.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Time.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

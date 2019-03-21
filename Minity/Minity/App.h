@@ -1,3 +1,6 @@
+//Tony Le
+//21 Mar 2019
+
 #pragma once
 #include "Time.h"
 
@@ -5,11 +8,17 @@
 
 using glm::vec4;
 
-class GLFWwindow;
+struct GLFWwindow;
+
+//// Prototype
+#include <vector>
+class GameObject;
+class Component;
+////
 
 namespace pkr {
 
-	enum eFLAGS
+	enum eFlags
 	{
 		PKR_FAIL = 0,
 		PKR_SUCCESS = 1,
@@ -22,9 +31,6 @@ class Time;
 
 class App
 {
-	friend class Time;
-	//friend class Camera;	//?
-
 	//very [P]rivate [M]ember variables used by core methods
 	unsigned int	pm_frames;
 	double			pm_fpsInterval;
@@ -33,6 +39,8 @@ class App
 	unsigned int	pm_maxLines, pm_maxTris, pm_max2DLines, pm_max2DTris;
 
 private:
+	std::vector<GameObject*> gameObjects;
+
 	//Window
 	const char*		m_appTitle;
 	unsigned int	m_scrnWidth, m_scrnHeight;
@@ -56,6 +64,10 @@ public:
 	App();
 	virtual ~App();		//??? Why virtual?
 
+	//Not copyable or [implicitly] not moveable
+	App(const App&) = delete;
+	App& operator=(const App&) = delete;
+
 	//User must run these to configure the engine
 	void			WindowConfig(const char* appTitle,
 								unsigned int screenWidth, unsigned int screenHeight,
@@ -66,8 +78,8 @@ public:
 
 	//Utility
 	unsigned int	getFPS() const;
-	void			showFPS() const;
-	void			hideFPS() const;
+	//void			showFPS() const;
+	//void			hideFPS() const;
 	unsigned int	getScreenWidth() const;
 	unsigned int	getScreenHeight() const;
 
@@ -75,10 +87,10 @@ public:
 	int				Run();
 	
 	//User
-	virtual bool	Start() = 0;
-	virtual void	Update() = 0;
-	virtual void	Draw() = 0;
-	virtual bool	End() = 0;
+	virtual bool	Start() = 0;	//For now is abstract/interface and must be derived
+	virtual void	Update() {}
+	virtual void	Draw() {}
+	virtual bool	End() { return true; }
 
 };
 

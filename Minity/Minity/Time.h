@@ -3,7 +3,7 @@
 namespace pkr {
 	class Time
 	{
-		friend class App;
+		friend class App;	//App has full access
 	private:
 		static double	m_dt;
 		static double	m_fdt;
