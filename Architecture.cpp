@@ -1,19 +1,35 @@
+#include "glm/ext.hpp"
+#include "GLFW/glfw3.h"
+#include <vector>
+#include <string>
+
 namespace MinityEngine
 {
     class string;
     std::vector<GameObject*> gameObjects;
+    std::vector<Scene*> scenes;
 
     class CoreEngine
     {
     private:
+        bool            m_isTerminating;
+        GLFWwindow*     m_window;
+
+        CoreEngine() :
+            m_window(nullptr),      //Reset window
+            m_isTerminating(false)  //App is still running
+        {}
+
+
         void Run()
         {
             CoreInit();
-            while (!terminating)
+            while (!m_isTerminating)
             {
                 CoreUpdate();
                 CoreDraw();
             }
+            CoreEnd();
         }
 
         void CoreInit()
@@ -36,23 +52,38 @@ namespace MinityEngine
         {
             Draw();
         }
+
+        void CoreEnd()
+        {
+            End();
+        }
+
     public:
-        virtual void Start();
-        virtual void Update();
-        virtual void Draw();
-        virtual void End();
-        
+        virtual void Start() {}
+        virtual void Update() {}
+        virtual void Draw() {}
+        virtual void End() {}
+    };
 
-    }
+    //////////////////////
+    class Object
+    {
+        //Base to GameObject and Component
+    public:
+        string name;
+        static void Destroy();
+        static void FindObject();
+        static Object Instantiate();
+    };
 
- 
-
-    class GameObject
+    ///////////////////////////
+    class GameObject : Object
     {
         std::string m_name;
         std::vector<Component> components;
         Scene* m_scene = nullptr;
 
+    public:
         GameObject()
         {
             addComponent(new Transform());
@@ -63,7 +94,7 @@ namespace MinityEngine
             m_scene = scene;
         }
 
-        void addComponent(Component component)
+        void addComponent(const Component& component)
         {
             components.push_back(component);
             component.addedToGameObject(this);
@@ -75,7 +106,6 @@ namespace MinityEngine
 
         }
 
-    private:
         void draw() //Should this be hidden from the user???
         {
             //Loop through all components and draw if necessary
@@ -88,16 +118,7 @@ namespace MinityEngine
                 }
             }
         }
-    }
-    
-    class Object;
-    {
-    public:
-        string name;
-        static void Destroy();
-        static void FindObject();
-        static Object Instantiate();
-    }
+    };
 
     /////////
     class Scene
@@ -105,11 +126,10 @@ namespace MinityEngine
         std::vector<GameObject> gameObjects;
         EventDispatcher* m_eventDispatcher;
         SceneRender* m_renderer;
-    }
+    };
 
 
     //////////
-
     class GameObject //: Object
     {
     private:
@@ -126,31 +146,51 @@ namespace MinityEngine
         string tag;
     
     }
-
+    
+    /////// /Componenets
     class Component
     {
         virtual void Start() {}
         virtual void Update() {}
         void Draw() {}
         void End() {}
-    }
+    };
 
     class Transform : Component
     {
+        //All GameObjects must have one of these. Cannot be removed (ideally)
     public:
         glm::vec3 position;
         glm::vec3 rotation;
         glm::vec3 scale;
-    }
+    };
 
+    class Rigidbody2D : Component;
+    class Rigidbody : Component
+    {};
+    class Collider2D : Component;
+    class Collider : Component
+    {};
+    class Camera : Component
+    {};
+    class Light : Component
+    {};
+    class Renderer : Component
+    {};
+    class Animation : Component     //Maybe
+    {};
+
+
+    //// Behaviours
     class Behaviour : Component
     {
+        //Behaviours are essentially the scripts. Derive from Behaviour to create a "script"
     public:
         bool enabled;
 
         void Update() override {} //?
 
-    }
+    };
 
     class PlayerBehaviour : Behaviour
     {
@@ -158,7 +198,7 @@ namespace MinityEngine
         {
             
         }
-    }
+    };
 
     // class Component : Object
     // {
@@ -173,34 +213,19 @@ namespace MinityEngine
     //     Component audio;
     //     Component collider;
     //     Component particleSystem;
-
     //     Transform transform;
-
     //     void BroadcastMessage();
     //     void SendMessage();
     //     void GetComponent();
-
-    // }
-
-
-
-    // class MonoBehaviour : Behaviour
-    // {
-    // public:
-    //     bool useGUILayout;
-    //     bool runInEditMode;
-    //     static void print(const char *);
-    //     void CancelInvoke();
-    //     void Invoke();
-    //     Coroutine StartCoroutine();
     // }
 }
+
+#include "Minity.h"
 
 using namespace MinityEngine;
 
 namespace MyProject
 {
-    class 
 
 
 }
