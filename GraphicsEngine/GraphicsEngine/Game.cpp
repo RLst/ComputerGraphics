@@ -1,33 +1,31 @@
 #include "Game.h"
-#include <Gizmos.h>
-#include <gl_core_4_4.h>
+
 #include <iostream>
-#include "Time.h"
-//#include <GLFW/glfw3.h>
+
+#include "Gizmos.h"
+
+
+
 
 Game::Game()
 {
 }
-
 Game::~Game()
 {
 }
 
-bool Game::Awake()
-{
-	return true;
-}
+
+
 
 bool Game::Start()
 {
-	aie::Gizmos::create(10000, 10000, 100, 100);
-
 	//Setup camera
 	m_view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(0, 1, 0));
-	m_view = glm::inverse(m_view);
+	//m_view = glm::inverse(m_view);
 	m_projection = glm::perspective(glm::pi<float>() * 0.3f, 16 / 9.f, 0.01f, 1000.f);
 	//m_projection = glm::ortho((int)getScreenWidth() / -2, (int)getScreenWidth() / 2, (int)getScreenHeight() / -2, (int)getScreenHeight() / 2, 0, 1000);
 
+	////// USER START START //////
 	////Init solar system
 	m_ss_angVel = 0.5f;
 	//Sun
@@ -36,6 +34,8 @@ bool Game::Start()
 	m_planets[0].pos = vec3(0,0,0);
 	m_planets[0].orbital.vel = 1.f / 24;
 	m_planets[0].orbital.angle = 0;
+	////// USER START END //////////
+
 
 	return true;
 }
@@ -47,10 +47,7 @@ void Game::Update()
 
 void Game::Draw()
 {
-	clearScreen(m_colours.lightGrey);
-	/////// BEGIN DRAW ///////
-	/////////////////////////
-
+	////// USER DRAW START //////////
 	aie::Gizmos::addTransform(glm::mat4(1));	//Draw the little tri coloured gizmo at the centre
 
 	drawGrid();
@@ -69,26 +66,18 @@ void Game::Draw()
 	tPlanetPos = glm::translate(tPlanetPos, vec3(glm::sin(tOrbitAng) * tOrbitRadius, 0, glm::cos(tOrbitAng) * tOrbitRadius));
 	aie::Gizmos::addSphere(vec3(2,0,2), 1, 20, 20, m_colours.white, &tPlanetPos);
 
-	//increment solar system orbit angle
-	//for (int i = 0; i < 10; ++i)
-	//{
-
-	//}
-	
-	///////////////////////////
-	//////// DRAW END ////////
-	m_view = 
-
+	//////// USER DRAW END ////////
 	aie::Gizmos::draw(m_projection * m_view);
 }
 
-void Game::clearScreen(const vec4& bgCol)
+bool Game::End()
 {
-	glClearColor(bgCol.r, bgCol.g, bgCol.b, bgCol.a);
-	glEnable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	aie::Gizmos::clear();
+
+	return true;
 }
+
+
+
 
 void Game::drawGrid()
 {
@@ -100,11 +89,3 @@ void Game::drawGrid()
 	}
 	glm::abs(1234);
 }
-
-bool Game::End()
-{
-	aie::Gizmos::destroy();
-
-	return false;
-}
-

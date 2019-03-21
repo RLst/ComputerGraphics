@@ -1,9 +1,22 @@
 #pragma once
 #include "Time.h"
 
+#include "glm/ext.hpp"
+
+using glm::vec4;
+
 class GLFWwindow;
 
 namespace pkr {
+
+	enum eFLAGS
+	{
+		PKR_FAIL = 0,
+		PKR_SUCCESS = 1,
+
+		PKR_FALSE = 0,
+		PKR_TRUE = 1,
+	};
 
 class Time;
 
@@ -12,44 +25,61 @@ class App
 	friend class Time;
 	//friend class Camera;	//?
 
-	//Very private member variables used by core methods
+	//very [P]rivate [M]ember variables used by core methods
 	unsigned int	pm_frames;
 	double			pm_fpsInterval;
-	bool			pm_terminating = false;
+	bool			pm_isTerminating = false;
+
+	unsigned int	pm_maxLines, pm_maxTris, pm_max2DLines, pm_max2DTris;
 
 private:
-	unsigned int	m_screenWidth;
-	unsigned int	m_screenHeight;
+	//Window
+	const char*		m_appTitle;
+	unsigned int	m_scrnWidth, m_scrnHeight;
+	vec4			m_bgCol;
 	bool			m_isFullscreen;
-	const char*		m_windowTitle;
 
 	unsigned int	m_fps;
 
 	GLFWwindow *	m_window;
 
 	//These hide core administrative logic that needs to run
-	int				tCoreStart();
-	void			tCoreUpdate();
-	void			tCoreDraw();
+	int				CoreInit();
+	void			CoreUpdate();
+	void			CoreDraw();
+	bool			CoreEnd();
 
+protected:
+	void			clearScreen() const;
+	
 public:
 	App();
-	App(const char* title, unsigned int scrnWidth, unsigned int scrnHeight, bool isFullscreen);
 	virtual ~App();		//??? Why virtual?
 
-	int				Run(const char* windowTitle, unsigned int width, unsigned int height, bool fullscreen);
+	//User must run these to configure the engine
+	void			WindowConfig(const char* appTitle,
+								unsigned int screenWidth, unsigned int screenHeight,
+								vec4 backgroundColor,
+								bool isFullscreen);
+	void			GizmoConfig	(unsigned int maxLines, unsigned int maxTris,
+								unsigned int max2DLines, unsigned int max2DTris);
+
+	//Utility
+	unsigned int	getFPS() const;
+	void			showFPS() const;
+	void			hideFPS() const;
+	unsigned int	getScreenWidth() const;
+	unsigned int	getScreenHeight() const;
+
+	//Runs the entire engine
+	int				Run();
 	
-	//Cores
-	virtual bool	Awake() = 0;
+	//User
 	virtual bool	Start() = 0;
 	virtual void	Update() = 0;
 	virtual void	Draw() = 0;
 	virtual bool	End() = 0;
 
-	//Utilities
-	unsigned int	fps() const;
-	unsigned int	getScreenWidth() const;
-	unsigned int	getScreenHeight() const;
 };
 
 }

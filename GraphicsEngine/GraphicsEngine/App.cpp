@@ -1,112 +1,58 @@
 #include "App.h"
 #include "Time.h"
 
-#include <iostream>
+#include "Gizmos.h"
+#include "gl_core_4_4.h"
+#include "GLFW/glfw3.h"
 
-#include <gl_core_4_4.h>
-#include <GLFW/glfw3.h>
+#ifdef _DEBUG
+	#include <iostream>
+#endif
 
 namespace pkr {
-	
-	int App::tCoreStart()
-	{
-		//Pre
-		pm_frames = 0;
-		pm_fpsInterval = 0;
-
-		//Initialise GLFW
-		if (!glfwInit())
-			return -1;
-
-		//Create window
-		m_window = glfwCreateWindow(width, height, windowTitle, (fullscreen ? glfwGetPrimaryMonitor() : nullptr), nullptr);
-		if (!m_window)
-		{
-			glfwTerminate();
-			return -2;
-		}
-		glfwMakeContextCurrent(m_window);
-
-		//Fix up openGL extentions
-		if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
-		{
-			glfwDestroyWindow(m_window);
-			glfwTerminate();
-			return -3;
-		}
-
-		///////////////
-		//// User ////
-		Start();
-		////////////
-		///////////
-
-		//Post
-	}
-
-	void App::tCoreUpdate()
-	{
-		//Pre
-
-		///////////////
-		//// User ////
-		Update();
-		////////////
-		///////////
-
-		//Post
-	}
-
-	void App::tCoreDraw()
-	{
-		//Pre
-
-		///////////////
-		//// User ////
-		Draw();
-		////////////
-		///////////
-
-		//Post
-	}
 
 	App::App() :
 		m_window(nullptr),
-		pm_terminating(false)
-	{
-	}
-
-	App::App(const char * title, unsigned int scrnWidth, unsigned int scrnHeight, bool isFullscreen) :
-		m_window(nullptr),
-		pm_terminating(false),
-		m_windowTitle(title),
-		m_screenWidth(scrnWidth),
-		m_screenHeight(scrnHeight),
-		m_isFullscreen(isFullscreen)
-	{
-	}
-
+		pm_isTerminating(false)
+	{}
 	App::~App() {}
 
-	int App::Run(const char * windowTitle, unsigned int width, unsigned int height, bool fullscreen)
+	void App::WindowConfig(const char * appTitle, unsigned int screenWidth, unsigned int screenHeight, vec4 backgroundColor, bool isFullscreen)
 	{
-		//Vars
-		unsigned int frames = 0;
-		double fpsInterval = 0;
+		m_appTitle = appTitle;
+		m_scrnWidth = screenWidth;
+		m_scrnHeight = screenHeight;
+		m_bgCol = backgroundColor;
+		m_isFullscreen = isFullscreen;
+	}
 
+	void App::GizmoConfig(unsigned int maxLines, unsigned int maxTris, unsigned int max2DLines, unsigned int max2DTris)
+	{
+		pm_maxLines = maxLines;
+		pm_maxTris = maxTris;
+		pm_max2DLines = max2DLines;
+		pm_max2DTris = max2DTris;
+	}
+
+
+
+	int App::CoreInit()
+	{
+		////Pre
+		//OPENGL setup
+		pm_frames = 0;
+		pm_fpsInterval = 0;
 		//Initialise GLFW
 		if (!glfwInit())
 			return -1;
-
 		//Create window
-		m_window = glfwCreateWindow(width, height, windowTitle, (fullscreen ? glfwGetPrimaryMonitor() : nullptr), nullptr);
+		m_window = glfwCreateWindow(m_scrnWidth, m_scrnHeight, m_appTitle, (m_isFullscreen ? glfwGetPrimaryMonitor() : nullptr), nullptr);
 		if (!m_window)
 		{
 			glfwTerminate();
 			return -2;
 		}
 		glfwMakeContextCurrent(m_window);
-
 		//Fix up openGL extentions
 		if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
 		{
@@ -114,7 +60,6 @@ namespace pkr {
 			glfwTerminate();
 			return -3;
 		}
-
 #ifdef _DEBUG
 		//Display version
 		auto major = ogl_GetMajorVersion();
@@ -122,53 +67,117 @@ namespace pkr {
 		printf("GL version: %i.%i", major, minor);
 #endif // _DEBUG
 
-		//USER INITIALISATIONS
-		if (!Awake()) return -4;
-		if (!Start()) return -5;
+		//Gizmos
+		aie::Gizmos::create(pm_maxLines, pm_maxTris, pm_max2DLines, pm_max2DTris);
+
+		///////////////
+		//// User ////
+		if (!Start()) return -4;
+		////////////
+		///////////
+
+		////Post
+		
+		return PKR_SUCCESS;
+	}
+
+	void App::CoreUpdate()
+	{
+		////Pre
+		//Calculate time and fps stuff
+		Time::updateDeltaTime();
+		pm_fpsInterval += Time::deltaTime();
+		if (pm_fpsInterval >= 1.0f)
+		{
+			m_fps = pm_frames;
+			pm_frames = 0;
+			pm_fpsInterval -= 1.0f;
+		}
+		//Skip updates and draw if window is minimized
+		if (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED) != 0)
+			return;
+		//Update window events ie. Input etc
+		glfwPollEvents();
+
+		///////////////
+		//// User ////
+		Update();
+		////////////
+		///////////
+
+		////Post
+	}
+
+	void App::CoreDraw()
+	{
+		////Pre
+		clearScreen();
+
+		///////////////
+		//// User ////
+		Draw();
+		////////////
+		///////////
+
+		////Post			
+		//Bring backbuffer front to draw
+		glfwSwapBuffers(m_window);
+	}
+
+	bool App::CoreEnd()
+	{
+		////Pre
+
+		///////////////
+		//// User ////
+		if (!End()) return false;
+		////////////
+		///////////
+
+		////Post			
+		aie::Gizmos::destroy();
+		//Shutdown GLFW
+		glfwDestroyWindow(m_window);
+		glfwTerminate();
+
+		return true;
+	}
+
+	void App::clearScreen() const
+	{
+		glClearColor(m_bgCol.r, m_bgCol.g, m_bgCol.b, m_bgCol.a);
+		glEnable(GL_DEPTH_TEST);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		aie::Gizmos::clear();
+	}
+
+	int App::Run()
+	{
+		//INITIALISE
+		auto initReturnCode = CoreInit();
+		if (initReturnCode != PKR_SUCCESS)
+			return initReturnCode;
 
 		//Game Loop
-		while (!pm_terminating)
+		while (!pm_isTerminating)
 		{
-			//Calculate time and fps stuff
-			Time::updateDeltaTime();
-			fpsInterval += Time::deltaTime();
-			if (fpsInterval >= 1.0f)
-			{
-				m_fps = frames;
-				frames = 0;
-				fpsInterval -= 1.0f;
-			}
-
-			//Update window events ie. Input etc
-			glfwPollEvents();
-
-			//Skip if window is minimized
-			if (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED) != 0)
-				continue;
-
-			//USER ACTIONS
-			Update();
-			Draw();
-
-			//Send redrawn backbuffer to the monitor
-			glfwSwapBuffers(m_window);
+			CoreUpdate();
+			CoreDraw();
 
 			//Check if app is terminating
 			if (glfwWindowShouldClose(m_window) == GLFW_TRUE ||		//User closes window
 				glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)	//User presses ESC
-				pm_terminating = true;
+				pm_isTerminating = true;
 		}
 
-		//USER SHUTDOWN
-		if (!End()) return -6;
+		//SHUTDOWN
+		if (!CoreEnd()) return -5;
 
-		//Shutdown GLFW
-		glfwDestroyWindow(m_window);
-		glfwTerminate();
+		//Successful run
 		return 0;
 	}
 
-	unsigned int App::fps() const
+	unsigned int App::getFPS() const
 	{
 		return m_fps;
 	}

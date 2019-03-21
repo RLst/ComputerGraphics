@@ -2,15 +2,23 @@
 // 14 Mar 2019
 
 #include "Game.h"
+#include "Colour.h"
 
 int main()
 {
-	auto app = new Game();
+	//Initialize main app and configure settings
+	auto game = new Game();
 
-	auto exitCode = app->Run("Minity", 1440, 900, false);
+	game->WindowConfig("Minity", 1440, 900, pkr::Colour::get(pkr::eORANGE), false);
+	game->GizmoConfig(10000, 10000, 100, 100);
 
-	delete app;
+	//Run it
+	auto exitCode = game->Run();
 
+	//Cleanup
+	delete game;
+
+	//Error codes
 	return exitCode;
 
 	/*Exitcodes:

@@ -1,9 +1,9 @@
 #pragma once
 #include "App.h"
 
-#include <glm/ext.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include "glm/ext.hpp"
+#include "glm/gtc/quaternion.hpp"
+//#include "glm/gtx/quaternion.hpp"
 
 using glm::vec2;
 using glm::vec3;
@@ -58,13 +58,11 @@ public:
 	Game();
 	~Game();
 
-	bool Awake() override;
 	bool Start() override;
 	void Update() override;
 	void Draw() override;
 	bool End() override;
 
-	void clearScreen(const vec4 & backgroundColour);
 	void drawGrid();
 };
 

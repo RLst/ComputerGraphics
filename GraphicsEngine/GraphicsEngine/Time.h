@@ -1,20 +1,17 @@
 #pragma once
 
-namespace pkr
-{
+namespace pkr {
+	class Time
+	{
+		friend class App;
+	private:
+		static double	m_dt;
+		static double	m_fdt;
 
-class Time
-{
-	friend class App;
-private:
-	static double	m_dt;
-	static double	m_fdt;
+		static void		updateDeltaTime();
 
-	static void		updateDeltaTime();
-
-public:
-	static double	deltaTime();
-	static double	fixedDeltaTime();
-};
-
+	public:
+		static double	deltaTime();
+		static double	fixedDeltaTime();
+	};
 }
