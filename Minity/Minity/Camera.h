@@ -13,6 +13,12 @@ namespace pkr
 		//friend class Time;
 		friend class App;
 	private:
+		vec3 m_position;
+		vec3 m_lookAt;
+
+		float m_near;
+		float m_far;
+
 		mat4			m_worldTransform;
 		mat4			m_viewTransform;
 		mat4			m_projectionTransform;
@@ -22,12 +28,17 @@ namespace pkr
 		void			updateProjectionView();
 	public:
 		Camera();
+		Camera(vec3 position) : m_position(position) {}
 		~Camera();
 
 		void virtual	update() = 0;
 		void			setProjection(float fovAngDeg, float aspectRatio, float near, float far);
-		void			setLookAt(const vec3& from, const vec3& to, const vec3& up);
+
 		void			setPosition(const vec3& position);
+
+		void			setLookAt(const vec3& lookAt);
+		void			setLookAt(const vec3& from, const vec3& to, const vec3& up);	//Hard set look at (probably avoid)
+
 		mat4			getWorldTransform() const;
 		mat4			getView() const;
 		mat4			getProjection() const;

@@ -3,15 +3,22 @@
 namespace pkr {
 	class Time
 	{
-		friend class App;	//App has full access
+		//Static Time module akin to UnityEngine.Time
+
+		friend class App;	//This specified class has full access to this
 	private:
+
+		static double	m_t;
 		static double	m_dt;
 		static double	m_fdt;
 
+		//Engine accesses these functions to 
+		static void		updateTime();
 		static void		updateDeltaTime();
 
 	public:
-		static double	deltaTime();
-		static double	fixedDeltaTime();
+		static double	time();				//The current app time
+		static double	deltaTime();		//Time between last frame and this frame
+		static double	fixedDeltaTime();	//Physics module time step
 	};
 }

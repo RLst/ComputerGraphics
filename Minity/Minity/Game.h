@@ -3,10 +3,10 @@
 
 #pragma once
 #include "App.h"
+#include "Colour.h"
 
 #include "glm/ext.hpp"
 #include "glm/gtc/quaternion.hpp"
-//#include "glm/gtx/quaternion.hpp"
 
 namespace pkr {
 	class Camera;
@@ -22,17 +22,34 @@ class Game : public pkr::App
 {
 private:
 
-	pkr::Camera* m_camera;
+	//Camera
+	struct {
+		pkr::Camera* camera;
+		vec3 position = vec3(10, 10, 10);
+		vec3 lookAt = vec3(0, 0, 0);
+		float fovAngle = 50.f;
+		float aspect = 16 / 9.f;
+		float near = 0.1f;
+		float far = 1000.f;
+	} m_cam;
+	//pkr::Camera* m_cameraMain;
+
+	//Quaternions tutorial
+	vec3 m_positions[3];
+	quat m_rotations[3];
+	struct {
+		vec3 p;
+		quat r;
+		mat4 m;
+	} box;
 
 	struct {
 		vec4 lightGrey = vec4(0.1f, 0.1f, 0.1f, 1);
 		vec4 white = vec4(1);
 		vec4 black = vec4(0, 0, 0, 1);
-		vec4 sun = vec4(1, 0.60f, 0, 1);
+		vec4 sun = pkr::Colour::random();
 	} m_colours;
 
-	mat4 m_view;
-	mat4 m_projection;
 
 	//Solar system
 	struct {
@@ -73,6 +90,6 @@ public:
 	void Draw() override;
 	bool End() override;
 
-	void drawGrid();
+	void drawGrid(int size);
 };
 

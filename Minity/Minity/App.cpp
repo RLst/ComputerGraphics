@@ -45,10 +45,13 @@ namespace pkr {
 		if (initReturnCode != PKR_SUCCESS)
 			return initReturnCode;
 
-		//Game Loop
+		//GAME LOOP
 		while (!pm_isTerminating)
 		{
+			//UPDATE
 			CoreUpdate();
+
+			//DRAW
 			CoreDraw();
 
 			//Check if app is terminating
@@ -112,7 +115,8 @@ namespace pkr {
 	void App::CoreUpdate()
 	{
 		////Pre
-		//Calculate time and fps stuff
+		//Update time module
+		Time::updateTime();
 		Time::updateDeltaTime();
 		pm_fpsInterval += Time::deltaTime();
 		if (pm_fpsInterval >= 1.0f)

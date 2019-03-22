@@ -3,17 +3,21 @@
 #include <vector>
 #include <string>
 
-namespace MinityEngine
+namespace Minity {
+namespace Core
 {
-    class string;
+    class Random;   //Functions to return good random using MT engines
+    class Colour;   //Functions to return colours in the form of glm::vec4
+    class Math;     //Functions like math constants (pi, e), sin, cos etc?
+
     std::vector<GameObject*> gameObjects;
-    std::vector<Scene*> scenes;
+    std::vector<World*> worlds;
 
     class CoreEngine
     {
     private:
-        bool            m_isTerminating;
-        GLFWwindow*     m_window;
+        bool m_isTerminating;
+        GLFWwindow* m_window;
 
         CoreEngine() :
             m_window(nullptr),      //Reset window
@@ -61,7 +65,7 @@ namespace MinityEngine
     public:
         virtual void Start() {}
         virtual void Update() {}
-        virtual void Draw() {}
+        // virtual void Draw() {}
         virtual void End() {}
     };
 
@@ -79,9 +83,42 @@ namespace MinityEngine
     ///////////////////////////
     class GameObject : Object
     {
+    
+    private:
+        bool m_enabled;
         std::string m_name;
+
         std::vector<Component> components;
         Scene* m_scene = nullptr;
+
+        void CoreInit()
+        {
+            //Run awake for all components
+            for (auto c : components)
+            {
+                c->Awake();
+            }
+            //Run start for all components that are enabled
+        }
+
+        void CoreUpdate()
+        {
+            //Run fixed update for all components
+            for (auto c : components)
+            {
+                c->FixedUpdate();
+            }
+            //Run update for all components
+            for (auto c : components)
+            {
+                c->Update();
+            }
+            //Run late update for all components MAYBE?
+            for (auto c : components)
+            {
+                c->LateUpdate();
+            }
+        }
 
     public:
         GameObject()
@@ -99,6 +136,8 @@ namespace MinityEngine
             components.push_back(component);
             component.addedToGameObject(this);
         }
+
+
 
         void update()
         {
@@ -118,14 +157,18 @@ namespace MinityEngine
                 }
             }
         }
+
+        //Properties
+        void setEnabled(bool setting) { m_enabled = setting; }
+        bool isEnabled() const { return m_enabled; }
     };
 
     /////////
-    class Scene
+    class World
     {
         std::vector<GameObject> gameObjects;
         EventDispatcher* m_eventDispatcher;
-        SceneRender* m_renderer;
+        WorldRenderer* m_worldRenderer;
     };
 
 
@@ -150,10 +193,12 @@ namespace MinityEngine
     /////// /Componenets
     class Component
     {
+        virtual void Awake() {}
         virtual void Start() {}
+        virtual void FixedUpdate() {}
         virtual void Update() {}
-        void Draw() {}
         void End() {}
+        // void Draw() {}
     };
 
     class Transform : Component
@@ -218,6 +263,7 @@ namespace MinityEngine
     //     void SendMessage();
     //     void GetComponent();
     // }
+}
 }
 
 #include "Minity.h"

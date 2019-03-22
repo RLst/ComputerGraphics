@@ -9,7 +9,7 @@ int main()
 	//Initialize main app and configure settings
 	auto game = new Game();
 
-	game->WindowConfig("Minity", 1440, 900, pkr::Colour::get(pkr::eORANGE), false);
+	game->WindowConfig("Minity", 1440, 900, pkr::Colour::orange(), false);
 	game->GizmoConfig(10000, 10000, 100, 100);
 
 	//Run it

@@ -29,7 +29,7 @@ namespace pkr {
 
 class Time;
 
-class App
+class App		//TODO rename this to Engine later
 {
 	//very [P]rivate [M]ember variables used by core methods
 	unsigned int	pm_frames;
