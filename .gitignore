@@ -31,7 +31,11 @@
 *.out
 *.app
 
-.vs/
-temp/
-GraphicsEngine/dependencies/glm/doc/
-Minity/output/
+**/.vs
+**/temp
+**/doc
+**/output
+**/x64
+**/x86
+**/Debug
+**/Release

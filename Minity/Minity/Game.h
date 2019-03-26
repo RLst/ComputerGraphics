@@ -42,6 +42,20 @@ private:
 		quat r;
 		mat4 m;
 	} box;
+	
+	struct KeyFrame {
+		glm::vec3 position;
+		glm::quat rotation;
+	};
+	KeyFrame m_hipFrames[2];
+	KeyFrame m_kneeFrames[2];
+	KeyFrame m_ankleFrames[2];
+	glm::mat4 m_hipBone;
+	glm::mat4 m_kneeBone;
+	glm::mat4 m_ankleBone;
+	vec3 m_hipPos;
+	vec3 m_kneePos;
+	vec3 m_anklePos;
 
 	struct {
 		vec4 lightGrey = vec4(0.1f, 0.1f, 0.1f, 1);
@@ -49,7 +63,6 @@ private:
 		vec4 black = vec4(0, 0, 0, 1);
 		vec4 sun = pkr::Colour::random();
 	} m_colours;
-
 
 	//Solar system
 	struct {
