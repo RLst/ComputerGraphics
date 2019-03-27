@@ -244,20 +244,12 @@ namespace Core
         glm::vec3 scale;
     };
 
-    class Rigidbody2D : Component;
-    class Rigidbody : Component
-    {};
-    class Collider2D : Component;
-    class Collider : Component
-    {};
-    class Camera : Component
-    {};
-    class Light : Component
-    {};
-    class Renderer : Component
-    {};
-    class Animation : Component     //Maybe
-    {};
+    class Rigidbody2D : Component; class Rigidbody : Component;
+    class Collider2D : Component; class Collider : Component;
+    class Camera : Component;
+    class Light : Component;
+    class Renderer : Component;
+    class Animation : Component;     //Maybe
 
 
     //// Behaviours
@@ -266,18 +258,32 @@ namespace Core
         //Behaviours are essentially the scripts. Derive from Behaviour to create a "script"
     public:
         bool enabled;
+        //Other members related only to with scripts
 
-        void Update() override {} //?
+        // void Update() override {} //?
 
     };
 
-    class PlayerBehaviour : Behaviour
+    #include "scripts/MyCustomScript.h"
+    class MyCustomScript : Behaviour
     {
-        void Update() override
-        {
-            
-        }
+        void Start() override;
+        void Update() override;
+        void End() override;
     };
+
+}
+}
+
+#include "Minity.h"
+
+using namespace MinityEngine;
+
+namespace MyProject
+{
+
+
+}
 
     // class Component : Object
     // {
@@ -297,15 +303,3 @@ namespace Core
     //     void SendMessage();
     //     void GetComponent();
     // }
-}
-}
-
-#include "Minity.h"
-
-using namespace MinityEngine;
-
-namespace MyProject
-{
-
-
-}
