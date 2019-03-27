@@ -4,6 +4,7 @@
 #pragma once
 #include "App.h"
 #include "Colour.h"
+#include "Shader.h"
 
 #include "glm/ext.hpp"
 #include "glm/gtc/quaternion.hpp"
@@ -59,12 +60,17 @@ private:
 	vec3 m_kneePos;
 	vec3 m_anklePos;
 
-	struct {
-		vec4 lightGrey = vec4(0.1f, 0.1f, 0.1f, 1);
-		vec4 white = vec4(1);
-		vec4 black = vec4(0, 0, 0, 1);
-		vec4 sun = pkr::Colour::random();
-	} m_colours;
+	//struct {
+	//	vec4 lightGrey = vec4(0.1f, 0.1f, 0.1f, 1);
+	//	vec4 white = vec4(1);
+	//	vec4 black = vec4(0, 0, 0, 1);
+	//	vec4 sun = pkr::Colour::random();
+	//} m_colours;
+
+	////Rendering geometry
+	aie::ShaderProgram m_shader;
+
+
 
 	//Solar system
 	struct {

@@ -46,6 +46,17 @@ bool Game::Start()
 	m_ankleFrames[0].position = vec3(0, -2.5f, 0); m_ankleFrames[0].rotation = quat(vec3(-1, 0, 0));
 	m_ankleFrames[1].position = vec3(0, -2.5f, 0); m_ankleFrames[1].rotation = quat(vec3(0, 0, 0));
 
+	////Rendering geometry
+	//Load vertex shader from file
+	m_shader.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
+	
+	//Load fragment shader from file
+	m_shader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/simple.frag");
+
+	if (m_shader.link() == false) {
+		printf("Shader Error: %s\n", m_shader.getLastError());
+	}
+
 	////Init solar system
 	m_ss_angVel = 0.5f;
 	//Sun

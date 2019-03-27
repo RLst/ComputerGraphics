@@ -227,12 +227,9 @@ namespace Core
     /////// /Componenets
     class Component
     {
-        virtual void Awake() {}
-        virtual void Start() {}
-        virtual void FixedUpdate() {}
-        virtual void Update() {}
-        void End() {}
-        // void Draw() {}
+        virtual void ComponentInit() {}
+        virtual void ComponentUpdate() {}
+        virtual void ComponentEnd() {}
     };
 
     class Transform : Component
