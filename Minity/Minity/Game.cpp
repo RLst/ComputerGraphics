@@ -29,7 +29,7 @@ bool Game::Start()
 	m_cam.camera->setLookAt(m_cam.lookAt);
 	m_cam.camera->setProjection(m_cam.fovAngle, m_cam.aspect, m_cam.near, m_cam.far);
 
-	//Quaternion tutorial
+	////Quaternion tutorial
 	m_positions[0] = vec3(-10, 5, -10);
 	m_positions[1] = vec3(10, 0, -10);
 	m_positions[2] = vec3(10, 2.5f, 10);
@@ -37,21 +37,14 @@ bool Game::Start()
 	m_rotations[1] = quat(vec3(0, 1, 0));
 	m_rotations[2] = quat(vec3(0, 0, 1));
 
-	m_hipFrames[0].position = vec3(0, 5, 0);
-	m_hipFrames[0].rotation = quat((vec3(1, 0, 0)));
-	m_hipFrames[1].position = vec3(0, 5, 0);
-	m_hipFrames[1].rotation = quat((vec3(-1, 0, 0)));
-	m_kneeFrames[0].position = vec3(0, -2.5f, 0);
-	m_kneeFrames[0].rotation = quat(vec3(1, 0, 0));
-	m_kneeFrames[1].position = vec3(0, -2.5f, 0);
-	m_kneeFrames[1].rotation = quat(vec3(0, 0, 0));
-	m_ankleFrames[0].position = vec3(0, -2.5f, 0);
-	m_ankleFrames[0].rotation = quat(vec3(-1, 0, 0));
-	m_ankleFrames[1].position = vec3(0, -2.5f, 0);
-	m_ankleFrames[1].rotation = quat(vec3(0, 0, 0));
+	m_hipFrames[0].position = vec3(0, 5, 0); m_hipFrames[0].rotation = quat((vec3(1, 0, 0)));
+	m_hipFrames[1].position = vec3(0, 5, 0); m_hipFrames[1].rotation = quat((vec3(-1, 0, 0)));
 
-	m_kneeBone = mat4(1);
-	m_ankleBone = mat4(1);
+	m_kneeFrames[0].position = vec3(0, -2.5f, 0); m_kneeFrames[0].rotation = quat(vec3(1, 0, 0));
+	m_kneeFrames[1].position = vec3(0, -2.5f, 0); m_kneeFrames[1].rotation = quat(vec3(0, 0, 0));
+
+	m_ankleFrames[0].position = vec3(0, -2.5f, 0); m_ankleFrames[0].rotation = quat(vec3(-1, 0, 0));
+	m_ankleFrames[1].position = vec3(0, -2.5f, 0); m_ankleFrames[1].rotation = quat(vec3(0, 0, 0));
 
 	////Init solar system
 	m_ss_angVel = 0.5f;
@@ -83,20 +76,21 @@ void Game::Update()
 	if (angle > 360) angle = 0;
 	rads = angle * glm::pi<float>() / 180.f;
 
-	//linearly interpolate hip position
-	vec3 p = (1.0f - s) * m_hipFrames[0].position + s * m_hipFrames[0].position;
-
-	//spherically interpolate hip rotation
+	//Interpolate hip bone 
+	vec3 p = (1.0f - s) * m_hipFrames[0].position + s * m_hipFrames[1].position;
 	quat r = glm::slerp(m_hipFrames[0].rotation, m_hipFrames[1].rotation, s);
-
-	//Update the hip bone
-	m_hipBone = glm::translate(p) * glm::toMat4(r);
+	m_hipBone = glm::translate(p) * glm::toMat4(r);	
 	
-	////Calculate the new knee and ankle bone matrices, then concatenate as described = Parent * Child
-	//Concatenate the knee bone matrix with the hip bone matrix
-	m_kneeBone = m_hipBone * m_kneeBone;
-	m_ankleBone = m_kneeBone * m_ankleBone;
-
+	//Interpolate knee, concatenate with hip bone
+	p = (1.0f - s) * m_kneeFrames[0].position + s * m_kneeFrames[1].position;
+	r = glm::slerp(m_kneeFrames[0].rotation, m_kneeFrames[1].rotation, s);
+	m_kneeBone = m_hipBone * (glm::translate(p) * glm::toMat4(r));
+	
+	//Interpolate ankle, concatenate with knee bone
+	p = (1.0f - s) * m_ankleFrames[0].position + s * m_ankleFrames[1].position;
+	r = glm::slerp(m_ankleFrames[0].rotation, m_ankleFrames[1].rotation, s);
+	m_ankleBone = m_kneeBone * (glm::translate(p) * glm::toMat4(r));
+	
 	m_hipPos = vec3(m_hipBone[3].x, m_hipBone[3].y, m_hipBone[3].z);
 	m_kneePos = vec3(m_kneeBone[3].x, m_kneeBone[3].x, m_kneeBone[3].z);
 	m_anklePos = vec3(m_ankleBone[3].x, m_ankleBone[3].y, m_ankleBone[3].z);
@@ -119,7 +113,7 @@ void Game::Draw()
 
 	////Quaternion tutorial
 	//Flying box
-	vec3 legExtents(0.5f, 2.f, 0.5f);
+	vec3 legExtents(0.5f, 2.5f, 0.5f);
 	aie::Gizmos::addTransform(box.m);
 	aie::Gizmos::addAABBFilled(box.p, vec3(0.5f), pkr::Colour::red(), &box.m);
 
