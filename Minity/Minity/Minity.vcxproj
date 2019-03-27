@@ -187,6 +187,7 @@
     <ClInclude Include="FlyCamera.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Input_pkr.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Vector.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="FlyCamera.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Input_pkr.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Time.cpp" />
