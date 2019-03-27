@@ -3,6 +3,41 @@
 #include <vector>
 #include <string>
 
+/* Suggested file layout
+namespace Minity
+    //OpenGL
+    gl_core_4_4.h
+
+    //Core modules
+    App     //Main app
+    Time
+    Random
+    Colour
+    Math
+    Input
+    Graphics
+    
+    GameObject
+    World
+
+    Components
+        //Required
+        Transform
+
+        //Optionals
+        Rigidbody/2D
+        Collider/2D
+        Light
+        Camera
+        Renderer
+        Gizmo  //Requires Renderer component
+        GUI_Text
+
+        Behaviour        //Base for all scripts
+
+
+*/
+
 namespace Minity {
 namespace Core
 {
@@ -187,7 +222,6 @@ namespace Core
         bool active;
         bool isStatic;
         string tag;
-    
     }
     
     /////// /Componenets

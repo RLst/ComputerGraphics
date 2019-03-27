@@ -50,6 +50,9 @@ bool Game::Start()
 	m_ankleFrames[1].position = vec3(0, -2.5f, 0);
 	m_ankleFrames[1].rotation = quat(vec3(0, 0, 0));
 
+	m_kneeBone = mat4(1);
+	m_ankleBone = mat4(1);
+
 	////Init solar system
 	m_ss_angVel = 0.5f;
 	//Sun
@@ -66,7 +69,7 @@ void Game::Update()
 {
 	//Quaternion tutorial
 	//use time to animate a alue between [0,1]
-	float s = glm::cos(Time::time()) * 0.5f + 0.5f;
+	float s = glm::cos((float)Time::time()) * 0.5f + 0.5f;
 	box.p = (1.0f - s) * m_positions[0] + s * m_positions[1] + s * m_positions[2];
 
 	////Flying box
@@ -75,7 +78,7 @@ void Game::Update()
 	//build a matrix
 	box.m = glm::translate(box.p) * glm::toMat4(box.r);
 	//Orbit the camera around
-	static float angle = 0; static float rads; static float orbitDist = 25;
+	static float angle = 0; static float rads; static float orbitDist = 35;
 	angle += 0.25f;
 	if (angle > 360) angle = 0;
 	rads = angle * glm::pi<float>() / 180.f;
@@ -89,17 +92,18 @@ void Game::Update()
 	//Update the hip bone
 	m_hipBone = glm::translate(p) * glm::toMat4(r);
 	
-	//Calculate the new knee and ankle bone matrices, then concatenate as described = Parent * Child
-	
-
+	////Calculate the new knee and ankle bone matrices, then concatenate as described = Parent * Child
+	//Concatenate the knee bone matrix with the hip bone matrix
+	m_kneeBone = m_hipBone * m_kneeBone;
+	m_ankleBone = m_kneeBone * m_ankleBone;
 
 	m_hipPos = vec3(m_hipBone[3].x, m_hipBone[3].y, m_hipBone[3].z);
 	m_kneePos = vec3(m_kneeBone[3].x, m_kneeBone[3].x, m_kneeBone[3].z);
 	m_anklePos = vec3(m_ankleBone[3].x, m_ankleBone[3].y, m_ankleBone[3].z);
 
 	//Update Camera
-	//m_cam.camera->setPosition(vec3(glm::sin(rads) * orbitDist, 7.5f, glm::cos(rads) * orbitDist));
-	m_cam.camera->setLookAt(box.p);
+	m_cam.camera->setPosition(vec3(glm::sin(rads) * orbitDist, 7.5f, glm::cos(rads) * orbitDist));
+	//m_cam.camera->setLookAt(m_hipPos);
 	m_cam.camera->update();
 }
 
@@ -113,13 +117,16 @@ void Game::Draw()
 	//Sun
 	aie::Gizmos::addSphere(m_planets[0].pos, m_planets[0].radius, 32, 32, m_colours.sun);
 
-	//Quaternion tutorial
-	vec4 half(0.5f);
+	////Quaternion tutorial
+	//Flying box
+	vec3 legExtents(0.5f, 2.f, 0.5f);
 	aie::Gizmos::addTransform(box.m);
 	aie::Gizmos::addAABBFilled(box.p, vec3(0.5f), pkr::Colour::red(), &box.m);
-	aie::Gizmos::addAABBFilled(m_hipPos, half, pkr::Colour::fuschia(), &m_hipBone);
-	aie::Gizmos::addAABBFilled(m_kneePos, half, pkr::Colour::fuschia(), &m_kneeBone);
-	aie::Gizmos::addAABBFilled(m_anklePos, half, pkr::Colour::fuschia(), &m_ankleBone);
+
+	//Leg
+	aie::Gizmos::addAABBFilled(m_hipPos, legExtents, pkr::Colour::fuschia(), &m_hipBone);
+	aie::Gizmos::addAABBFilled(m_kneePos, legExtents, pkr::Colour::fuschia(), &m_kneeBone);
+	aie::Gizmos::addAABBFilled(m_anklePos, legExtents, pkr::Colour::fuschia(), &m_ankleBone);
 
 	//Temp planet
 	static float tOrbitAng = 0;
@@ -155,5 +162,4 @@ void Game::drawGrid(int size)
 		aie::Gizmos::addLine(vec3(-halfsize + i, 0, halfsize), vec3(-halfsize + i, 0, -halfsize), i == halfsize ? pkr::Colour::white() : pkr::Colour::shade(0.15f));
 		aie::Gizmos::addLine(vec3(halfsize, 0, -halfsize + i), vec3(-halfsize, 0, -halfsize + i), i == halfsize ? pkr::Colour::white() : pkr::Colour::shade(0.15f));
 	}
-	//glm::abs(1234);	//TODO Why? The f*** does this do?
 }

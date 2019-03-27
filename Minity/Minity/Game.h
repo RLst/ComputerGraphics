@@ -34,7 +34,8 @@ private:
 	} m_cam;
 	//pkr::Camera* m_cameraMain;
 
-	//Quaternions tutorial
+	////Quaternions tutorial
+	//Flying box
 	vec3 m_positions[3];
 	quat m_rotations[3];
 	struct {
@@ -43,6 +44,7 @@ private:
 		mat4 m;
 	} box;
 	
+	//Leg
 	struct KeyFrame {
 		glm::vec3 position;
 		glm::quat rotation;
@@ -51,7 +53,7 @@ private:
 	KeyFrame m_kneeFrames[2];
 	KeyFrame m_ankleFrames[2];
 	glm::mat4 m_hipBone;
-	glm::mat4 m_kneeBone;
+	glm::mat4 m_kneeBone; 
 	glm::mat4 m_ankleBone;
 	vec3 m_hipPos;
 	vec3 m_kneePos;
@@ -90,7 +92,7 @@ private:
 		struct {
 			float angle = 0;
 			float vel = 0;
-			void setAngle(float inAngle) { angle += inAngle; if (angle > 360) angle - 360.f; else if (angle < 0) angle + 360.f; }
+			void setAngle(float inAngle) { angle += inAngle; if (angle > 360) angle -= 360.f; else if (angle < 0) angle += 360.f; }
 		} orbital;
 	} m_planets[10];
 
