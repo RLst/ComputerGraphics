@@ -27,9 +27,10 @@ namespace pkr {
 		PKR_TRUE = 1,
 	};
 
-class Time;
+	class Input;
+	class Time;
 
-class App		//TODO rename this to Engine later
+typedef class App		//TODO rename this to Engine later
 {
 	//very [P]rivate [M]ember variables used by core methods
 	unsigned int	pm_frames;
@@ -45,7 +46,7 @@ private:
 	const char*		m_appTitle;
 	unsigned int	m_scrnWidth, m_scrnHeight;
 	vec4			m_bgCol;
-	bool			m_isFullscreen;
+	 bool			m_isFullscreen;
 
 	unsigned int	m_fps;
 
@@ -92,6 +93,6 @@ public:
 	virtual void	Draw() {}
 	virtual bool	End() { return true; }
 
-};
+} App;
 
 }

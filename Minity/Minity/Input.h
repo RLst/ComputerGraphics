@@ -6,7 +6,7 @@
 
 struct GLFWwindow;
 
-namespace aie {
+namespace pkr {
 
 // a giant list of input codes for keyboard and mouse
 enum EInputCodes : int {
@@ -193,7 +193,7 @@ public:
 protected:
 
 	// just giving the Application class access to the Input singleton
-	friend class Application;
+	friend class App;
 
 	// singleton pointer
 	static Input* m_instance;

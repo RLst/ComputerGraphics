@@ -2,6 +2,8 @@
 //21 Mar 2019
 
 #pragma once
+#include <memory>
+
 #include "App.h"
 #include "Colour.h"
 #include "Shader.h"
@@ -11,6 +13,9 @@
 
 namespace pkr {
 	class Camera;
+}
+namespace tut {
+	class Mesh;
 }
 
 using glm::vec2;
@@ -23,17 +28,29 @@ class Game : public pkr::App
 {
 private:
 
-	//Camera
+	////Camera
 	struct {
-		pkr::Camera* camera;
-		vec3 position = vec3(10, 10, 10);
+		std::unique_ptr<pkr::Camera> camera;
+		vec3 position = vec3(0, 10, -10);
 		vec3 lookAt = vec3(0, 0, 0);
-		float fovAngle = 50.f;
+		float fov = 50.f;
 		float aspect = 16 / 9.f;
 		float near = 0.1f;
 		float far = 1000.f;
 	} m_cam;
-	//pkr::Camera* m_cameraMain;
+
+	////Solar system
+	struct {
+		float sun = 1.f / 24;
+		float mercury = 47.87f;
+		float venus = 35.02f;
+		float earth = 29.78f;
+		float mars = 24.077f;
+		float jupiter = 13.07f;
+		float saturn = 9.69f;
+		float uranus = 6.81f;
+		float neptune = 5.43f;
+	} speed;
 
 	////Quaternions tutorial
 	//Flying box
@@ -60,31 +77,11 @@ private:
 	vec3 m_kneePos;
 	vec3 m_anklePos;
 
-	//struct {
-	//	vec4 lightGrey = vec4(0.1f, 0.1f, 0.1f, 1);
-	//	vec4 white = vec4(1);
-	//	vec4 black = vec4(0, 0, 0, 1);
-	//	vec4 sun = pkr::Colour::random();
-	//} m_colours;
-
 	////Rendering geometry
 	aie::ShaderProgram m_shader;
-
-
-
-	//Solar system
-	struct {
-		float sun = 1.f / 24;
-		float mercury = 47.87f;
-		float venus = 35.02f;
-		float earth = 29.78f;
-		float mars = 24.077f;
-		float jupiter = 13.07f;
-		float saturn = 9.69f;
-		float uranus = 6.81f;
-		float neptune = 5.43f;
-	} speed;
-
+	std::unique_ptr<tut::Mesh> m_quadMesh;
+	mat4 m_quadTransform;
+	   
 	float m_ss_angVel;
 	struct {
 		//Core settings
@@ -111,6 +108,13 @@ public:
 	void Draw() override;
 	bool End() override;
 
-	void drawGrid(int size);
+	void StartSolarSystem();
+	void StartQuatTutorial();
+	void StartRenderGeomTutorial();
+	void UpdateQuatTutorial();
+	void DrawGrid(int size);
+	void DrawSolarSystem();
+	void DrawQuatTutorial();
+	void DrawRenderGeomTutorial();
 };
 

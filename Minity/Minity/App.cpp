@@ -3,6 +3,7 @@
 
 #include "App.h"
 #include "Time.h"
+#include "Input.h"
 
 #include "Gizmos.h"
 #include "gl_core_4_4.h"
@@ -101,6 +102,9 @@ namespace pkr {
 		//Gizmos
 		aie::Gizmos::create(pm_maxLines, pm_maxTris, pm_max2DLines, pm_max2DTris);
 
+		//Start input manager
+		Input::create();
+
 		///////////////
 		//// User ////
 		if (!Start()) return -4;
@@ -128,6 +132,10 @@ namespace pkr {
 		//Skip updates and draw if window is minimized
 		if (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED) != 0)
 			return;
+
+		//Clear input status
+		Input::getInstance()->clearStatus();
+
 		//Update window events ie. Input etc
 		glfwPollEvents();
 
