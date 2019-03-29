@@ -14,7 +14,7 @@
 namespace pkr {
 	class Camera;
 }
-namespace tut {
+namespace pkr {
 	class Mesh;
 }
 
@@ -81,7 +81,7 @@ private:
 
 	////Rendering geometry
 	aie::ShaderProgram m_shader;
-	std::unique_ptr<tut::Mesh> m_quadMesh;
+	std::unique_ptr<pkr::Mesh> m_quadMesh;
 	mat4 m_quadTransform;
 	   
 	float m_ss_angVel;

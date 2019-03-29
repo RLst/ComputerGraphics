@@ -111,14 +111,20 @@ void Game::StartRenderGeomTutorial()
 	}
 	
 	//Make quad
-	m_quadMesh.reset(new tut::Mesh());
-	m_quadMesh->initialiseQuad();
-	m_quadTransform = {
-		10, 0, 0, 0,
-		0, 10, 0, 0,
-		0, 0, 10, 0,
-		0, 0, 0, 1
-	};
+	m_quadMesh.reset(new Mesh());
+	m_quadTransform = glm::scale(vec3(15, 0, 10));
+	
+	Mesh::Vertex vertices[4];
+	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
+	vertices[1].position = { 0.5f, 0, 0.5f, 1 };
+	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
+	vertices[3].position = { 0.5f, 0, -0.5f, 1 };
+	//vertices[4].position = { 0.5f, 0, 0.5f, 1 };
+	//vertices[5].position = { 0.5f, 0, -0.5f, 1 };
+
+	unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
+	m_quadMesh->initialise(4, vertices, 6, indices);
+	//m_quadMesh->initialiseQuad();
 }
 
 //UPDATES

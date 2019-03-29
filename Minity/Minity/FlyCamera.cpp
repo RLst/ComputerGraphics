@@ -89,28 +89,28 @@ void FlyCamera::adjustYaw(float angle)
 	glm::mat4 yaw(1.0f);
 	yaw = glm::rotate(angle, vec3(worldUp.x, worldUp.y, worldUp.z));
 
-	m_view = yaw * m_view;
-	m_world = glm::inverse(m_view);
+	m_world = m_world * yaw;
+	m_view = glm::inverse(m_world);
 	updateProjectionView();
 }
 
 void FlyCamera::adjustPitch(float angle)
 {
 	//Get the camera's local right axis by getting cross product of world up * local right
-	glm::vec4 worldUp = glm::normalize(glm::inverse(m_world) * glm::vec4(0, 1, 0, 0));
+	//glm::vec4 worldUp = glm::normalize(glm::inverse(m_world) * glm::vec4(0, 1, 0, 0));
 
 	//Get normalized local forward
-	glm::vec3 localForward = glm::normalize(forward());
+	//glm::vec3 localForward = glm::normalize(forward());
 
 	//Get local right by getting cross product of world up and local foward
-	glm::vec3 localRight = glm::cross(vec3(worldUp.x, worldUp.y, worldUp.z), localForward);
+	//glm::vec3 localRight = glm::cross(vec3(worldUp.x, worldUp.y, worldUp.z), localForward);
 
 
 	//Rotate camera's right axis
 	glm::mat4 pitch(1.0f);
-	pitch = glm::rotate(angle, localRight);
+	pitch = glm::rotate(angle, vec3(m_world[0].x, m_world[0].y, m_world[0].z));
 
-	m_view = pitch * m_view;
-	m_world = glm::inverse(m_view);
+	m_world = m_world * pitch;
+	m_view = glm::inverse(m_world);
 	updateProjectionView();
 }
