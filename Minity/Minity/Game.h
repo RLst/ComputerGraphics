@@ -31,13 +31,15 @@ private:
 	////Camera
 	struct {
 		std::unique_ptr<pkr::Camera> camera;
-		vec3 position = vec3(0, 10, -10);
+		vec3 position = vec3(0, 5, 10);
 		vec3 lookAt = vec3(0, 0, 0);
+		float speed = 15.0f;
+		float smoothing = 0.25f;
 		float fov = 50.f;
 		float aspect = 16 / 9.f;
 		float near = 0.1f;
 		float far = 1000.f;
-	} m_cam;
+	} c;
 
 	////Solar system
 	struct {
@@ -112,6 +114,7 @@ public:
 	void StartQuatTutorial();
 	void StartRenderGeomTutorial();
 	void UpdateQuatTutorial();
+	void UpdateCamera();
 	void DrawGrid(int size);
 	void DrawSolarSystem();
 	void DrawQuatTutorial();

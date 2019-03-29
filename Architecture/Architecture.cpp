@@ -8,14 +8,14 @@ namespace Minity
     //OpenGL
     gl_core_4_4.h
 
-    //Core modules
+    //Core modules/managers
     App     //Main app
-    Time
-    Random
-    Colour
-    Math
-    Input
-    Graphics
+    o Time
+    o Random
+    o Colour
+    - Math    (glm math functions)
+    o Input[Manager]     (aie copy, write my own later)
+    o Graphics[Manager]
     
     GameObject
     World

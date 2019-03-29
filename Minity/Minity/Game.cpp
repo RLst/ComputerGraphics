@@ -27,10 +27,11 @@ Game::~Game()
 bool Game::Start()
 {
 	//Camera
-	m_cam.camera.reset(new FlyCamera(m_cam.position, m_cam.lookAt, 3, 0.25f, m_cam.fov, m_cam.aspect, m_cam.near, m_cam.far));	//Sets initial pos
+	c.camera.reset(new FlyCamera(c.position, c.lookAt, c.speed, c.smoothing, c.fov, c.aspect, c.near, c.far));	//Sets initial pos
+	//c.camera.reset(new FlyCamera());
 
 	StartSolarSystem();
-	StartQuatTutorial();
+	//StartQuatTutorial();
 	StartRenderGeomTutorial();
 
 	return true;
@@ -38,31 +39,19 @@ bool Game::Start()
 
 void Game::Update()
 {
-	UpdateQuatTutorial();
-
-	//Update Camera
-	
-
-	////Orbit the camera around
-	//static float angle = 0; static float rads; static float orbitDist = 35;
-	//angle += 0.2f;
-	//if (angle > 360) angle = 0;
-	//rads = angle * glm::pi<float>() / 180.f;
-	//m_cam.camera->setPosition(vec3(glm::sin(rads) * orbitDist, 7.5f, glm::cos(rads) * orbitDist));
-	////m_cam.camera->setLookAt(m_hipPos);
-	//m_cam.camera->setProjection(m_cam.fov, getScreenWidth() / (float)getScreenHeight(), m_cam.near, m_cam.far);	//Doesn't work very well
-	m_cam.camera->update();
+	//UpdateQuatTutorial();
+	UpdateCamera();
 }
 
 void Game::Draw()
 {
 	DrawGrid(30);
-	//DrawSolarSystem();
-	DrawQuatTutorial();
+	DrawSolarSystem();
+	//DrawQuatTutorial();
 	DrawRenderGeomTutorial();
 
 	////Draw cameras
-	aie::Gizmos::draw(m_cam.camera->getProjectionView());
+	aie::Gizmos::draw(c.camera->getProjectionView());
 	aie::Gizmos::draw2D((float)getScreenWidth(), (float)getScreenHeight());
 }
 
@@ -165,6 +154,18 @@ void Game::UpdateQuatTutorial()
 	m_kneePos = vec3(m_kneeBone[3].x, m_kneeBone[3].x, m_kneeBone[3].z);
 	m_anklePos = vec3(m_ankleBone[3].x, m_ankleBone[3].y, m_ankleBone[3].z);
 }
+void Game::UpdateCamera()
+{
+	//Update Camera
+	//Orbit the camera around
+	//static float angle = 0; static float rads; static float orbitDist = 35;
+	//angle += 0.2f;
+	//if (angle > 360) angle = 0;
+	//rads = angle * glm::pi<float>() / 180.f;
+	//c.camera->setPosition(vec3(glm::sin(rads) * orbitDist, 7.5f, glm::cos(rads) * orbitDist));
+	//c.camera->setProjection(c.fov, getScreenWidth() / (float)getScreenHeight(), c.near, c.far);	//Doesn't work very well
+	c.camera->update();
+}
 
 //DRAWS
 void Game::DrawGrid(int size)
@@ -220,7 +221,7 @@ void Game::DrawRenderGeomTutorial()
 	m_shader.bind();
 
 	//bind transform
-	auto pvm = m_cam.camera->getProjectionView() * m_quadTransform;
+	auto pvm = c.camera->getProjectionView() * m_quadTransform;
 	m_shader.bindUniform("ProjectionViewModel", pvm);
 
 	//Draw Quad

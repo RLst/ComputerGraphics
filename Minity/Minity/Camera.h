@@ -13,40 +13,54 @@ namespace pkr
 	class Camera
 	{
 	protected:
-		vec3 m_position;
+		mat4			m_world;
+		mat4			m_view;
+		mat4			m_projection;
+		mat4			m_projectionView;
+
 		vec3 m_lookAt;
 
-		quat m_rotation;
-		vec3 m_direction;
+		//glm::vec3	m_up = vec3(0, 1, 0);
+		//glm::vec3	m_front = vec3(0, 0, -1);
+		//glm::ivec3	m_front_desired = m_front;
+		//quat m_rotation;
+		//vec3 m_direction;
 
-		float m_fovAngle, m_aspect, m_near, m_far;
+		float m_fovAngle = 50.f;
+		float m_aspect = 16 / 9.0f;
+		float m_near = 0.1f, m_far = 1000;
 
-		//mat4			m_worldTransform;
-		mat4			m_viewTransform;
-		mat4			m_projectionTransform;
-		mat4			m_projectionViewTransform;
 
-		void			updateProjectionView();
 	public:
+		Camera();
 		Camera(vec3 position);
 		Camera(vec3 position, vec3 lookAt, float fovAngle, float aspect, float near, float far);
 		~Camera();
 
 		void virtual	update() = 0;
+		
+		const mat4		getView() const;
+		void			setLookAt(const vec3& lookAt, const vec3& up);
+
+		const mat4		getProjection() const;
 		void			setProjection(float fovAngDeg, float aspectRatio, float near, float far);
 
+		const mat4		getWorld() const;
+
+		const mat4		getProjectionView() const;
+		void			updateProjectionView();
+		
 		void			setPosition(const vec3& position);
+		const vec3		getPosition() const;
 		void			translate(const vec3& translation);
 
-		void			setLookAt(const vec3& lookAt);
-		void			setLookAtHARD(const vec3& from, const vec3& to, const vec3& up);	//Hard set look at (probably avoid)
 
-		//mat4			getWorldTransform() const;	//TODO is this neccessary?
-		mat4			getView() const;
-		mat4			getProjection() const;
-		mat4			getProjectionView() const;
-
-		vec3			getPosition() const;
+		const vec3		up() const;
+		const vec3		right() const;
+		const vec3		forward() const;
+		const vec3		down() const;
+		const vec3		left() const;
+		const vec3		backward() const;
 	};
 
 }
