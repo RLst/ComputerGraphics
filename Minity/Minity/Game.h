@@ -13,9 +13,10 @@
 
 namespace pkr {
 	class Camera;
-}
-namespace pkr {
 	class Mesh;
+}
+namespace aie {
+	class OBJMesh;
 }
 
 using glm::vec2;
@@ -80,9 +81,12 @@ private:
 	vec3 m_anklePos;
 
 	////Rendering geometry
-	aie::ShaderProgram m_shader;
-	std::unique_ptr<pkr::Mesh> m_quadMesh;
-	mat4 m_quadTransform;
+	aie::ShaderProgram					m_shader;
+	mat4								m_quadTransform;
+	std::unique_ptr<pkr::Mesh>			m_quadMesh;
+	
+	mat4								m_demoObjTransform;
+	std::unique_ptr<aie::OBJMesh>		m_demoObjMesh;
 	   
 	float m_ss_angVel;
 	struct {

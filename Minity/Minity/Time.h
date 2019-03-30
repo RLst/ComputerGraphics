@@ -6,6 +6,7 @@ namespace pkr {
 		//Static Time module akin to UnityEngine.Time
 
 		friend class App;	//This specified class has full access to this
+		friend class Core;
 		friend class Camera;
 	private:
 

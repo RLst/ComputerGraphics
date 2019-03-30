@@ -10,6 +10,7 @@
 #include "Vector.h"
 #include "Mesh.h"
 #include "Input.h"
+#include "OBJMesh.h"
 
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/transform.hpp"
@@ -103,14 +104,14 @@ void Game::StartRenderGeomTutorial()
 	m_shader.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
 
 	//Load fragment shader from file
-	m_shader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/simple.frag");
+	m_shader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/flat.frag");
 
 	if (m_shader.link() == false) {
 		printf("Shader Error: %s\n", m_shader.getLastError());
 		assert(false);	//Lazy exception handling
 	}
 	
-	//Make quad
+	//QUAD
 	m_quadMesh.reset(new Mesh());
 	m_quadTransform = glm::scale(vec3(15, 0, 10));
 	
@@ -125,6 +126,16 @@ void Game::StartRenderGeomTutorial()
 	unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
 	m_quadMesh->initialise(4, vertices, 6, indices);
 	//m_quadMesh->initialiseQuad();
+
+	//DEMO
+	m_demoObjMesh.reset(new aie::OBJMesh());
+	if (m_demoObjMesh->load("./assets/LaFerrari.obj") == false) {
+		printf("Demo Mesh Error!\n");
+		assert(false);
+	}
+
+	m_demoObjTransform = glm::scale(vec3(0.1f));
+	m_demoObjTransform *= glm::rotate(quat(vec3(90, 180, 0)), vec3(0,1,0));
 }
 
 //UPDATES
@@ -200,11 +211,11 @@ void Game::DrawSolarSystem()
 	static float tOrbitAng = 0;
 	static float tOrbitRadius = 4.f;
 	static mat4 tRotate = mat4();
-	static mat4 tPlanetPos = mat4();
-	tOrbitAng += 0.025f;
+	static mat4 tPlanetTransform = mat4();
+	tOrbitAng += 0.015f;
 	//tPlanetPos = glm::mat4(1) * glm::rotate(tOrbitAng, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 10));
-	tPlanetPos = glm::rotate(tOrbitAng, vec3(0, 1, 0)) * glm::translate(vec3(10, 0, 10));
-	aie::Gizmos::addSphere(vec3(0), 1, 20, 20, pkr::Colour::dodgerblue(), &tPlanetPos);
+	tPlanetTransform = glm::rotate(tOrbitAng, vec3(0, 1, 0)) * glm::translate(vec3(10, 0, 10));
+	aie::Gizmos::addSphere(vec3(0), 1, 20, 20, pkr::Colour::dodgerblue(), &tPlanetTransform);
 
 }
 void Game::DrawQuatTutorial()
@@ -232,4 +243,12 @@ void Game::DrawRenderGeomTutorial()
 
 	//Draw Quad
 	m_quadMesh->draw();
+
+	//bind transform
+	auto pvm2 = c.camera->getProjectionView() * m_demoObjTransform;
+	m_shader.bindUniform("ProjectionViewModel", pvm2);
+
+	//Draw demo mesh
+	m_demoObjMesh->draw();
+
 }

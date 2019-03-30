@@ -14,7 +14,6 @@ struct GLFWwindow;
 #include <vector>
 
 ////
-
 namespace pkr {
 
 	enum eFlags
