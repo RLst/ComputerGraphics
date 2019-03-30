@@ -27,7 +27,7 @@ Game::~Game()
 bool Game::Start()
 {
 	//Camera
-	c.camera.reset(new FlyCamera(c.position, c.lookAt, c.speed, c.smoothing, c.fov, c.aspect, c.near, c.far));	//Sets initial pos
+	c.camera.reset(new FlyCamera(c.position, c.lookAt, c.speed, c.fov, c.aspect, c.near, c.far));
 	//c.camera.reset(new FlyCamera());
 
 	StartSolarSystem();
@@ -45,7 +45,7 @@ void Game::Update()
 
 void Game::Draw()
 {
-	DrawGrid(30);
+	DrawGridGizmo(100);
 	DrawSolarSystem();
 	//DrawQuatTutorial();
 	DrawRenderGeomTutorial();
@@ -174,7 +174,7 @@ void Game::UpdateCamera()
 }
 
 //DRAWS
-void Game::DrawGrid(int size)
+void Game::DrawGridGizmo(int size)
 {
 	aie::Gizmos::addTransform(glm::mat4(1));	//Draw the little tri coloured gizmo at the centre
 
@@ -185,8 +185,8 @@ void Game::DrawGrid(int size)
 	//Draw grid
 	for (int i = 0; i <= size; ++i)
 	{
-		aie::Gizmos::addLine(vec3(-halfsize + i, 0, halfsize), vec3(-halfsize + i, 0, -halfsize), i == halfsize ? pkr::Colour::white() : pkr::Colour::shade(0.15f));
-		aie::Gizmos::addLine(vec3(halfsize, 0, -halfsize + i), vec3(-halfsize, 0, -halfsize + i), i == halfsize ? pkr::Colour::white() : pkr::Colour::shade(0.15f));
+		aie::Gizmos::addLine(vec3(-halfsize + i, 0, halfsize), vec3(-halfsize + i, 0, -halfsize), i == halfsize ? pkr::Colour::shade(0.85f) : pkr::Colour::shade(0.15f));
+		aie::Gizmos::addLine(vec3(halfsize, 0, -halfsize + i), vec3(-halfsize, 0, -halfsize + i), i == halfsize ? pkr::Colour::shade(0.85f) : pkr::Colour::shade(0.15f));
 	}
 }
 void Game::DrawSolarSystem()

@@ -9,14 +9,14 @@ class FlyCamera : public pkr::Camera
 {
 private:
 	float		m_speed = 1;
-	float		m_smoothing = 0.5f;
 
-	void		init();
+	float		m_fastSpeedFactor = 2.5f;
+	float		m_lookSpeed = 0.0018f;
+	//float		m_smoothing = 0.5f;		TODO maybe implement lerping later
 	
 public:
-	FlyCamera();
 	FlyCamera(vec3 position) : Camera(position) {};
-	FlyCamera(vec3 position, vec3 lookAt, float speed, float smoothing, float fovAngle, float aspect, float near, float far);
+	FlyCamera(vec3 position, vec3 lookAt, float speed, float fovAngle, float aspect, float near, float far);
 	virtual ~FlyCamera() {}
 
 	void		update() override;
@@ -24,6 +24,6 @@ public:
 
 	void		adjustYaw(float angle);
 	void		adjustPitch(float angle);
-	void		adjustRoll();
+	//void		adjustRoll();
 };
 

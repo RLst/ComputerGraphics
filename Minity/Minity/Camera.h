@@ -13,6 +13,10 @@ namespace pkr
 	class Camera
 	{
 	protected:
+		//TODO Implement quaternions later, might make lerping easier
+		//vec3			m_position;
+		//quat			m_rotation;
+
 		mat4			m_world;
 		mat4			m_view;
 		mat4			m_projection;
@@ -20,17 +24,10 @@ namespace pkr
 
 		vec3 m_lookAt;
 
-		//glm::vec3	m_up = vec3(0, 1, 0);
-		//glm::vec3	m_front = vec3(0, 0, -1);
-		//glm::ivec3	m_front_desired = m_front;
-		//quat m_rotation;
-		//vec3 m_direction;
-
 		float m_fovAngle = 50.f;
 		float m_aspect = 16 / 9.0f;
 		float m_near = 0.1f, m_far = 1000;
-
-
+		
 	public:
 		Camera();
 		Camera(vec3 position);
@@ -53,8 +50,7 @@ namespace pkr
 		void			setPosition(const vec3& position);
 		const vec3		getPosition() const;
 		void			translate(const vec3& translation);
-
-
+		
 		const vec3		up() const;
 		const vec3		right() const;
 		const vec3		forward() const;

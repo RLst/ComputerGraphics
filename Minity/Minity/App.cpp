@@ -129,9 +129,9 @@ namespace pkr {
 			pm_frames = 0;
 			pm_fpsInterval -= 1.0f;
 		}
-		//Skip updates and draw if window is minimized
-		if (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED) != 0)
-			return;
+		//Skip updates and draw if window is minimized (BUG! If minimised window get's stuck)
+		//if (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED) != 0)
+		//	return;
 
 		//Clear input status
 		Input::getInstance()->clearStatus();
