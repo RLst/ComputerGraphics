@@ -134,8 +134,7 @@ void Game::StartRenderGeomTutorial()
 		assert(false);
 	}
 
-	m_demoObjTransform = glm::scale(vec3(0.1f));
-	m_demoObjTransform *= glm::rotate(quat(vec3(90, 180, 0)), vec3(0,1,0));
+	m_demoObjTransform = glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
 }
 
 //UPDATES
