@@ -104,7 +104,7 @@ void Game::StartRenderGeomTutorial()
 	m_shader.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
 
 	//Load fragment shader from file
-	m_shader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/flat.frag");
+	m_shader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/custom.frag");
 
 	if (m_shader.link() == false) {
 		printf("Shader Error: %s\n", m_shader.getLastError());
