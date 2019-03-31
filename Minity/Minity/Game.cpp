@@ -17,26 +17,21 @@
 
 using namespace pkr;
 
-Game::Game()
-{
-}
-Game::~Game()
-{
-}
-
-
 bool Game::Start()
 {
 	//Camera
 	c.camera.reset(new FlyCamera(c.position, c.lookAt, c.speed, c.fov, c.aspect, c.near, c.far));
 	//c.camera.reset(new FlyCamera());
 
-	StartSolarSystem();
+	//StartSolarSystem();
 	//StartQuatTutorial();
 	StartRenderGeomTutorial();
+	StartMaterialAndTextures();
 
 	return true;
 }
+
+
 
 void Game::Update()
 {
@@ -47,7 +42,7 @@ void Game::Update()
 void Game::Draw()
 {
 	DrawGridGizmo(100);
-	DrawSolarSystem();
+	//DrawSolarSystem();
 	//DrawQuatTutorial();
 	DrawRenderGeomTutorial();
 
@@ -101,40 +96,53 @@ void Game::StartRenderGeomTutorial()
 {
 	////Rendering geometry
 	//Load vertex shader from file
-	m_shader.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
+	m_shaderProg.loadShader(aie::eShaderStage::VERTEX, "./shaders/textured.vert");
 
 	//Load fragment shader from file
-	m_shader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/custom.frag");
+	m_shaderProg.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/textured.frag");
 
-	if (m_shader.link() == false) {
-		printf("Shader Error: %s\n", m_shader.getLastError());
+	if (m_shaderProg.link() == false) {
+		printf("Shader Error: %s\n", m_shaderProg.getLastError());
 		assert(false);	//Lazy exception handling
 	}
 	
-	//QUAD
-	m_quadMesh.reset(new Mesh());
-	m_quadTransform = glm::scale(vec3(15, 0, 10));
-	
-	Mesh::Vertex vertices[4];
-	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
-	vertices[1].position = { 0.5f, 0, 0.5f, 1 };
-	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
-	vertices[3].position = { 0.5f, 0, -0.5f, 1 };
-	//vertices[4].position = { 0.5f, 0, 0.5f, 1 };
-	//vertices[5].position = { 0.5f, 0, -0.5f, 1 };
-
-	unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
-	m_quadMesh->initialise(4, vertices, 6, indices);
-	//m_quadMesh->initialiseQuad();
+	//Mesh::Vertex vertices[4];
+	//vertices[0].position = { -0.5f, 0, 0.5f, 1 };
+	//vertices[1].position = { 0.5f, 0, 0.5f, 1 };
+	//vertices[2].position = { -0.5f, 0, -0.5f, 1 };
+	//vertices[3].position = { 0.5f, 0, -0.5f, 1 };
+	////vertices[4].position = { 0.5f, 0, 0.5f, 1 };
+	////vertices[5].position = { 0.5f, 0, -0.5f, 1 };
+	//unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
+	//m_quadMesh->initialise(4, vertices, 6, indices);
 
 	//DEMO
-	m_demoObjMesh.reset(new aie::OBJMesh());
-	if (m_demoObjMesh->load("./assets/LaFerrari.obj") == false) {
-		printf("Demo Mesh Error!\n");
+	//m_demoObjMesh.reset(new aie::OBJMesh());
+	//if (m_demoObjMesh->load("./assets/LaFerrari.obj") == false) {
+	//	printf("Demo Mesh Error!\n");
+	//	assert(false);
+	//}
+	//m_demoObjTransform = glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
+}
+
+void Game::StartMaterialAndTextures()
+{
+	//m_texture1.reset(new aie::Texture());
+	//m_texture1->load("./assets/Texture/interior_LOD0.bmp");
+	////Create a 2x2 black n white checker texture
+	////RED simply means one color channel, ie. grayscale
+	//m_texture2.reset(new aie::Texture());
+	//unsigned char texelData[4] = { 0, 255, 255, 0 };
+	//m_texture2->create(2, 2, aie::Texture::RED, texelData);
+
+	//QUAD
+	m_planeMesh.reset(new Mesh());
+	if (m_planeTexture.load("./assets/Texture/numbered_grid.tga") == false) {
+		printf("Failed to load texture!\n");
 		assert(false);
 	}
-
-	m_demoObjTransform = glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
+	m_planeTransform = glm::scale(vec3(10, 0, 10));
+	m_planeMesh->initialiseQuad();
 }
 
 //UPDATES
@@ -234,20 +242,25 @@ void Game::DrawQuatTutorial()
 void Game::DrawRenderGeomTutorial()
 {
 	//bind shader
-	m_shader.bind();
+	m_shaderProg.bind();
 
 	//bind transform
-	auto pvm = c.camera->getProjectionView() * m_quadTransform;
-	m_shader.bindUniform("ProjectionViewModel", pvm);
+	auto pvm = c.camera->getProjectionView() * m_planeTransform;
+	m_shaderProg.bindUniform("ProjectionViewModel", pvm);
+
+	//bind texture location
+	m_shaderProg.bindUniform("diffuseTexture", 0);
+
+	//Bind texture to specified locstion
+	m_planeTexture.bind(0);
 
 	//Draw Quad
-	m_quadMesh->draw();
+	m_planeMesh->draw();
 
 	//bind transform
-	auto pvm2 = c.camera->getProjectionView() * m_demoObjTransform;
-	m_shader.bindUniform("ProjectionViewModel", pvm2);
+	//auto pvm2 = c.camera->getProjectionView() * m_demoObjTransform;
+	//m_shader.bindUniform("ProjectionViewModel", pvm2);
 
-	//Draw demo mesh
-	m_demoObjMesh->draw();
-
+	////Draw demo mesh
+	//m_demoObjMesh->draw();
 }

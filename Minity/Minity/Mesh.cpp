@@ -31,6 +31,10 @@ namespace pkr
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 
+		//enable third element as texture
+		glDisableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)32);
+
 		//Bind indices if there are any
 		if (indexCount != 0)
 		{
@@ -80,12 +84,24 @@ namespace pkr
 		vertices[4].position = { 0.5f, 0, 0.5f, 1 };
 		vertices[5].position = { 0.5f, 0, -0.5f, 1 };
 
+		vertices[0].texCoord = { 0, 1 };	//bottom left
+		vertices[1].texCoord = { 1, 1 };	//bottom right
+		vertices[2].texCoord = { 0, 0 };	//top left
+		vertices[3].texCoord = { 0, 0 };	//top left
+		vertices[4].texCoord = { 1, 1 };	//bottom left
+		vertices[5].texCoord = { 1, 0 };	//top right
+
+
 		//Fill vertex buffer
 		glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex), vertices, GL_STATIC_DRAW);
 
 		//Enable first element as position
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+
+		//Enable third element as texture
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)32);
 
 		//Unbind buffers
 		glBindVertexArray(0);

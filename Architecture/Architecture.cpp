@@ -32,6 +32,8 @@ namespace Minity
         Renderer
         Gizmo  //Requires Renderer component
         GUI_Text
+		Mesh
+		Material/Shader
 
         Behaviour        //Base for all scripts
 

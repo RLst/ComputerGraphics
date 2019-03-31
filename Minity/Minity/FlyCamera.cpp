@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "glm/ext.hpp"
 #include "Time.h"	//Coupled to Time system
+#include "Texture.h"
 
 FlyCamera::FlyCamera(vec3 position, vec3 lookAt, float speed, float fovAngle, float aspect, float near, float far) :
 	Camera(position, lookAt, fovAngle, aspect, near, far),
@@ -20,7 +21,8 @@ void FlyCamera::update()
 	vec3 world = vec3(m_world[3].x, m_world[3].y, m_world[3].z);
 
 	//Unity style camera
-	if (input->isMouseButtonDown(pkr::INPUT_MOUSE_BUTTON_RIGHT))
+	if (input->isMouseButtonDown(pkr::INPUT_MOUSE_BUTTON_RIGHT) ||
+		input->isKeyDown(pkr::INPUT_KEY_SPACE))
 	{
 		//Move faster if holding shift
 		if (input->isKeyDown(pkr::INPUT_KEY_LEFT_SHIFT))
