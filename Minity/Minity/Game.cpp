@@ -141,15 +141,22 @@ void Game::StartMaterialAndTextures()
 }
 void Game::StartLighting()
 {
+	//Load shader
 	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
 	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
 	if (!m_phongShader.link())
 		printf("Shader Error: %s\n", m_phongShader.getLastError()); assert(false);
 
+	//Load demo mesh
 	m_demoObj = std::make_unique<aie::OBJMesh>();
 	if (!m_demoObj->load("./assets/LaFerrari.obj"))
 		printf("Mesh Error!\n"); assert(false);
 	m_demoTransform = glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
+
+	//Set light position
+	m_light.diffuse = { 1, 1, 0 };
+	m_light.specular = { 1, 1, 0 };
+	m_ambientLight = { 0.25f, 0.25f, 0.25f };
 }
 
 //UPDATES
@@ -191,7 +198,7 @@ void Game::UpdateLighting()
 	float t = Time::time();
 
 	//Rotate light
-	m_light.m_tDirection = glm::normalize(vec3(glm::cos(t * 2), glm::sin(t * 2), 0));
+	m_light.direction = glm::normalize(vec3(glm::cos(t * 2), glm::sin(t * 2), 0));
 }
 void Game::UpdateCamera()
 {
@@ -284,7 +291,10 @@ void Game::DrawLighting()
 	m_phongShader.bind();
 
 	//bind Light
-	m_phongShader.bindUniform("LightDirection", m_light.m_tDirection);
+	m_phongShader.bindUniform("Ia", m_ambientLight);
+	m_phongShader.bindUniform("Id", m_light.diffuse);
+	m_phongShader.bindUniform("Is", m_light.specular);
+	m_phongShader.bindUniform("LightDirection", m_light.direction);
 
 	//bind transform
 	auto pvm = c.camera->getProjectionView() * m_demoTransform;

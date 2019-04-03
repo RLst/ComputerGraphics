@@ -116,6 +116,7 @@ private:
 	//Direct lighting
 	aie::ShaderProgram					m_phongShader;
 	pkr::Light							m_light;
+	glm::vec3							m_ambientLight;
 	   
 public:
 	bool Start() override;
