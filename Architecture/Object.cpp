@@ -4,5 +4,13 @@
 
 namespace Minity
 {
-	class Object;
+	class Object
+	{
+	protected:
+		const char* name;
+	protected:
+		static void Destroy();
+		static void FindObjectOfType();
+		static void Instantiate();
+	}
 }

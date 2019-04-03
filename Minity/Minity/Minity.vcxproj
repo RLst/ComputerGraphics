@@ -194,6 +194,7 @@
     <ClInclude Include="Core.h" />
     <ClInclude Include="FlyCamera.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Object.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="FlyCamera.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -231,7 +233,11 @@
   <ItemGroup>
     <None Include="..\shaders\custom.frag" />
     <None Include="..\shaders\flat.frag" />
+    <None Include="..\shaders\phong.vert" />
     <None Include="..\shaders\simple.vert" />
+    <None Include="..\shaders\simple_diffuse.frag" />
+    <None Include="..\shaders\textured.frag" />
+    <None Include="..\shaders\textured.vert" />
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

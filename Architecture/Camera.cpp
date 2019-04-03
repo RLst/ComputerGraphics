@@ -3,14 +3,12 @@ namespace Minity
 {
 	class Camera : public Component
 	{
-	private:
-		vec3 position;
-		vec3 rotation;
-		float fov;
-
+		Transform* m_transform;
 	protected:
-		void Init()
-		{}
+		void Init() override
+		{
+			
+		}
 
 		void Update()
 		{

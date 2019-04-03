@@ -12,6 +12,7 @@
 #include "OBJMesh.h"
 #include "Texture.h"
 #include "FlyCamera.h"
+#include "Light.h"
 
 #include "glm/ext.hpp"
 #include "glm/gtc/quaternion.hpp"
@@ -104,17 +105,18 @@ private:
 
 	////Rendering geometry
 	aie::ShaderProgram					m_shaderProg;
+
 	mat4								m_planeTransform;
 	aie::Texture						m_planeTexture;
 	unique_ptr<pkr::Mesh>				m_planeMesh;
-	//mat4								m_demoObjTransform;
-	//unique_ptr<aie::OBJMesh>			m_demoObjMesh;
-	   
-	//Load imaginary texture
-	//unique_ptr<aie::Texture> m_texture1;
-	//unique_ptr<aie::Texture> m_texture2;
-	//unique_ptr<aie::Texture> m_gridTexture;
+	//aie::OBJMesh						m_demoObj;
+	unique_ptr<aie::OBJMesh>			m_demoObj;
+	mat4								m_demoTransform;
 
+	//Direct lighting
+	aie::ShaderProgram					m_phongShader;
+	pkr::Light							m_light;
+	   
 public:
 	bool Start() override;
 	void Update() override;
@@ -125,11 +127,16 @@ public:
 	void StartQuatTutorial();
 	void StartRenderGeomTutorial();
 	void StartMaterialAndTextures();
+	void StartLighting();
+
 	void UpdateQuatTutorial();
+	void UpdateLighting();
 	void UpdateCamera();
+
 	void DrawGridGizmo(int size);
 	void DrawSolarSystem();
 	void DrawQuatTutorial();
 	void DrawRenderGeomTutorial();
+	void DrawLighting();
 };
 

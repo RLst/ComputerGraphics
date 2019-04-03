@@ -78,12 +78,8 @@ namespace pkr {
 		Core& operator=(const Core&) = delete;
 
 		//User must run these to configure the engine
-		void			WindowConfig(const char* appTitle,
-			unsigned int screenWidth, unsigned int screenHeight,
-			vec4 backgroundColor,
-			bool isFullscreen);
-		void			GizmoConfig(unsigned int maxLines, unsigned int maxTris,
-			unsigned int max2DLines, unsigned int max2DTris);
+		void			WindowConfig(const char* appTitle, unsigned intscreenWidth, unsigned int screenHeight, vec4 backgroundColor, bool isFullscreen);
+		void			GizmoConfig(unsigned int maxLines, unsigned int maxTris, unsigned int max2DLines, unsigned int max2DTris);
 
 		//Utility
 		unsigned int	getFPS() const;

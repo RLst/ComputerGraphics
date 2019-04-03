@@ -1,8 +1,7 @@
 #include <vector>
 
 class GLFWwindow;
-class World;
-class GameObject;
+#include "World.cpp"
 
 namespace Minity
 {
@@ -27,6 +26,7 @@ namespace Minity
 			CoreEnd();
 		}
 
+	private:
 		void CoreInit()
 		{
 			currentWorld->Init();
@@ -37,10 +37,16 @@ namespace Minity
 
 		void CoreUpdate()
 		{
+			//Calculate dt etc
+			PreUpdate();
+
 			currentWorld->Update();
 			//Run update functions on World...
 			//Which shoudl run update functions on each GameObject
 			//Which should run update functions on each GO's Component
+
+			//Gl window stuff ie. polling etc
+			PostUpdate();
 		}
 
 		void CoreEnd()
@@ -50,5 +56,8 @@ namespace Minity
 			//Which should run end functions on each GameObject
 			//Which should run end functions on each GO's Component
 		}
+
+		void PreUpdate() {}
+		void PostUpdate() {}
 	};
 } // Minity

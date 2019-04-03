@@ -2,42 +2,59 @@
 
 #include <vector>
 
-class Components;
+#include "Component.cpp"
 class Transform;
 
 namespace Minity
 {
-	class GameObject
+	class GameObject : Object
 	{
 	protected:
-		Transform* transform;
-		std::vector<Components*> components;
+		bool m_isStatic
+		World* m_ofWorld;	//The world that this gameobject is part of
+		Transform* m_transform;		//Get reference in Init()
+		std::vector<Component*> components;
 
 	public:
-
-		void Init()
+		void BaseInit()
 		{
+			m_transform = GetComponent<Transform>();
+
 			for (auto c : components)
 			{
-				c->Awake();
-				c->Start();
+				c->BaseInit();
 			}
 		}
 
-		void Update()
+		void BaseUpdate()
 		{
 			for (auto c : components)
 			{
-				c->Update();
+				c->BaseUpdate();
 			}
 		}
 
-		void End()
+		void BaseEnd()
 		{
 			for (auto c : components)
 			{
-				c->End();
+				c->BaseEnd();
 			}
 		}
+
+		void GetComponent();
+		void AddComponent()
+		{
+			//Make the component...
+			components.push_back(new Component());
+
+			//Set component's game object reference
+			components.end()->m_gameObject = this;
+		}
+		void RemoveComponent();
+		void SetActive();
+		void isActive();
+		void BroadcastMessage();	//Not important, tag based, prone to error
+		void SendMessage();			//Not important
 	};
 }

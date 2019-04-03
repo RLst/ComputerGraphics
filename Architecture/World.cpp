@@ -2,7 +2,7 @@
 
 #include <vector>
 
-class GameObject;
+#include "GameObject.cpp"
 
 namespace Minity
 {
@@ -14,6 +14,25 @@ namespace Minity
 	public:
 		void Init()	//Build the world
 		{
+			for (auto& go : gameObjects)
+				go->BaseInit();
+		}
+
+		void Update()	//Update the world
+		{
+			for (auto& go : gameObjects)
+				go->BaseUpdate();
+		}
+
+		void End()		//End the world
+		{
+			for (auto& go : gameObjects)
+				go->BaseEnd();
+		}
+	};
+} // Minity
+
+
 			// for (auto go : gameObjects)
 			// {
 			// 	if (go->isActive())
@@ -25,22 +44,3 @@ namespace Minity
 			// 	}
 			// 	go->awake();
 			// }
-
-			for (auto go : gameObjects)
-				go->Init();
-
-		}
-
-		void Update()	//Update the world
-		{
-			for (auto go : gameObjects)
-				go->Update();
-		}
-
-		void End()		//End the world
-		{
-			for (auto go : gameObjects)
-				go->End();
-		}
-	};
-} // Minity

@@ -20,31 +20,32 @@ using namespace pkr;
 bool Game::Start()
 {
 	//Camera
-	c.camera.reset(new FlyCamera(c.position, c.lookAt, c.speed, c.fov, c.aspect, c.near, c.far));
+	c.camera = std::make_unique<FlyCamera>(c.position, c.lookAt, c.speed, c.fov, c.aspect, c.near, c.far);
 	//c.camera.reset(new FlyCamera());
 
-	//StartSolarSystem();
+	StartSolarSystem();
 	//StartQuatTutorial();
-	StartRenderGeomTutorial();
-	StartMaterialAndTextures();
+	//StartRenderGeomTutorial();
+	//StartMaterialAndTextures();
+	StartLighting();
 
 	return true;
 }
 
-
-
 void Game::Update()
 {
 	//UpdateQuatTutorial();
+	UpdateLighting();
 	UpdateCamera();
 }
 
 void Game::Draw()
 {
 	DrawGridGizmo(100);
-	//DrawSolarSystem();
+	DrawSolarSystem();
 	//DrawQuatTutorial();
-	DrawRenderGeomTutorial();
+	//DrawRenderGeomTutorial();
+	DrawLighting();
 
 	////Draw cameras
 	aie::Gizmos::draw(c.camera->getProjectionView());
@@ -96,15 +97,13 @@ void Game::StartRenderGeomTutorial()
 {
 	////Rendering geometry
 	//Load vertex shader from file
-	m_shaderProg.loadShader(aie::eShaderStage::VERTEX, "./shaders/textured.vert");
+	m_shaderProg.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
 
 	//Load fragment shader from file
-	m_shaderProg.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/textured.frag");
+	m_shaderProg.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/simple_diffuse.frag");
 
-	if (m_shaderProg.link() == false) {
-		printf("Shader Error: %s\n", m_shaderProg.getLastError());
-		assert(false);	//Lazy exception handling
-	}
+	if (m_shaderProg.link() == false)
+		printf("Shader Error: %s\n", m_shaderProg.getLastError()); assert(false);	//Lazy exception handling
 	
 	//Mesh::Vertex vertices[4];
 	//vertices[0].position = { -0.5f, 0, 0.5f, 1 };
@@ -117,14 +116,11 @@ void Game::StartRenderGeomTutorial()
 	//m_quadMesh->initialise(4, vertices, 6, indices);
 
 	//DEMO
-	//m_demoObjMesh.reset(new aie::OBJMesh());
-	//if (m_demoObjMesh->load("./assets/LaFerrari.obj") == false) {
-	//	printf("Demo Mesh Error!\n");
-	//	assert(false);
-	//}
-	//m_demoObjTransform = glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
+	m_demoObj.reset(new aie::OBJMesh());
+	if (!m_demoObj->load("./assets/LaFerrari.obj"))
+		printf("Demo Mesh Error!\n"); assert(false);
+	m_demoTransform = glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
 }
-
 void Game::StartMaterialAndTextures()
 {
 	//m_texture1.reset(new aie::Texture());
@@ -137,12 +133,23 @@ void Game::StartMaterialAndTextures()
 
 	//QUAD
 	m_planeMesh.reset(new Mesh());
-	if (m_planeTexture.load("./assets/Texture/numbered_grid.tga") == false) {
-		printf("Failed to load texture!\n");
-		assert(false);
-	}
+	//m_planeMesh = std::make_unique<aie::OBJMesh>();
+	if (m_planeTexture.load("./assets/Texture/numbered_grid.tga") == false)
+		printf("Failed to load texture!\n"); assert(false);
 	m_planeTransform = glm::scale(vec3(10, 0, 10));
 	m_planeMesh->initialiseQuad();
+}
+void Game::StartLighting()
+{
+	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
+	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
+	if (!m_phongShader.link())
+		printf("Shader Error: %s\n", m_phongShader.getLastError()); assert(false);
+
+	m_demoObj = std::make_unique<aie::OBJMesh>();
+	if (!m_demoObj->load("./assets/LaFerrari.obj"))
+		printf("Mesh Error!\n"); assert(false);
+	m_demoTransform = glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
 }
 
 //UPDATES
@@ -177,6 +184,14 @@ void Game::UpdateQuatTutorial()
 	m_hipPos = vec3(m_hipBone[3].x, m_hipBone[3].y, m_hipBone[3].z);
 	m_kneePos = vec3(m_kneeBone[3].x, m_kneeBone[3].x, m_kneeBone[3].z);
 	m_anklePos = vec3(m_ankleBone[3].x, m_ankleBone[3].y, m_ankleBone[3].z);
+}
+void Game::UpdateLighting()
+{
+	//query time since application started
+	float t = Time::time();
+
+	//Rotate light
+	m_light.m_tDirection = glm::normalize(vec3(glm::cos(t * 2), glm::sin(t * 2), 0));
 }
 void Game::UpdateCamera()
 {
@@ -238,7 +253,6 @@ void Game::DrawQuatTutorial()
 	aie::Gizmos::addAABBFilled(m_kneePos, legExtents, pkr::Colour::fuschia(), &m_kneeBone);
 	aie::Gizmos::addAABBFilled(m_anklePos, legExtents, pkr::Colour::fuschia(), &m_ankleBone);
 }
-
 void Game::DrawRenderGeomTutorial()
 {
 	//bind shader
@@ -258,9 +272,27 @@ void Game::DrawRenderGeomTutorial()
 	m_planeMesh->draw();
 
 	//bind transform
-	//auto pvm2 = c.camera->getProjectionView() * m_demoObjTransform;
-	//m_shader.bindUniform("ProjectionViewModel", pvm2);
+	auto pvm2 = c.camera->getProjectionView() * m_demoTransform;
+	m_shaderProg.bindUniform("ProjectionViewModel", pvm2);
 
-	////Draw demo mesh
-	//m_demoObjMesh->draw();
+	//Draw demo mesh
+	m_demoObj->draw();
+}
+void Game::DrawLighting()
+{
+	//bind shader	
+	m_phongShader.bind();
+
+	//bind Light
+	m_phongShader.bindUniform("LightDirection", m_light.m_tDirection);
+
+	//bind transform
+	auto pvm = c.camera->getProjectionView() * m_demoTransform;
+	m_phongShader.bindUniform("ProjectionViewModel", pvm);
+
+	//bind transform for lighting
+	m_phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_demoTransform)));
+
+	//draw object
+	m_demoObj->draw();
 }
