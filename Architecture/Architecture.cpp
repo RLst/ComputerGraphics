@@ -9,7 +9,7 @@ namespace Minity
     gl_core_4_4.h
 
     //Core modules/managers
-    App     //Main app
+    o App     //Main app
     o Time
     o Random
     o Colour
@@ -32,8 +32,6 @@ namespace Minity
         Renderer
         Gizmo  //Requires Renderer component
         GUI_Text
-		Mesh
-		Material/Shader
 
         Behaviour        //Base for all scripts
 
@@ -50,7 +48,7 @@ namespace Core
     std::vector<GameObject*> gameObjects;
     std::vector<World*> worlds;
 
-    class CoreEngine
+    class Core
     {
     private:
         bool m_isTerminating;
@@ -99,11 +97,11 @@ namespace Core
             End();
         }
 
-    public:
-        virtual void Start() {}
-        virtual void Update() {}
-        // virtual void Draw() {}
-        virtual void End() {}
+    // public:
+    //     virtual void Start() {}
+    //     virtual void Update() {}
+    //     // virtual void Draw() {}
+    //     virtual void End() {}
     };
 
     //////////////////////

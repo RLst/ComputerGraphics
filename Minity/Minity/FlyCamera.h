@@ -10,8 +10,9 @@ class FlyCamera : public pkr::Camera
 private:
 	float		m_speed = 1;
 
+	float		m_slowSpeedFactor = 0.25f;
 	float		m_fastSpeedFactor = 2.5f;
-	float		m_lookSpeed = 0.0018f;
+	float		m_lookSpeed = 0.00003f;
 	//float		m_smoothing = 0.5f;		TODO maybe implement lerping later
 	
 public:

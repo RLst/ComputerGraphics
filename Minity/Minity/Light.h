@@ -15,6 +15,11 @@ namespace pkr
 
 	class Light
 	{
+	protected:
+		bool		isVisualised = false;	//Gizmo shown, Omni = Sphere, Spot = Cylinder, Directional = Axes
+
+		virtual void Update();
+
 	public:
 		eLightType	type;
 		glm::vec3	position;
