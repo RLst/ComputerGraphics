@@ -3,6 +3,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
 #include <string>
 #include <vector>
 #include "Texture.h"
@@ -12,6 +13,8 @@ namespace aie {
 // a simple triangle mesh wrapper
 class OBJMesh {
 public:
+	//Lazy transform properties
+	glm::mat4 transform;
 
 	// a vertex structure for obj files
 	struct Vertex {
@@ -26,7 +29,6 @@ public:
 	// a basic material
 	class Material {
 	public:
-
 		Material() : ambient(1), diffuse(1), specular(0), emissive(0), specularPower(1), opacity(1) {}
 		~Material() {}
 
@@ -45,7 +47,7 @@ public:
 		Texture specularHighlightTexture;	// bound slot 4
 		Texture normalTexture;				// bound slot 5
 		Texture displacementTexture;		// bound slot 6
-	};
+	} material;
 
 	OBJMesh() {}
 	~OBJMesh();

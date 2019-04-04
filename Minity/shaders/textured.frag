@@ -3,11 +3,11 @@
 
 in vec2 vTexCoord;
 
-uniform sampler2D diffuseTexture;
+uniform sampler2D DiffuseTexture;
 
 out vec4 FragColour;
 
 void main()
 {
-	FragColour = texture(diffuseTexture, vTexCoord);
+	FragColour = texture(DiffuseTexture, vTexCoord);
 }

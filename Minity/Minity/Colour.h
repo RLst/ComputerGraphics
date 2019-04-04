@@ -6,7 +6,7 @@ using glm::vec4;
 
 namespace pkr
 {
-	class Colour
+	class Colour : public glm::vec4
 	{
 	public:
 		//static vec4 random();			//Random colour from full palette

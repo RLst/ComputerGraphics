@@ -12,6 +12,10 @@ namespace Minity
 		std::vector<GameObject*> gameObjects;
 
 	public:
+		void AddGameObject();
+		void GetGameObject();
+		void RemoveGameObject();
+
 		void Init()	//Build the world
 		{
 			for (auto& go : gameObjects)

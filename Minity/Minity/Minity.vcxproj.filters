@@ -166,22 +166,34 @@
     <None Include="..\shaders\simple.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\shaders\custom.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\shaders\textured.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\shaders\textured.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\shaders\simple_diffuse.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\shaders\phong.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\shaders\phong.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\shaders\cartoon.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\shaders\cartoon.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\shaders\phongtextured.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\shaders\normalmap.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\shaders\normalmap.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\shaders\simplediffuse.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

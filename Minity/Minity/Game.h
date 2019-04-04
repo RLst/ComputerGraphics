@@ -106,18 +106,19 @@ private:
 	////Rendering geometry
 	aie::ShaderProgram					m_shaderProg;
 
-	mat4								m_planeTransform;
-	aie::Texture						m_planeTexture;
-	unique_ptr<pkr::Mesh>				m_planeMesh;
-	//aie::OBJMesh						m_demoObj;
-	unique_ptr<aie::OBJMesh>			m_demoObj;
-	mat4								m_demoTransform;
+	unique_ptr<pkr::Mesh>				m_plane;
+
+	unique_ptr<aie::OBJMesh>			m_ferrari;
 
 	//Direct lighting
 	aie::ShaderProgram					m_phongShader;
 	pkr::Light							m_light;
-	glm::vec3							m_ambientLight;
-	float								m_specularPower = 0.01f;
+	pkr::Light							m_light2;
+	glm::vec3							m_ambientLightColour;
+
+	//Advanced Texturing
+	unique_ptr<aie::ShaderProgram>		m_normalMapShader;
+	unique_ptr<aie::OBJMesh>			m_soulspear;
 	   
 public:
 	bool Start() override;
@@ -129,16 +130,20 @@ public:
 	void StartQuatTutorial();
 	void StartRenderGeomTutorial();
 	void StartMaterialAndTextures();
-	void StartLighting();
+	void StartDirectLightingTutorial();
+	void StartAdvancedTexturingTutorial();
 
 	void UpdateQuatTutorial();
-	void UpdateLighting();
+	void UpdateDirectLightingTutorial();
+	void UpdateAdvancedTexturingTutorial();
 	void UpdateCamera();
 
 	void DrawGridGizmo(int size);
 	void DrawSolarSystem();
 	void DrawQuatTutorial();
 	void DrawRenderGeomTutorial();
+	void DrawMaterialAndTextures();
 	void DrawDirectLightingTutorial();
+	void DrawAdvancedTexturingTutorial();
 };
 

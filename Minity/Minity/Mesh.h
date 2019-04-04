@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/ext.hpp>
+#include "Texture.h"
 
 namespace pkr
 {
@@ -14,6 +15,9 @@ namespace pkr
 	public:
 		Mesh() : triCount(0), vao(0), vbo(0), ibo(0) {}
 		virtual ~Mesh();	
+
+		glm::mat4	transform;
+		aie::Texture texture;
 
 		struct Vertex
 		{

@@ -16,6 +16,21 @@ namespace Minity
 		std::vector<Component*> components;
 
 	public:
+		void GetComponent();
+		void AddComponent()
+		{
+			//Make the component...
+			components.push_back(new Component());
+
+			//Set component's game object reference
+			components.end()->m_gameObject = this;
+		}
+		void RemoveComponent();
+		void SetActive();
+		void isActive();
+		void BroadcastMessage();	//Not important, tag based, prone to error
+		void SendMessage();			//Not important
+
 		void BaseInit()
 		{
 			m_transform = GetComponent<Transform>();
@@ -41,20 +56,5 @@ namespace Minity
 				c->BaseEnd();
 			}
 		}
-
-		void GetComponent();
-		void AddComponent()
-		{
-			//Make the component...
-			components.push_back(new Component());
-
-			//Set component's game object reference
-			components.end()->m_gameObject = this;
-		}
-		void RemoveComponent();
-		void SetActive();
-		void isActive();
-		void BroadcastMessage();	//Not important, tag based, prone to error
-		void SendMessage();			//Not important
 	};
 }

@@ -3,7 +3,6 @@
 
 in vec4 vPosition;
 in vec3 vNormal;
-in vec2 vTexCoord;
 
 //Camera
 uniform vec3 CameraPosition;
@@ -40,7 +39,7 @@ void main()
 
     //Calculate diffuse
 	vec3 ambient = Ia * Ka;
-    vec3 diffuse = Id * Kd * lambertTerm;
+	vec3 diffuse = Id * Kd * lambertTerm;
 	vec3 specular = Is * Ks * specularTerm;
 
     //Final output
