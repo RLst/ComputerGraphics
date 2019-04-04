@@ -27,6 +27,8 @@ void FlyCamera::update()
 		//Move faster if holding shift
 		if (input->isKeyDown(pkr::INPUT_KEY_LEFT_SHIFT))
 			workingSpeed = m_speed * m_fastSpeedFactor;
+		else if (input->isKeyDown(pkr::INPUT_KEY_LEFT_CONTROL))
+			workingSpeed = m_speed * m_slowSpeedFactor;
 
 		//Normal WASD
 		if (input->isKeyDown(pkr::INPUT_KEY_W))
@@ -45,8 +47,8 @@ void FlyCamera::update()
 			translate(down() * workingSpeed * (float)pkr::Time::deltaTime());
 
 		//Look around
-		adjustYaw(-input->getMouseDeltaX() * m_lookSpeed);
-		adjustPitch(input->getMouseDeltaY() * m_lookSpeed);
+		adjustYaw(-input->getMouseDeltaX() * m_fovAngle * m_lookSpeed);
+		adjustPitch(input->getMouseDeltaY() * m_fovAngle * m_lookSpeed);
 	}
 	updateProjectionView();
 }

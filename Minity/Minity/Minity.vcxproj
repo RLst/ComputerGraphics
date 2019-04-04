@@ -233,6 +233,7 @@
   <ItemGroup>
     <None Include="..\shaders\custom.frag" />
     <None Include="..\shaders\flat.frag" />
+    <None Include="..\shaders\phong.frag" />
     <None Include="..\shaders\phong.vert" />
     <None Include="..\shaders\simple.vert" />
     <None Include="..\shaders\simple_diffuse.frag" />

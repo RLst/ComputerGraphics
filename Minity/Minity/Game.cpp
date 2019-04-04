@@ -23,7 +23,7 @@ bool Game::Start()
 	c.camera = std::make_unique<FlyCamera>(c.position, c.lookAt, c.speed, c.fov, c.aspect, c.near, c.far);
 	//c.camera.reset(new FlyCamera());
 
-	StartSolarSystem();
+	//StartSolarSystem();
 	//StartQuatTutorial();
 	//StartRenderGeomTutorial();
 	//StartMaterialAndTextures();
@@ -42,7 +42,7 @@ void Game::Update()
 void Game::Draw()
 {
 	DrawGridGizmo(100);
-	DrawSolarSystem();
+	//DrawSolarSystem();
 	//DrawQuatTutorial();
 	//DrawRenderGeomTutorial();
 	DrawLighting();
@@ -145,18 +145,24 @@ void Game::StartLighting()
 	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
 	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
 	if (!m_phongShader.link())
-		printf("Shader Error: %s\n", m_phongShader.getLastError()); assert(false);
+	{
+		printf("Shader Error: %s\n", m_phongShader.getLastError()); 
+		assert(false);
+	}
 
 	//Load demo mesh
 	m_demoObj = std::make_unique<aie::OBJMesh>();
 	if (!m_demoObj->load("./assets/LaFerrari.obj"))
-		printf("Mesh Error!\n"); assert(false);
+	{
+		printf("Mesh Error!\n"); 
+		assert(false);
+	}
 	m_demoTransform = glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
 
-	//Set light position
-	m_light.diffuse = { 1, 1, 0 };
-	m_light.specular = { 1, 1, 0 };
-	m_ambientLight = { 0.25f, 0.25f, 0.25f };
+	//Set light
+	m_light.diffuse = { 0.36f, 0.36f, 0.36f };
+	m_light.specular = { 0.12f, 0.12f, 0.12f };
+	m_ambientLight = { 0.4f, 0.4f, 0.4f };;
 }
 
 //UPDATES
@@ -195,10 +201,62 @@ void Game::UpdateQuatTutorial()
 void Game::UpdateLighting()
 {
 	//query time since application started
-	float t = Time::time();
+	//float t = (float)Time::time();
+	static float ang = 2.f;
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_LEFT))
+		ang += 0.01f;
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_RIGHT))
+		ang -= 0.01f;
+
+	////Adjust light properties
+	//Ambient
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_T))
+	{
+		m_ambientLight += 0.01f;
+		std::cout << "Ambient: " << m_ambientLight[0] << std::endl;
+	}
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_G))
+	{
+		m_ambientLight -= 0.01f;
+		std::cout << "Ambient: " << m_ambientLight[0] << std::endl;
+	}
+	//Diffuse
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_Y))
+	{
+		m_light.diffuse += 0.01f;
+		std::cout << "Diffuse: " << m_light.diffuse[0] << std::endl;
+	}
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_H))
+	{
+		m_light.diffuse -= 0.01f;
+		std::cout << "Diffuse: " << m_light.diffuse[0] << std::endl;
+	}
+	//Specular
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_U))
+	{
+		m_light.specular += 0.01f;
+		std::cout << "Specular: " << m_light.specular[0] << std::endl;
+	}
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_J))
+	{
+		m_light.specular -= 0.01f;
+		std::cout << "Specular: " << m_light.specular[0] << std::endl;
+	}
+	//Specular power
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_I))
+	{
+		m_specularPower += 0.01f;
+		std::cout << "Specular Power: " << m_specularPower << std::endl;
+	}
+	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_K))
+	{
+		m_specularPower -= 0.01f;
+		std::cout << "Specular Power: " << m_specularPower << std::endl;
+	}
+	m_specularPower = glm::clamp(m_specularPower, 0.00000000001f, 5.0f);
 
 	//Rotate light
-	m_light.direction = glm::normalize(vec3(glm::cos(t * 2), glm::sin(t * 2), 0));
+	m_light.direction = glm::normalize(vec3(glm::cos(ang * 2), glm::sin(ang * 2), 0));
 }
 void Game::UpdateCamera()
 {
@@ -253,7 +311,7 @@ void Game::DrawQuatTutorial()
 	//Flying box
 	vec3 legExtents(0.5f, 0.5f, 0.5f);
 	aie::Gizmos::addTransform(box.m);
-	aie::Gizmos::addAABBFilled(box.p, vec3(0.5f), pkr::Colour::red(), &box.m);
+	aie::Gizmos::addAABBFilled(box.p, vec3(0.5f), pkr::Colour::redpure(), &box.m);
 
 	//Leg
 	aie::Gizmos::addAABBFilled(m_hipPos, legExtents, pkr::Colour::fuschia(), &m_hipBone);
@@ -295,10 +353,16 @@ void Game::DrawLighting()
 	m_phongShader.bindUniform("Id", m_light.diffuse);
 	m_phongShader.bindUniform("Is", m_light.specular);
 	m_phongShader.bindUniform("LightDirection", m_light.direction);
+	m_phongShader.bindUniform("SpecularPower", m_specularPower);
+
+	//bind camera positions
+	m_phongShader.bindUniform("CameraPosition", c.camera->getPosition());
 
 	//bind transform
-	auto pvm = c.camera->getProjectionView() * m_demoTransform;
-	m_phongShader.bindUniform("ProjectionViewModel", pvm);
+	m_phongShader.bindUniform("ProjectionViewModel", c.camera->getProjectionView() * m_demoTransform);
+
+	//bind model matrix
+	m_phongShader.bindUniform("ModelMatrix", m_demoTransform);
 
 	//bind transform for lighting
 	m_phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_demoTransform)));

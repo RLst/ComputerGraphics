@@ -96,7 +96,7 @@ namespace pkr {
 		//Display version
 		auto major = ogl_GetMajorVersion();
 		auto minor = ogl_GetMinorVersion();
-		printf("GL version: %i.%i", major, minor);
+		printf("GL version: %i.%i\n", major, minor);
 #endif // _DEBUG
 
 		//Gizmos
@@ -156,6 +156,11 @@ namespace pkr {
 		///////////////
 		//// User ////
 		Draw();
+
+		//For entity component system
+
+
+
 		////////////
 		///////////
 

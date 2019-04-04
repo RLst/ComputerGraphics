@@ -10,11 +10,13 @@ namespace Minity
 	private:
 		bool m_isTerminating;
 		
-		std::vector<World*> worlds;
-		World* currentWorld;
-
 		GLFWwindow*	m_window;
 
+		std::vector<World*> worlds;
+		World* currentWorld;
+		void AddWorld();
+		void GetWorld();
+		void RemoveWorld();
 	public:
 		void Run()
 		{
