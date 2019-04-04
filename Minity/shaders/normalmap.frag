@@ -52,6 +52,8 @@ void main()
 	//Calculate the specular term
 	float specularTerm = pow(max(0, dot(R, V)), SpecularPower);
 
+	N = TBN * (texNormal * 2 - 1);
+
     //Calculate diffuse
 	vec3 ambient = Ia * Ka;
 	vec3 diffuse = N;
