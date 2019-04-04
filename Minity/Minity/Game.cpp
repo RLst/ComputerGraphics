@@ -143,7 +143,7 @@ void Game::StartMaterialAndTextures()
 		printf("Failed to load texture!\n");
 		assert(false);
 	}
-	m_plane->transform = mat4(1);
+	m_plane->transform = glm::scale(vec3(50));
 	m_plane->initialiseQuad();
 }
 void Game::StartDirectLightingTutorial()
@@ -165,9 +165,9 @@ void Game::StartDirectLightingTutorial()
 		assert(false);
 	}
 	//Load demo texture
-	if (m_ferrari->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga"))
+	if (!m_ferrari->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga"))
 	{
-		std::cout << "File load error!\n" << std::endl; 
+		printf("File load error!\n"); 
 		assert(false);
 	}
 	//Set demo object transform

@@ -87,13 +87,6 @@ namespace pkr
 		vertices[4].position = { 0.5f, 0, 0.5f, 1 };
 		vertices[5].position = { 0.5f, 0, -0.5f, 1 };
 
-		vertices[0].position = { 0, 1, 0, 1 };
-		vertices[1].position = { 0, 1, 0, 1 };
-		vertices[2].position = { 0, 1, 0, 1 };
-		vertices[3].position = { 0, 1, 0, 1 };
-		vertices[4].position = { 0, 1, 0, 1 };
-		vertices[5].position = { 0, 1, 0, 1 };
-
 		vertices[0].texCoord = { 0, 1 };	//bottom left
 		vertices[1].texCoord = { 1, 1 };	//bottom right
 		vertices[2].texCoord = { 0, 0 };	//top left
