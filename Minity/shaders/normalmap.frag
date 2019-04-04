@@ -43,7 +43,7 @@ void main()
 	vec3 texNormal = texture(NormalTexture, vTexCoord).rgb;
 
     //Calculate lambert term (Don't negate light direction?)
-    float lambertTerm = max(0, dot(N, -L));
+    float lambertTerm = max(0, min(1, dot(N, -L)));
 
 	//Calculate view vector and reflection vector
 	vec3 V = normalize(CameraPosition - vPosition.xyz);
@@ -54,7 +54,9 @@ void main()
 
     //Calculate diffuse
 	vec3 ambient = Ia * Ka;
-	vec3 diffuse = Id * Kd * texDiffuse * lambertTerm;
+	vec3 diffuse = N;
+//	vec3 diffuse = N * Id * Kd * texDiffuse * lambertTerm;
+//	vec3 diffuse = N * lambertTerm;
 	vec3 specular = Is * Ks * texSpecular * specularTerm;
 
     //Final output

@@ -23,8 +23,9 @@ bool Game::Start()
 	//StartSolarSystem();
 	//StartQuatTutorial();
 	//StartRenderGeomTutorial();
-	StartMaterialAndTextures();		//Numbered grid plane
-	StartDirectLightingTutorial();	//Ferrari
+	StartMaterialAndTextures();			//Numbered grid plane
+	//StartDirectLightingTutorial();		//Ferrari
+	StartAdvancedTexturingTutorial();	//Soulspear
 
 	//Start Camera
 	c.camera = std::make_unique<FlyCamera>(c.position, c.lookAt, c.speed, c.fov, c.aspect, c.near, c.far);
@@ -35,7 +36,7 @@ bool Game::Start()
 void Game::Update()
 {
 	//UpdateQuatTutorial();
-	UpdateDirectLightingTutorial();
+	//UpdateDirectLightingTutorial();
 
 	//Update Camera
 	c.camera->update();
@@ -48,7 +49,8 @@ void Game::Draw()
 	//DrawQuatTutorial();
 	//DrawRenderGeomTutorial();
 	DrawMaterialAndTextures();
-	DrawDirectLightingTutorial();
+	//DrawDirectLightingTutorial();
+	DrawAdvancedTexturingTutorial();
 
 	////Draw cameras
 	aie::Gizmos::draw(c.camera->getProjectionView());
@@ -159,14 +161,12 @@ void Game::StartDirectLightingTutorial()
 
 	//Load demo mesh
 	m_ferrari = std::make_unique<aie::OBJMesh>();
-	if (!m_ferrari->load("./assets/LaFerrari.obj"))
-	{
+	if (!m_ferrari->load("./assets/LaFerrari.obj"))	{
 		printf("Error loading mesh!\n"); 
 		assert(false);
 	}
 	//Load demo texture
-	if (!m_ferrari->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga"))
-	{
+	if (!m_ferrari->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga")) {
 		printf("File load error!\n"); 
 		assert(false);
 	}
@@ -182,24 +182,35 @@ void Game::StartDirectLightingTutorial()
 void Game::StartAdvancedTexturingTutorial()
 {
 	//Load normal map texture
-	m_normalMapShader = std::make_unique<aie::ShaderProgram>();
+	m_normalMapShader = std::make_unique<aie::ShaderProgram>(); //Allocate
 	m_normalMapShader->loadShader(aie::eShaderStage::VERTEX, "./shaders/normalmap.vert");
 	m_normalMapShader->loadShader(aie::eShaderStage::FRAGMENT, "./shaders/normalmap.frag");
-	if (m_phongShader.link() == false)
-		printf("Error loading shader: %s\n", m_normalMapShader->getLastError()); assert(false);
+	if (m_normalMapShader->link() == false) {
+		printf("Error linking shader: %s\n", m_normalMapShader->getLastError()); 
+		assert(false);
+	}
 
 	//Load soulspear
-	m_soulspear = std::make_unique<aie::OBJMesh>();
-	if (m_soulspear->load("./assets/soulspear.obj") == false)
-		printf("Error loading mesh!\n"); assert(false);
+	m_soulspear = std::make_unique<aie::OBJMesh>();	//Allocate
+	m_soulspear->transform = mat4(1);
+	if (!m_soulspear->load("./assets/soulspear.obj")) {
+		printf("Error loading mesh!\n"); 
+		assert(false);
+	}
 
 	//Load textures
-	if (m_soulspear->material.diffuseTexture.load("./assets/Texture/soulspear_diffuse.tga"))
-		printf("Error loading diffuse!\n"); assert(false);
-	if (m_soulspear->material.normalTexture.load("./assets/Texture/soulspear_normal.tga"))
-		printf("Error loading diffuse!\n"); assert(false);
-	if (m_soulspear->material.specularTexture.load("./assets/Texture/soulspear_diffuse.tga"))
-		printf("Error loading diffuse!\n"); assert(false);
+	if (!m_soulspear->material.diffuseTexture.load("./assets/Texture/soulspear_diffuse.tga")) {
+		printf("Error loading diffuse texture!\n"); 
+		assert(false);
+	}
+	if (!m_soulspear->material.normalTexture.load("./assets/Texture/soulspear_normal.tga")) {
+		printf("Error loading normal texture!\n"); 
+		assert(false);
+	}
+	if (!m_soulspear->material.specularTexture.load("./assets/Texture/soulspear_specular.tga")) {
+		printf("Error loading specular texture!\n"); 
+		assert(false);
+	}
 }
 
 //UPDATES
@@ -297,7 +308,7 @@ void Game::UpdateDirectLightingTutorial()
 }
 void Game::UpdateAdvancedTexturingTutorial()
 {
-
+	
 }
 
 //DRAWS
@@ -404,5 +415,26 @@ void Game::DrawDirectLightingTutorial()
 }
 void Game::DrawAdvancedTexturingTutorial()
 {
+	//Shader Bindings
+	m_normalMapShader->bind();
+	m_normalMapShader->bindUniform("CameraPosition", c.camera->getPosition());
+	m_normalMapShader->bindUniform("ProjectionViewModel", c.camera->getProjectionView() * m_soulspear->transform);
+	m_normalMapShader->bindUniform("ModelMatrix", m_soulspear->transform);
+	m_normalMapShader->bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_soulspear->transform)));
+	m_normalMapShader->bindUniform("Ia", m_ambientLightColour);
+	m_normalMapShader->bindUniform("Id", m_light.diffuse);
+	m_normalMapShader->bindUniform("Is", m_light.specular);
+	m_normalMapShader->bindUniform("LightDirection", m_light.direction);
+	m_normalMapShader->bindUniform("SpecularPower", 0.01f);
 
+	//Bind textures
+	m_soulspear->material.diffuseTexture.bind(0);
+	m_normalMapShader->bindUniform("DiffuseTexture", 0);
+	m_soulspear->material.normalTexture.bind(1);
+	m_normalMapShader->bindUniform("NormalTexture", 1);
+	m_soulspear->material.specularTexture.bind(2);
+	m_normalMapShader->bindUniform("SpecularTexture", 2);
+
+	//Draw
+	m_soulspear->draw();
 }
