@@ -4,9 +4,16 @@ namespace pkr
 {
 	class World
 	{
+	private:
+
+	protected:
+
 	public:
-		World();
-		~World();
+		void Build()
+		{
+
+		}
+		
 	};
 
 }

@@ -1,17 +1,28 @@
-//Phong Fragment Shader with Basic Diffuse Texturing
+//Comprehensive shader with all combined capabilities based on the phong shader
 #version 410
 
 in vec4 vPosition;
 in vec3 vNormal;
 in vec2 vTexCoord;
+in vec3 vTangent;
+in vec3 vBiTangent;
 
 //Texture
 uniform sampler2D DiffuseTexture;
+uniform sampler2D SpecularTexture;
+uniform sampler2D NormalTexture;
 
 //Camera
 uniform vec3 CameraPosition;
 
 //Lights
+const unsigned int NUM_OF_LIGHTS = 32;
+struct Light {
+	vec3 Diffuse;
+	vec3 Direction;
+};
+uniform Light lights[NUM_OF_LIGHTS];
+
 uniform vec3 Ia;    //Ambient
 uniform vec3 Id;    //Diffuse
 uniform vec3 Is;    //Specular

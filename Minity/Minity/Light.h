@@ -10,7 +10,8 @@ namespace pkr
 	{
 		DIRECTIONAL,
 		OMNI,
-		SPOT
+		SPOT,
+		AMBIENT
 	};
 
 	class Light
@@ -21,11 +22,18 @@ namespace pkr
 		virtual void Update();
 
 	public:
+		Light() = delete;
+		Light(eLightType lightType);
 		eLightType	type;
 		glm::vec3	position;
 		glm::vec3	direction;
 		glm::vec3	diffuse;
 		glm::vec3	specular;
+
+		struct DirectionalLight
+		{
+			glm::vec3 position;
+		} directionalLight;
 	};
 
 }

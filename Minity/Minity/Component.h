@@ -4,16 +4,30 @@
 
 namespace pkr
 {
-
 	class Component : public Object
 	{
 		//Component is abstract?
 	private:
 
 	public:
-		virtual void Init() = 0;
-		virtual void Update() = 0;
-		virtual void End() = 0;
+		//Initialisations
+		virtual void Awake();
+		virtual void Start();
+
+		//Updates
+		virtual void FixedUpdate();
+		virtual void Update();
+		virtual void LateUpdate();
+
+		//Rendering
+		virtual void PreRender();
+		virtual void Render();
+		virtual void PostRender();
+		virtual void OnGui();
+		virtual void OnRenderGizmos();
+
+		//Shutdowns
+		virtual void End();
 	};
 
 	class Transform : Component
@@ -21,10 +35,10 @@ namespace pkr
 	private:
 		glm::mat4 transform;
 	public:
-		glm::vec3 position() const;
-		glm::vec3 eulerAngles() const;
-		glm::vec3 scale() const;
-		glm::quat rotation() const;
+		glm::vec3 position();
+		glm::vec3 eulerAngles();
+		glm::vec3 scale();
+		glm::quat rotation();
 
 		glm::vec3 up() const;
 		glm::vec3 forwar() const;

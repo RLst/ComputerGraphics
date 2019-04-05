@@ -12,12 +12,20 @@ namespace Minity
 		
 		GLFWwindow*	m_window;
 
-		std::vector<World*> worlds;
+		//Declare world stuff
 		World* currentWorld;
+		std::vector<World*> worlds;
+
+		//Declare objects
+		std::vector<GameObject*> gameObjects;
+
+
+	public:
 		void AddWorld();
 		void GetWorld();
 		void RemoveWorld();
-	public:
+
+		
 		void Run()
 		{
 			CoreInit();

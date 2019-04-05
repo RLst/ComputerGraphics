@@ -56,9 +56,7 @@ void main()
 
     //Calculate diffuse
 	vec3 ambient = Ia * Ka;
-	vec3 diffuse = N;
-//	vec3 diffuse = N * Id * Kd * texDiffuse * lambertTerm;
-//	vec3 diffuse = N * lambertTerm;
+	vec3 diffuse = N * Id * Kd * texDiffuse * lambertTerm;
 	vec3 specular = Is * Ks * texSpecular * specularTerm;
 
     //Final output

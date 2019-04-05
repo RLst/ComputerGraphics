@@ -17,21 +17,15 @@
 #include "glm/ext.hpp"
 #include "glm/gtc/quaternion.hpp"
 
-//namespace pkr {
-//	class Camera;
-//	//class Mesh;
-//}
-//namespace aie {
-//	class OBJMesh;
-//	class Texture;
-//}
-
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
 using glm::quat;
 using std::unique_ptr;
+using std::make_unique;
+using std::shared_ptr;
+using std::make_shared;
 
 class Game : public pkr::App
 {
@@ -103,29 +97,36 @@ private:
 	vec3 m_kneePos;
 	vec3 m_anklePos;
 
-	////Rendering geometry
+	//Geometry
 	aie::ShaderProgram					m_shaderProg;
-
 	unique_ptr<pkr::Mesh>				m_plane;
-
 	unique_ptr<aie::OBJMesh>			m_ferrari;
-
-	//Direct lighting
-	aie::ShaderProgram					m_phongShader;
-	pkr::Light							m_light;
-	pkr::Light							m_light2;
-	glm::vec3							m_ambientLightColour;
-
-	//Advanced Texturing
-	unique_ptr<aie::ShaderProgram>		m_normalMapShader;
 	unique_ptr<aie::OBJMesh>			m_soulspear;
-	   
+
+	//Lights
+	const size_t						m_lightCount = 32;
+	unique_ptr<Light>					m_ambientLight;
+	typedef std::vector<unique_ptr<Light>> Lights;
+	Lights								m_lights;
+
+	//Direct lighting Tutorial
+	aie::ShaderProgram					m_phongShader;
+
+	//Advanced Texturing Tutorial
+	unique_ptr<aie::ShaderProgram>		m_normalMapShader;
+
+	//Multi-lights
+	float								m_specularPower;
+	unique_ptr<aie::ShaderProgram>		m_shader;	//Multi-light textured shader for assessment
+
 public:
 	bool Start() override;
 	void Update() override;
 	void Draw() override;
 	bool End() override;
 
+	void StartCamera();
+	void StartLighting();
 	void StartSolarSystem();
 	void StartQuatTutorial();
 	void StartRenderGeomTutorial();
@@ -133,11 +134,13 @@ public:
 	void StartDirectLightingTutorial();
 	void StartAdvancedTexturingTutorial();
 
-	void UpdateQuatTutorial();
-	void UpdateDirectLightingTutorial();
-	void UpdateAdvancedTexturingTutorial();
 	void UpdateCamera();
+	void UpdateObjects();
+	void UpdateLighting();
+	void UpdateQuatTutorial();
+	void UpdateAdvancedTexturingTutorial();
 
+	void DrawCamera();
 	void DrawGridGizmo(int size);
 	void DrawSolarSystem();
 	void DrawQuatTutorial();
