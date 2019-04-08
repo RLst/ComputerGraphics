@@ -98,26 +98,27 @@ private:
 	vec3 m_anklePos;
 
 	//Geometry
-	aie::ShaderProgram					m_shaderProg;
-	unique_ptr<pkr::Mesh>				m_plane;
-	unique_ptr<aie::OBJMesh>			m_ferrari;
-	unique_ptr<aie::OBJMesh>			m_soulspear;
+	aie::ShaderProgram								m_shaderProg;
+	unique_ptr<pkr::Mesh>							m_plane;
+	unique_ptr<aie::OBJMesh>						m_ferrari;
+	unique_ptr<aie::OBJMesh>						m_soulspear;
 
 	//Lights
-	const size_t								m_lightCount = 32;
-	unique_ptr<pkr::Light>						m_ambientLight;
-	typedef std::vector<unique_ptr<pkr::Light>> Lights;
-	Lights										m_lights;
+	const size_t									m_lightCount = 32;
+	unique_ptr<pkr::Light>							m_ambientLight;
+	typedef std::vector<unique_ptr<pkr::Light>>		Lights;
+	Lights											m_lights;
 
 	//Direct lighting Tutorial
-	aie::ShaderProgram					m_phongShader;
+	aie::ShaderProgram								m_phongShader;
 
 	//Advanced Texturing Tutorial
-	unique_ptr<aie::ShaderProgram>		m_normalMapShader;
+	unique_ptr<aie::ShaderProgram>					m_normalmapShader;
 
 	//Multi-lights
-	float								m_specularPower;
-	unique_ptr<aie::ShaderProgram>		m_shader;	//Multi-light textured shader for assessment
+	unique_ptr<aie::OBJMesh>						m_model;
+	float											m_specularPower;
+	unique_ptr<aie::ShaderProgram>					m_shader;	//Multi-light textured shader for assessment
 
 public:
 	bool Start() override;
@@ -125,28 +126,29 @@ public:
 	void Draw() override;
 	bool End() override;
 
-	void StartCamera();
-	void StartLighting();
 	void StartSolarSystem();
 	void StartQuatTutorial();
 	void StartRenderGeomTutorial();
-	void StartMaterialAndTextures();
-	void StartDirectLightingTutorial();
-	void StartAdvancedTexturingTutorial();
+	void StartLighting();
+	void StartPlane();
+	void StartFerrari();
+	void StartSoulspear();
+	void StartAssessment();
+	void StartCamera();
 
-	void UpdateCamera();
+	void UpdateQuatTutorial();
 	void UpdateObjects();
 	void UpdateLighting();
-	void UpdateQuatTutorial();
-	void UpdateAdvancedTexturingTutorial();
+	void UpdateCamera();
 
-	void DrawCamera();
 	void DrawGridGizmo(int size);
 	void DrawSolarSystem();
 	void DrawQuatTutorial();
 	void DrawRenderGeomTutorial();
-	void DrawMaterialAndTextures();
-	void DrawDirectLightingTutorial();
-	void DrawAdvancedTexturingTutorial();
+	void DrawPlane();
+	void DrawFerrari();
+	void DrawSoulspear();
+	void DrawAssessment();
+	void DrawCamera();
 };
 

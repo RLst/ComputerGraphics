@@ -21,12 +21,12 @@ struct Light {
 	vec3 Diffuse;
 	vec3 Direction;
 };
-uniform Light lights[NUM_OF_LIGHTS];
+uniform Light Lights[NUM_OF_LIGHTS];
 
 uniform vec3 Ia;    //Ambient
 uniform vec3 Id;    //Diffuse
 uniform vec3 Is;    //Specular
-uniform vec3 LightDirection;
+//uniform vec3 LightDirection;
 
 //Material
 uniform vec3 Ka;	//Ambient
