@@ -7,6 +7,8 @@
 #include "Time.h"	//Coupled to Time system
 #include "Texture.h"
 
+using namespace pkr;
+
 FlyCamera::FlyCamera(vec3 position, vec3 lookAt, float speed, float fovAngle, float aspect, float near, float far) :
 	Camera(position, lookAt, fovAngle, aspect, near, far),
 	m_speed(speed)
@@ -21,30 +23,30 @@ void FlyCamera::update()
 	vec3 world = vec3(m_world[3].x, m_world[3].y, m_world[3].z);
 
 	//Unity style camera
-	if (input->isMouseButtonDown(pkr::INPUT_MOUSE_BUTTON_RIGHT) ||
-		input->isKeyDown(pkr::INPUT_KEY_SPACE))
+	if (input->isMouseButtonDown(KeyCode::Mouse1) ||
+		input->isKeyDown(KeyCode::Space))
 	{
 		//Move faster if holding shift
-		if (input->isKeyDown(pkr::INPUT_KEY_LEFT_SHIFT))
+		if (input->isKeyDown(KeyCode::LeftShift))
 			workingSpeed = m_speed * m_fastSpeedFactor;
-		else if (input->isKeyDown(pkr::INPUT_KEY_LEFT_CONTROL))
+		else if (input->isKeyDown(KeyCode::LeftControl))
 			workingSpeed = m_speed * m_slowSpeedFactor;
 
 		//Normal WASD
-		if (input->isKeyDown(pkr::INPUT_KEY_W))
-			translate(forward() * workingSpeed * (float)pkr::Time::deltaTime());
-		if (input->isKeyDown(pkr::INPUT_KEY_S))
-			translate(backward() * workingSpeed * (float)pkr::Time::deltaTime());
-		if (input->isKeyDown(pkr::INPUT_KEY_A))
-			translate(left() * workingSpeed * (float)pkr::Time::deltaTime());
-		if (input->isKeyDown(pkr::INPUT_KEY_D))
-			translate(right() * workingSpeed * (float)pkr::Time::deltaTime());
+		if (input->isKeyDown(KeyCode::W))
+			translate(forward() * workingSpeed * (float)Time::deltaTime());
+		if (input->isKeyDown(KeyCode::S))
+			translate(backward() * workingSpeed * (float)Time::deltaTime());
+		if (input->isKeyDown(KeyCode::A))
+			translate(left() * workingSpeed * (float)Time::deltaTime());
+		if (input->isKeyDown(KeyCode::D))
+			translate(right() * workingSpeed * (float)Time::deltaTime());
 
 		//Up and down
-		if (input->isKeyDown(pkr::INPUT_KEY_E))
-			translate(up() * workingSpeed * (float)pkr::Time::deltaTime());		
-		if (input->isKeyDown(pkr::INPUT_KEY_Q))
-			translate(down() * workingSpeed * (float)pkr::Time::deltaTime());
+		if (input->isKeyDown(KeyCode::E))
+			translate(up() * workingSpeed * (float)Time::deltaTime());		
+		if (input->isKeyDown(KeyCode::Q))
+			translate(down() * workingSpeed * (float)Time::deltaTime());
 
 		//Look around
 		adjustYaw(-input->getMouseDeltaX() * m_fovAngle * m_lookSpeed);

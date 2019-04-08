@@ -1,6 +1,6 @@
 #include "Input_pkr.h"
 
-namespace pkr {
+namespace Minity {
 
 
 Input::Input()
