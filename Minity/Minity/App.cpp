@@ -75,11 +75,11 @@ namespace pkr {
 		pm_frames = 0;
 		pm_fpsInterval = 0;
 		//Initialise GLFW
-		if (!glfwInit())
+		if (glfwInit() == GLFW_FALSE)
 			return -1;
 		//Create window
 		m_window = glfwCreateWindow(m_scrnWidth, m_scrnHeight, m_appTitle, (m_isFullscreen ? glfwGetPrimaryMonitor() : nullptr), nullptr);
-		if (!m_window)
+		if (m_window == nullptr)
 		{
 			glfwTerminate();
 			return -2;

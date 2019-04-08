@@ -21,35 +21,44 @@ using namespace pkr;
 /////////// MAIN LOOP //////////////
 bool Game::Start()
 {
-	StartCamera();
 	//StartSolarSystem();
 	//StartQuatTutorial();
 	//StartRenderGeomTutorial();
+
 	StartLighting();
+
 	StartMaterialAndTextures();				//Numbered grid plane
-	//StartDirectLightingTutorial();		//Ferrari
-	StartAdvancedTexturingTutorial();		//Soulspear
+	StartDirectLightingTutorial();		//Ferrari
+	//StartAdvancedTexturingTutorial();		//Soulspear
+
+	StartCamera();
 	return true;
 }
 
 void Game::Update()
 {
-	UpdateCamera();
+	//UpdateQuatTutorial();
+
 	UpdateObjects();
 	UpdateLighting();
-	//UpdateQuatTutorial();
+
+	UpdateCamera();
 }	
 
 void Game::Draw()
 {
-	DrawCamera();
-	DrawGridGizmo(50);
+
 	//DrawSolarSystem();
 	//DrawQuatTutorial();
 	//DrawRenderGeomTutorial();
+
+	DrawGridGizmo(50);
+
 	DrawMaterialAndTextures();
-	//DrawDirectLightingTutorial();
-	DrawAdvancedTexturingTutorial();
+	DrawDirectLightingTutorial();
+	//DrawAdvancedTexturingTutorial();
+
+	DrawCamera();
 }
 
 bool Game::End()
@@ -155,7 +164,7 @@ void Game::StartLighting()
 	m_shader = make_unique<aie::ShaderProgram>();
 	m_shader->loadShader(aie::eShaderStage::VERTEX, "./shaders/comprehensive.vert");
 	m_shader->loadShader(aie::eShaderStage::FRAGMENT, "./shaders/comprehensive.frag");
-	if (m_shader->link())
+	if (m_shader->link() == false)
 	{
 		printf("Shader Error: %s\n", m_shader->getLastError());
 		assert(false);
@@ -163,23 +172,29 @@ void Game::StartLighting()
 
 	//Make a scene ambient light
 	m_ambientLight = make_unique<Light>(AMBIENT);
-	m_ambientLight->diffuse = Colour::skyblue();
 
-	//Make some directional lights
+	//Make some directional lights with some random settings
 	for (int i = 0; i < m_lightCount; ++i)
 	{
 		m_lights.push_back(std::make_unique<Light>(DIRECTIONAL));
 		m_lights.back()->direction = vec3(Random::range(-1.f, 1.f), Random::range(-1.f, 1.f), Random::range(-1.f, 1.f));	//Set random light directions
-		m_lights.back()->diffuse = Colour::random();
-		m_lights.back()->specular = Colour::shade(Random::range(0.0000001f, 1.f));
+		//m_lights.back()->diffuse = Colour::random();
+		//m_lights.back()->specular = Colour::shade(Random::range(0.0000001f, 1.f));
 	}
+
+	////SET LIGHTS
+	//WET CAR LOOK
+	m_ambientLight->diffuse = glm::vec3(0.2f);
+	m_lights[0]->diffuse = glm::vec3(0.6f);
+	m_lights[0]->specular = glm::vec3(0.21f);
+	m_specularPower = 0.0001f;
 }
 void Game::StartDirectLightingTutorial()
 {
 	//Load shader
 	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
 	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
-	if (!m_phongShader.link())
+	if (m_phongShader.link() == false)
 	{
 		printf("Shader Error: %s\n", m_phongShader.getLastError());
 		assert(false);
@@ -191,12 +206,12 @@ void Game::StartDirectLightingTutorial()
 	m_ferrari->transform = glm::translate(vec3(-10, 0, -10)) * glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
 
 	//Load demo mesh
-	if (!m_ferrari->load("./assets/LaFerrari.obj")) {
+	if (m_ferrari->load("./assets/LaFerrari.obj") == false) {
 		printf("Error loading mesh!\n");
 		assert(false);
 	}
 	//Load demo texture
-	if (!m_ferrari->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga")) {
+	if (m_ferrari->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga") == false) {
 		printf("File load error!\n");
 		assert(false);
 	}
@@ -218,21 +233,21 @@ void Game::StartAdvancedTexturingTutorial()
 	m_soulspear->transform = mat4(1);
 
 	//Load soulspear
-	if (!m_soulspear->load("./assets/soulspear.obj", true, true)) {	//This object needs 
+	if (m_soulspear->load("./assets/soulspear.obj", true, true) == false) {	//This object needs 
 		printf("Error loading mesh!\n"); 
 		assert(false);
 	}
 
 	//Load textures
-	if (!m_soulspear->material.diffuseTexture.load("./assets/Texture/soulspear_diffuse.tga")) {
+	if (m_soulspear->material.diffuseTexture.load("./assets/Texture/soulspear_diffuse.tga") == false) {
 		printf("Error loading diffuse texture!\n"); 
 		assert(false);
 	}
-	if (!m_soulspear->material.normalTexture.load("./assets/Texture/soulspear_normal.tga")) {
+	if (m_soulspear->material.normalTexture.load("./assets/Texture/soulspear_normal.tga") == false) {
 		printf("Error loading normal texture!\n"); 
 		assert(false);
 	}
-	if (!m_soulspear->material.specularTexture.load("./assets/Texture/soulspear_specular.tga")) {
+	if (m_soulspear->material.specularTexture.load("./assets/Texture/soulspear_specular.tga") == false) {
 		printf("Error loading specular texture!\n"); 
 		assert(false);
 	}
@@ -278,14 +293,14 @@ void Game::UpdateCamera()
 void Game::UpdateObjects()
 {
 	//Adjust objects specular powers
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_I))
+	if (Input::getInstance()->isKeyDown(KeyCode::I))
 	{
-		m_specularPower += 0.001f;
+		m_specularPower += 0.01f;
 		std::cout << "Specular Power: " << m_specularPower << std::endl;
 	}
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_K))
+	if (Input::getInstance()->isKeyDown(KeyCode::K))
 	{
-		m_specularPower -= 0.001f;
+		m_specularPower -= 0.01f;
 		std::cout << "Specular Power: " << m_specularPower << std::endl;
 	}
 	//Make adjustments
@@ -296,41 +311,41 @@ void Game::UpdateLighting()
 	//query time since application started
 	//float t = (float)Time::time();
 	static float ang = 2.f;
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_LEFT))
+	if (Input::getInstance()->isKeyDown(KeyCode::LeftArrow))
 		ang += 0.01f;
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_RIGHT))
+	if (Input::getInstance()->isKeyDown(KeyCode::RightArrow))
 		ang -= 0.01f;
 
 	////Adjust light properties
 	//Ambient
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_T))
+	if (Input::getInstance()->isKeyDown(KeyCode::T))
 	{
 		m_ambientLight->diffuse += 0.01f;
 		std::cout << "Ambient: " << m_ambientLight->diffuse[0] << std::endl;
 	}
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_G))
+	if (Input::getInstance()->isKeyDown(KeyCode::G))
 	{
 		m_ambientLight->diffuse -= 0.01f;
 		std::cout << "Ambient: " << m_ambientLight->diffuse[0] << std::endl;
 	}
 	//Diffuse
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_Y))
+	if (Input::getInstance()->isKeyDown(KeyCode::Y))
 	{
 		m_lights[0]->diffuse += 0.01f;
 		std::cout << "Diffuse: " << m_lights[0]->diffuse[0] << std::endl;
 	}
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_H))
+	if (Input::getInstance()->isKeyDown(KeyCode::H))
 	{
 		m_lights[0]->diffuse -= 0.01f;
 		std::cout << "Diffuse: " << m_lights[0]->diffuse[0] << std::endl;
 	}
 	//Specular
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_U))
+	if (Input::getInstance()->isKeyDown(KeyCode::U))
 	{
 		m_lights[0]->specular += 0.01f;
 		std::cout << "Specular: " << m_lights[0]->specular[0] << std::endl;
 	}
-	if (Input::getInstance()->isKeyDown(pkr::INPUT_KEY_J))
+	if (Input::getInstance()->isKeyDown(KeyCode::J))
 	{
 		m_lights[0]->specular -= 0.01f;
 		std::cout << "Specular: " << m_lights[0]->specular[0] << std::endl;
@@ -431,11 +446,11 @@ void Game::DrawDirectLightingTutorial()
 	m_phongShader.bind();
 
 	//bind Light
-	m_phongShader.bindUniform("Ia", m_ambientLightColour);
-	m_phongShader.bindUniform("Id", m_light.diffuse);
-	m_phongShader.bindUniform("Is", m_light.specular);
-	m_phongShader.bindUniform("LightDirection", m_light.direction);
-	m_phongShader.bindUniform("SpecularPower", m_ferrari->material.specularPower);
+	m_phongShader.bindUniform("Ia", m_ambientLight->diffuse);
+	m_phongShader.bindUniform("Id", m_lights[0]->diffuse);
+	m_phongShader.bindUniform("Is", m_lights[0]->specular);
+	m_phongShader.bindUniform("LightDirection", m_lights[0]->direction);
+	m_phongShader.bindUniform("SpecularPower", m_specularPower);
 
 	//bind camera positions
 	m_phongShader.bindUniform("CameraPosition", c.camera->getPosition());
@@ -466,6 +481,7 @@ void Game::DrawAdvancedTexturingTutorial()
 	m_normalMapShader->bindUniform("Id", m_lights[0]->diffuse);
 	m_normalMapShader->bindUniform("Is", m_lights[0]->specular);
 
+	//Jared's code... REVIEW!
 	int lightLocation = m_shader->getUniform("lights");
 	const int numFieldsPerLight = 2;
 	for (int i = 0; i < (int)m_lights.size(); ++i)

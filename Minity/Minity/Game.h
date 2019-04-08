@@ -104,10 +104,10 @@ private:
 	unique_ptr<aie::OBJMesh>			m_soulspear;
 
 	//Lights
-	const size_t						m_lightCount = 32;
-	unique_ptr<Light>					m_ambientLight;
-	typedef std::vector<unique_ptr<Light>> Lights;
-	Lights								m_lights;
+	const size_t								m_lightCount = 32;
+	unique_ptr<pkr::Light>						m_ambientLight;
+	typedef std::vector<unique_ptr<pkr::Light>> Lights;
+	Lights										m_lights;
 
 	//Direct lighting Tutorial
 	aie::ShaderProgram					m_phongShader;
