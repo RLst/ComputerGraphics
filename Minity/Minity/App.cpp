@@ -159,8 +159,6 @@ namespace pkr {
 
 		//For entity component system
 
-
-
 		////////////
 		///////////
 

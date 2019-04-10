@@ -41,7 +41,6 @@ namespace pkr
 
 		//void Update();
 		virtual void DrawVisualisation() = 0;
-		virtual void BindToShader(const aie::ShaderProgram& shaderProgram);
 	};
 
 	class DirectionalLight : public Light

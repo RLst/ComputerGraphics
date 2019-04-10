@@ -5,8 +5,8 @@ out vec4 FragColour;
 //Material
 struct Material {
 	sampler2D Kd;	//diffuse
-	sampler2D Ks;	//specular
-	sampler2D Kn;	//normal
+//	sampler2D Ks;	//specular
+//	sampler2D Kn;	//normal
 	float shininess;	//aka specular power
 };
 
@@ -35,13 +35,12 @@ struct Light {		//light
 	float outerCutOff;
 };
 
-//Inputs
-in vec3 FragPos;
+//--------------- Inputs ---------------//
+in vec4 FragPos;
 in vec3 Normal;
 in vec2 TexCoord;
 in vec3 Tangent;
 in vec3 BiTangent;
-
 //-------------- Uniforms ------------//
 uniform vec3 ViewPos;	//camera position
 uniform Material material;
@@ -60,16 +59,15 @@ void main()
 	vec3 B = normalize(BiTangent);
 	mat3 TBN = mat3(T, B, N);
 
-	vec3 viewDir = normalize(ViewPos - FragPos);
+	vec3 viewDir = normalize(ViewPos - FragPos.xyz);
 
-	vec3 result = vec3(0);
+	vec3 result;
 	
 	//Apply lighting from ALL lights of many types
 	for (int i = 0; i < NumOfLights; ++i)
 	{
-		result += CalcLight(Lights[i], N, FragPos, viewDir);
+		result += CalcLight(Lights[i], N, FragPos.xyz, viewDir);
 	}
-	
 	FragColour = vec4(result, 1.0);
 }
 
@@ -106,6 +104,7 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	vec3 ambient = light.Ia * vec3(texture(material.Kd, TexCoord));
 	vec3 diffuse = light.Id * diffuseTerm * vec3(texture(material.Kd, TexCoord));
 	vec3 specular = light.Is * specularTerm * vec3(texture(material.Ks, TexCoord));
+//	vec3 specular = light.Is * specularTerm * vec3(0);
 	ambient *= attenuation * intensity;
 	diffuse *= attenuation * intensity;
 	specular *= attenuation * intensity;
