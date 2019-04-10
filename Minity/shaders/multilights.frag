@@ -5,18 +5,18 @@ out vec4 FragColour;
 //Material
 //NOTE! OBJMesh automatically tries to load default values from obj and mtl files
 struct Material {
-	sampler2D Kd;	//diffuse
-	sampler2D Ks;	//specular
-//	sampler2D Kn;	//normal
+	sampler2D diffuse;	//diffuse
+	sampler2D specular;	//specular
+//	sampler2D normal;	//normal
 	float shininess;	//aka specular power
 };
 
 //Lights
-const uint MAX_LIGHTS = 4;
+const uint MAX_LIGHTS = 16;
+//enums
 const uint DIRECTIONAL = 0;
 const uint OMNI = 1;
 const uint SPOT = 2;
-//#define MAX_LIGHTS 16
 struct Light {		//light 
 	//Common
 	int type;
@@ -40,18 +40,20 @@ struct Light {		//light
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoord;
-//in vec3 Tangent;
-//in vec3 BiTangent;
+in vec3 Tangent;
+in vec3 BiTangent;
 //-------------- Uniforms ------------//
 uniform vec3 ViewPos;	//camera position
 
-//uniform sampler2D Ka;
-uniform sampler2D Kd;
-uniform sampler2D Ks;
+//uniform Material material;
+
+uniform vec3 Ka;
+uniform vec3 Kd;
+uniform vec3 Ks;
 uniform float specularPower;
 
 uniform int NumOfLights;
-uniform Light Lights[MAX_LIGHTS];
+uniform Light lights[MAX_LIGHTS];
 //------------------------------------//
 
 //Function prototypes
@@ -61,9 +63,9 @@ void main()
 {
 	//Ensure inputs are normalized
 	vec3 N = normalize(Normal);
-//	vec3 T = normalize(Tangent);
-//	vec3 B = normalize(BiTangent);
-//	mat3 TBN = mat3(T, B, N);
+	vec3 T = normalize(Tangent);
+	vec3 B = normalize(BiTangent);
+	mat3 TBN = mat3(T, B, N);
 
 	vec3 viewDir = normalize(ViewPos - FragPos.xyz);
 
@@ -72,7 +74,7 @@ void main()
 	//Apply lighting from ALL lights of many types
 	for (int i = 0; i < NumOfLights; ++i)
 	{
-		result += CalcLight(Lights[i], N, FragPos.xyz, viewDir);
+		result += CalcLight(lights[i], N, FragPos.xyz, viewDir);
 	}
 	FragColour = vec4(result, 1.0);
 }
@@ -92,6 +94,9 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	//Specular
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), specularPower);
+//	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+
+	float lambertTerm = max(0, min(1, dot(normal, -lightDir)));
 
 	switch (light.type)
 	{
@@ -107,9 +112,12 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	}
 
 	//Resultant
-	vec3 ambient = light.Ia * vec3(texture(Kd, TexCoord));
-	vec3 diffuse = light.Id * diffuseTerm * vec3(texture(Kd, TexCoord));
-	vec3 specular = light.Is * specularTerm * vec3(texture(Ks, TexCoord));
+	vec3 ambient = light.Ia * Ka;
+	vec3 diffuse = light.Id * diffuseTerm * Kd * lambertTerm;
+	vec3 specular = light.Is * specularTerm * Ks;	
+//	vec3 ambient = light.Ia * texture(material.diffuse, TexCoord).xyz;
+//	vec3 diffuse = light.Id * diffuseTerm * texture(material.diffuse, TexCoord).xyz * lambertTerm;
+//	vec3 specular = light.Is * specularTerm * texture(material.specular, TexCoord).xyz;
 	ambient *= attenuation * intensity;
 	diffuse *= attenuation * intensity;
 	specular *= attenuation * intensity;

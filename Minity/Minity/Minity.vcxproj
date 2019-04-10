@@ -242,6 +242,7 @@
     <None Include="..\shaders\comprehensive.frag" />
     <None Include="..\shaders\comprehensive.vert" />
     <None Include="..\shaders\flat.frag" />
+    <None Include="..\shaders\multilights.frag" />
     <None Include="..\shaders\normalmap.frag" />
     <None Include="..\shaders\normalmap.vert" />
     <None Include="..\shaders\phong.frag" />

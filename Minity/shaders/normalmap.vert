@@ -1,27 +1,27 @@
 //Classic Phong Vertex Shader
 #version 410
 
-layout(location = 0) in vec4 Position;
-layout(location = 1) in vec4 Normal;
-layout(location = 2) in vec2 TexCoord;
-layout(location = 3) in vec4 Tangent;
+layout(location = 0) in vec4 aPosition;
+layout(location = 1) in vec4 aNormal;
+layout(location = 2) in vec2 aTexCoord;
+layout(location = 3) in vec4 aTangent;
 
-uniform mat4 ProjectionViewModel;
-uniform mat4 ModelMatrix;	//Need this matrix to transform the position
-uniform mat3 NormalMatrix;	//Need this matrix to tranform the normal
+uniform mat4 uProjectionViewModel;
+uniform mat4 uModel;	//Need this matrix to transform the position
+uniform mat3 uNormal;	//Need this matrix to tranform the normal
 
-out vec4 vPosition;
-out vec3 vNormal;
-out vec2 vTexCoord;
-out vec3 vTangent;
-out vec3 vBiTangent;
+out vec4 FragPos;
+out vec3 Normal;
+out vec2 TexCoord;
+out vec3 Tangent;
+out vec3 BiTangent;
 
 void main()
 {
-	vPosition = ModelMatrix * Position;
-	vNormal = NormalMatrix * Normal.xyz;
-	vTexCoord = TexCoord;
-	vTangent = NormalMatrix * Tangent.xyz;
-	vBiTangent = cross(vNormal, vTangent) * Tangent.w;
-	gl_Position = ProjectionViewModel * Position;
+	FragPos = uModel * aPosition;
+	Normal = uNormal * aNormal.xyz;
+	TexCoord = aTexCoord;
+	Tangent = uNormal * aTangent.xyz;
+	BiTangent = cross(Normal, Tangent) * aTangent.w;
+	gl_Position = uProjectionViewModel * aPosition;
 }

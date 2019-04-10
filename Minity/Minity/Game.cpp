@@ -26,7 +26,7 @@ bool Game::Start()
 
 	StartPlane();			//Material and textures tutorial
 	//StartFerrari();			//Direct Lighting tutorial
-	StartSoulspear();		//Advanced Texturing Tutorials
+	//StartSoulspear();		//Advanced Texturing Tutorials
 	StartAssessment();
 
 	StartCamera();
@@ -47,7 +47,7 @@ void Game::Draw()
 
 	DrawPlane();
 	//DrawFerrari();
-	DrawSoulspear();
+	//DrawSoulspear();
 	DrawAssessment();
 
 	DrawCamera();
@@ -86,19 +86,9 @@ void Game::StartLighting()
 {
 	//Good light settings: diffuse = 0.95, specular = 0.12-0.2, specularPower = 0.00000001 (this shoudl have a range between 0-128. Check shader code)
 
-	//Load shader
-	m_shader = make_unique<aie::ShaderProgram>();
-	m_shader->loadShader(aie::eShaderStage::VERTEX, "./shaders/comprehensive.vert");
-	m_shader->loadShader(aie::eShaderStage::FRAGMENT, "./shaders/comprehensive.frag");
-	if (m_shader->link() == false)
-	{
-		printf("Shader Error: %s\n", m_shader->getLastError());
-		assert(false);
-	}
-
 	////CREATE
 	//Universal ambient light (is not part of m_lights)
-	m_ambientLight.diffuse = Colour::white() * 0.4f;
+	m_ambientLight.diffuse = Colour::white() * 1.f;
 
 	//Sun
 	m_lights.push_back(make_unique<DirectionalLight>());
@@ -117,6 +107,7 @@ void Game::StartLighting()
 		//Random locations around origin, random colours
 		m_lights.push_back(make_unique<OmniLight>());
 		m_lights.back()->position = vec3(Random::range(-5, 5), Random::range(0, 2), Random::range(-5, 5));
+		m_lights.back()->direction = vec3(0);	//Filler
 		m_lights.back()->ambient = vec3(0.05f);
 		m_lights.back()->diffuse = Colour::random();
 		m_lights.back()->specular = vec3(1.0f);
@@ -199,7 +190,7 @@ void Game::StartAssessment()
 	//Init shader program
 	m_shader = make_unique<aie::ShaderProgram>();
 	m_shader->loadShader(aie::eShaderStage::VERTEX, "./shaders/comprehensive.vert");
-	m_shader->loadShader(aie::eShaderStage::FRAGMENT, "./shaders/comprehensive.frag");
+	m_shader->loadShader(aie::eShaderStage::FRAGMENT, "./shaders/multilights.frag");
 	if (m_shader->link() == false) {
 		printf("Error linking shader: %s\n", m_shader->getLastError());
 		assert(false);
@@ -208,11 +199,14 @@ void Game::StartAssessment()
 	//Setup mesh
 	m_model = make_unique<aie::OBJMesh>();
 	
-	m_model->material.specularPower = 64;
+	m_model->material.ambient = vec3(0.1f);
+	m_model->material.diffuse = vec3(0.9f);
+	m_model->material.specular = vec3(0.5f);
+	m_model->material.specularPower = 8.0f;
 	
-	m_model->transform = mat4(1) * glm::translate(vec3(0, 0, 0)) * glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.01f));
+	m_model->transform = mat4(1) * glm::translate(vec3(100, 0, 0)) * glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
 	
-	if (m_model->load("./assets/LaFerrari.obj") == false) {
+	if (m_model->load("./assets/LaFerrari.obj", true, false) == false) {
 		printf("Error loading mesh!\n");
 		assert(false);
 	}
@@ -222,11 +216,11 @@ void Game::StartAssessment()
 		printf("Error loading diffuse texture!\n");
 		assert(false);
 	}
-	if (m_model->material.specularTexture.load("./assets/Texture/numbered_grid.tga") == false) {
+	if (m_model->material.specularTexture.load("./assets/Texture/soulspear_specular.tga") == false) {
 		printf("Error loading specular texture!\n");
 		assert(false);
 	}
-	if (m_model->material.normalTexture.load("./assets/Texture/numbered_grid.tga") == false) {
+	if (m_model->material.normalTexture.load("./assets/Texture/soulspear_normal.tga") == false) {
 		printf("Error loading normal texture!\n");
 		assert(false);
 	}
@@ -242,16 +236,14 @@ void Game::UpdateObjects()
 	//Adjust objects specular powers
 	if (Input::getInstance()->isKeyDown(KeyCode::I))
 	{
-		m_ferrari->material.specularPower += 0.01f;
-		std::cout << "Specular Power: " << m_ferrari->material.specularPower << std::endl;
+		m_specularPower += 0.01f;
+		std::cout << "Specular Power: " << m_specularPower << std::endl;
 	}
 	if (Input::getInstance()->isKeyDown(KeyCode::K))
 	{
-		m_ferrari->material.specularPower -= 0.01f;
-		std::cout << "Specular Power: " << m_ferrari->material.specularPower << std::endl;
+		m_specularPower -= 0.01f;
+		std::cout << "Specular Power: " << m_specularPower << std::endl;
 	}
-	//Make adjustments
-	//m_ferrari->material.specularPower = glm::clamp(m_ferrari->material.specularPower, 0.00000000001f, 128.f);
 }
 void Game::UpdateLighting()
 {
@@ -347,24 +339,27 @@ void Game::DrawFerrari()
 	//bind shader	
 	m_phongShader.bind();
 
+	//bind transform
+	m_phongShader.bindUniform("uProjectionViewModel", c.camera->getProjectionView() * m_ferrari->transform);
+
+	//bind model matrix
+	m_phongShader.bindUniform("uModel", m_ferrari->transform);
+
+
+	//bind transform for lighting
+	m_phongShader.bindUniform("uNormal", glm::inverseTranspose(glm::mat3(m_ferrari->transform)));
+	
+	//bind camera positions
+	m_phongShader.bindUniform("ViewPos", c.camera->getPosition());
+
 	//bind Light
 	m_phongShader.bindUniform("Ia", m_ambientLight.diffuse);
 	m_phongShader.bindUniform("Id", m_lights[0]->diffuse);
 	m_phongShader.bindUniform("Is", m_lights[0]->specular);
 	m_phongShader.bindUniform("LightDirection", m_lights[0]->direction);
-	m_phongShader.bindUniform("SpecularPower", m_ferrari->material.specularPower);
 
-	//bind camera positions
-	m_phongShader.bindUniform("CameraPosition", c.camera->getPosition());
-
-	//bind transform
-	m_phongShader.bindUniform("ProjectionViewModel", c.camera->getProjectionView() * m_ferrari->transform);
-
-	//bind model matrix
-	m_phongShader.bindUniform("ModelMatrix", m_ferrari->transform);
-
-	//bind transform for lighting
-	m_phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_ferrari->transform)));
+	m_phongShader.bindUniform("specularPower", m_specularPower);
+	//m_phongShader.bindUniform("specularPower", m_ferrari->material.specularPower);
 
 	//draw object
 	m_ferrari->draw();
@@ -375,21 +370,21 @@ void Game::DrawSoulspear()
 	m_normalmapShader->bind();
 
 	//Vertex
-	m_normalmapShader->bindUniform("ProjectionViewModel", c.camera->getProjectionView() * m_soulspear->transform);
-	m_normalmapShader->bindUniform("ModelMatrix", m_soulspear->transform);
-	m_normalmapShader->bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_soulspear->transform)));
+	m_normalmapShader->bindUniform("uProjectionViewModel", c.camera->getProjectionView() * m_soulspear->transform);
+	m_normalmapShader->bindUniform("uModel", m_soulspear->transform);
+	m_normalmapShader->bindUniform("uNormal", glm::inverseTranspose(glm::mat3(m_soulspear->transform)));
 
 	//Fragment
 	m_soulspear->material.diffuseTexture.bind(0);
 	m_soulspear->material.normalTexture.bind(1);
 	m_soulspear->material.specularTexture.bind(2);
-	m_normalmapShader->bindUniform("DiffuseTexture", 0);
-	m_normalmapShader->bindUniform("NormalTexture", 1);
-	m_normalmapShader->bindUniform("SpecularTexture", 2);
+	m_normalmapShader->bindUniform("diffuseTexture", 0);
+	m_normalmapShader->bindUniform("normalTexture", 1);
+	m_normalmapShader->bindUniform("specularTexture", 2);
 
-	m_normalmapShader->bindUniform("CameraPosition", c.camera->getPosition());
+	m_normalmapShader->bindUniform("ViewPos", c.camera->getPosition());
 
-	m_normalmapShader->bindUniform("SpecularPower", m_soulspear->material.specularPower);
+	m_normalmapShader->bindUniform("specularPower", m_soulspear->material.specularPower);
 
 	m_normalmapShader->bindUniform("Ia", m_ambientLight.diffuse);
 	m_normalmapShader->bindUniform("Id", m_lights[0]->diffuse);
@@ -404,15 +399,34 @@ void Game::DrawAssessment()
 	////Shader bindings
 	m_shader->bind();
 	///Vertex
-	m_shader->bindUniform("Model", m_model->transform);
-	m_shader->bindUniform("View", c.camera->getView());
-	m_shader->bindUniform("Projection", c.camera->getProjection());
+	m_shader->bindUniform("uModel", m_model->transform);
+	m_shader->bindUniform("uView", c.camera->getView());
+	m_shader->bindUniform("uProjection", c.camera->getProjection());
+	//m_shader->bindUniform("uProjectionViewModel", c.camera->getProjectionView() * m_model->transform);
+	//m_shader->bindUniform("uModel", m_model->transform);
+	//m_shader->bindUniform("uNormal", glm::inverseTranspose(glm::mat3(m_model->transform)));
 	///Fragment
 	m_shader->bindUniform("ViewPos", c.camera->getPosition());
+
 	//Material
-	BindMaterial(m_model.get(), m_shader.get(), m_model->material.specularPower);
+	BindMaterial(m_model.get(), m_shader.get());
+
+	m_shader->bindUniform("Ka", m_ambientLight.diffuse);
+	m_shader->bindUniform("Kd", m_model->material.diffuse);
+	m_shader->bindUniform("Ks", m_model->material.specular);
+	m_shader->bindUniform("specularPower", m_specularPower);
+
 	//Lights
-	BindLights(m_lights, m_shader.get());
+	//Pass through amount of lights
+	m_shader->bindUniform("NumOfLights", 1);
+	m_shader->bindUniform("lights[0].type", m_lights[0]->type);
+	m_shader->bindUniform("lights[0].position", m_lights[0]->position);
+	m_shader->bindUniform("lights[0].direction", m_lights[0]->direction);
+	m_shader->bindUniform("lights[0].Ia", m_lights[0]->ambient);
+	m_shader->bindUniform("lights[0].Id", m_lights[0]->diffuse);
+	m_shader->bindUniform("lights[0].Is", m_lights[0]->specular);
+
+	//BindLights(m_lights, m_shader.get());
 
 	m_model->draw();
 }
@@ -422,17 +436,17 @@ void Game::DrawCamera()
 	aie::Gizmos::draw2D((float)getScreenWidth(), (float)getScreenHeight());
 }
 
-
-void Game::BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader, float shininess)
+void Game::BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
 {
 	mesh->material.diffuseTexture.bind(0);
-	mesh->material.normalTexture.bind(1);
+	//mesh->material.normalTexture.bind(1);
 	mesh->material.specularTexture.bind(2);
 
-	shader->bindUniform("material.Kd", 0);
-	shader->bindUniform("material.Kn", 1);
-	shader->bindUniform("material.Ks", 2);
-	shader->bindUniform("material.shininess", shininess);
+	//shader->bindUniform("Ka", mesh->material.ambient);
+	shader->bindUniform("material.diffuse", 0);
+	//shader->bindUniform("material.normal", 1);
+	shader->bindUniform("material.specular", 2);
+	shader->bindUniform("material.shininess", 32);	//TEST
 }
 
 void Game::BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader) 
@@ -445,41 +459,41 @@ void Game::BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::Sh
 	for (int i = 0; i < lights.size(); ++i)
 	{
 		//Common
-		uniform = "Lights[" + std::to_string(i) + "].type";
+		uniform = "lights[" + std::to_string(i) + "].type";
 		shader->bindUniform(uniform.c_str(), lights[i]->type);
 
-		uniform = "Lights[" + std::to_string(i) + "].position";
+		uniform = "lights[" + std::to_string(i) + "].position";
 		shader->bindUniform(uniform.c_str(), lights[i]->position);
 
-		uniform = "Lights[" + std::to_string(i) + "].direction";
+		uniform = "lights[" + std::to_string(i) + "].direction";
 		shader->bindUniform(uniform.c_str(), lights[i]->direction);
 
-		uniform = "Lights[" + std::to_string(i) + "].Ia";
+		uniform = "lights[" + std::to_string(i) + "].Ia";
 		shader->bindUniform(uniform.c_str(), lights[i]->ambient);
 
-		uniform = "Lights[" + std::to_string(i) + "].Id";
+		uniform = "lights[" + std::to_string(i) + "].Id";
 		shader->bindUniform(uniform.c_str(), lights[i]->diffuse);
 
-		uniform = "Lights[" + std::to_string(i) + "].Is";
+		uniform = "lights[" + std::to_string(i) + "].Is";
 		shader->bindUniform(uniform.c_str(), lights[i]->specular);
 
 		switch (lights[i]->type)
 		{
 		case pkr::eLightType::SPOT:
-			uniform = "Lights[" + std::to_string(i) + "].cutOff";
+			uniform = "lights[" + std::to_string(i) + "].cutOff";
 			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::SpotLight*>(lights[i].get())->cutOff);
 
-			uniform = "Lights[" + std::to_string(i) + "].outerCutOff";
+			uniform = "lights[" + std::to_string(i) + "].outerCutOff";
 			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::SpotLight*>(lights[i].get())->outerCutOff);
 
 		case pkr::eLightType::OMNI:
-			uniform = "Lights[" + std::to_string(i) + "].constant";
+			uniform = "lights[" + std::to_string(i) + "].constant";
 			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::OmniLight*>(lights[i].get())->constant);
 
-			uniform = "Lights[" + std::to_string(i) + "].linear";
+			uniform = "lights[" + std::to_string(i) + "].linear";
 			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::OmniLight*>(lights[i].get())->linear);
 
-			uniform = "Lights[" + std::to_string(i) + "].quadratic";
+			uniform = "lights[" + std::to_string(i) + "].quadratic";
 			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::OmniLight*>(lights[i].get())->quadratic);
 		}
 	}

@@ -2,16 +2,16 @@
 #version 410
 
 layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec4 aNormal;
+layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aTexCoord;
 layout(location = 3) in vec4 aTangent;
 
 //----------- Uniforms ------------//
-uniform mat4 Model;	//Need this matrix to transform the position
-uniform mat4 View;
-uniform mat4 Projection;
+uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProjection;
 //---------------------------------//
-out vec4 FragPos;
+out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoord;
 out vec3 Tangent;
@@ -19,25 +19,25 @@ out vec3 BiTangent;
 //--------------------------------//
 
 //uniform mat4 uProjectionViewModel;
-//uniform mat4 uNormal;
 //uniform mat4 uModel;
+//uniform mat3 uNormal;
 
 void main()
 {
 //	FragPos = uModel * vec4(aPosition, 1.0);
-//	Normal = Normal * aNormal.xyz;
+//	Normal = uNormal * aNormal.xyz;
 //	TexCoord = aTexCoord;
 //
-//	Tangent = Normal * aTangent.xyz;
+//	Tangent = uNormal * aTangent.xyz;
 //	BiTangent = cross(Normal, Tangent) * aTangent.w;
 //
-//	gl_Position = uProjectionViewModel * FragPos;
+//	gl_Position = uProjectionViewModel * vec4(aPosition, 1.0);
 
-	FragPos = Model * vec4(aPosition, 1.0);
-	Normal = mat3(transpose(inverse(Model))) * aNormal.xyz;
+	FragPos = vec3(uModel * vec4(aPosition, 1.0));
+	Normal = mat3(transpose(inverse(uModel))) * aNormal;
 	TexCoord = aTexCoord;
 	Tangent = Normal * aTangent.xyz;
 	BiTangent = cross(Normal, Tangent) * aTangent.w;
 
-	gl_Position = Projection * View * Model * vec4(aPosition, 1.0);
+	gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
 }

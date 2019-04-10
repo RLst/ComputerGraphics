@@ -53,8 +53,9 @@ private:
 
 	//Lights
 	typedef std::vector<unique_ptr<pkr::Light>>		Lights;
-	const size_t									m_lightCount = 10;
+	const size_t									m_lightCount = 6;
 	pkr::AmbientLight								m_ambientLight;
+	float											m_specularPower = 100;
 	Lights											m_lights;	//First light is directional (sun)
 
 	//Shaders
@@ -87,6 +88,6 @@ public:
 	void DrawAssessment();
 	void DrawCamera();
 
-	static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader, float shininess);
+	static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader);
 	static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader);
 };

@@ -220,5 +220,8 @@
     <None Include="..\shaders\comprehensive.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\shaders\multilights.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
