@@ -4,6 +4,7 @@
 #include "Game.h"
 
 #include <iostream>
+#include <string>
 
 #include "Gizmos.h"
 #include "FlyCamera.h"
@@ -28,7 +29,7 @@ bool Game::Start()
 	StartLighting();
 
 	StartPlane();			//Material and textures tutorial
-	StartFerrari();			//Direct Lighting tutorial
+	//StartFerrari();			//Direct Lighting tutorial
 	StartSoulspear();		//Advanced Texturing Tutorials
 	StartAssessment();
 
@@ -56,7 +57,7 @@ void Game::Draw()
 	DrawGridGizmo(50);
 
 	DrawPlane();
-	DrawFerrari();
+	//DrawFerrari();
 	DrawSoulspear();
 	DrawAssessment();
 
@@ -172,24 +173,41 @@ void Game::StartLighting()
 		assert(false);
 	}
 
-	//Make a scene ambient light
-	m_ambientLight = make_unique<Light>(AMBIENT);
+	////CREATE
+	//Universal ambient light (is not part of m_lights)
+	m_ambientLight = make_unique<AmbientLight>();
+	m_ambientLight->diffuse = Colour::orange() * 0.4f;
 
-	//Make some directional lights with some random settings
-	for (int i = 0; i < m_lightCount; ++i)
+	//Sun
+	m_lights.push_back(make_unique<DirectionalLight>());
+	vec3 randomDir = vec3(Random::range(-1, 1), Random::range(-1, 1), Random::range(-1, 1));
+	m_lights.back()->direction = -randomDir;
+	m_lights.back()->ambient = vec3(0.05f);
+	m_lights.back()->diffuse = Colour::orange() * 0.8f;
+	m_lights.back()->specular = vec3(0.5f);
+
+	//Point lights
+	static float constant = 1.0f;
+	static float minLinear = 0.25f, maxLinear = 0.8f;
+	static float quadFactor = 1.8f;
+	for (int i = 1; i < m_lightCount; ++i)
 	{
-		m_lights.push_back(std::make_unique<Light>(DIRECTIONAL));
-		m_lights.back()->direction = vec3(Random::range(-1.f, 1.f), Random::range(-1.f, 1.f), Random::range(-1.f, 1.f));	//Set random light directions
-		//m_lights.back()->diffuse = Colour::random();
-		//m_lights.back()->specular = Colour::shade(Random::range(0.0000001f, 1.f));
+		//Random locations around origin, random colours
+		m_lights.push_back(make_unique<OmniLight>());
+		m_lights.back()->position = vec3(Random::range(-5, 5), Random::range(0, 2), Random::range(-5, 5));
+		m_lights.back()->ambient = vec3(0.05f);
+		m_lights.back()->diffuse = Colour::random();
+		m_lights.back()->specular = vec3(1.0f);
+		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->constant = 1.0f;
+		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->linear = Random::range(minLinear, maxLinear);
+		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->quadratic = Random::range(minLinear * quadFactor, maxLinear * quadFactor);
 	}
 
-	////SET LIGHTS
-	//WET CAR LOOK
-	m_ambientLight->diffuse = glm::vec3(0.2f);
-	m_lights[0]->diffuse = glm::vec3(0.6f);
-	m_lights[0]->specular = glm::vec3(0.21f);
-	m_specularPower = 0.0001f;
+	////WET CAR LOOK
+	//m_ambientLight->diffuse = glm::vec3(0.2f);
+	//m_lights[0]->diffuse = glm::vec3(0.6f);
+	//m_lights[0]->specular = glm::vec3(0.21f);
+	//m_specularPower = 0.0001f;
 }
 void Game::StartFerrari()
 {
@@ -265,28 +283,28 @@ void Game::StartAssessment()
 		assert(false);
 	}
 
-	//Setup model
-	m_model = make_unique<aie::OBJMesh>();
-	m_model->material.specularPower;
-	m_model->transform = mat4(1);
-	if (m_model->load("./assets/soulspear.obj", true, true) == false) {
+	//Setup mesh
+	if (m_ferrari.get() != nullptr)  m_ferrari = make_unique<aie::OBJMesh>();
+	m_ferrari->material.specularPower = 256;
+	m_ferrari->transform = glm::translate(vec3(-10, 0, -10)) * glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
+	if (m_ferrari->load("./assets/LaFerrari.obj", true, true) == false) {
 		printf("Error loading mesh!\n");
 		assert(false);
 	}
 
 	//Load textures
-	if (m_model->material.diffuseTexture.load("./assets/Texture/soulspear_diffuse.tga") == false) {
+	if (m_ferrari->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga") == false) {
 		printf("Error loading diffuse texture!\n");
 		assert(false);
 	}
-	if (m_model->material.normalTexture.load("./assets/Texture/soulspear_normal.tga") == false) {
-		printf("Error loading normal texture!\n");
-		assert(false);
-	}
-	if (m_model->material.specularTexture.load("./assets/Texture/soulspear_specular.tga") == false) {
-		printf("Error loading specular texture!\n");
-		assert(false);
-	}
+	//if (m_ferrari->material.specularTexture.load("./assets/Texture/soulspear_specular.tga") == false) {
+	//	printf("Error loading specular texture!\n");
+	//	assert(false);
+	//}
+	//if (m_ferrari->material.normalTexture.load("./assets/Texture/soulspear_normal.tga") == false) {
+	//	printf("Error loading normal texture!\n");
+	//	assert(false);
+	//}
 }
 
 //UPDATES
@@ -345,7 +363,7 @@ void Game::UpdateObjects()
 void Game::UpdateLighting()
 {
 	//query time since application started
-	//float t = (float)Time::time();
+	float t = (float)Time::time() * 0.5f;
 	static float ang = 2.f;
 	if (Input::getInstance()->isKeyDown(KeyCode::LeftArrow))
 		ang += 0.01f;
@@ -387,9 +405,14 @@ void Game::UpdateLighting()
 		std::cout << "Specular: " << m_lights[0]->specular[0] << std::endl;
 	}
 
-
-	//Rotate light
+	//Move sun
 	m_lights[0]->direction = glm::normalize(vec3(glm::cos(ang * 2), glm::sin(ang * 2), 0));
+
+	//Orbit point lights around origin
+	for (int i = 1; i < m_lights.size(); ++i)
+	{
+		m_lights[i]->position = glm::normalize(vec3(glm::cos(t * 2), m_lights[i]->position.y, vec3(glm::sin(t * 2))));
+	}
 }
 
 
@@ -502,46 +525,128 @@ void Game::DrawFerrari()
 }
 void Game::DrawSoulspear()
 {
-	////Shader Bindings
+	////Shader Bindings (all in order of binding)
 	m_normalmapShader->bind();
-	m_normalmapShader->bindUniform("CameraPosition", c.camera->getPosition());
+
+	//Vertex
 	m_normalmapShader->bindUniform("ProjectionViewModel", c.camera->getProjectionView() * m_soulspear->transform);
 	m_normalmapShader->bindUniform("ModelMatrix", m_soulspear->transform);
 	m_normalmapShader->bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_soulspear->transform)));
-	m_normalmapShader->bindUniform("Ia", m_ambientLight->diffuse);
 
-
-	m_normalmapShader->bindUniform("Id", m_lights[0]->diffuse);
-	m_normalmapShader->bindUniform("Is", m_lights[0]->specular);
-
-	//Jared's code... REVIEW!
-	int lightLocation = m_shader->getUniform("lights");
-	const int numFieldsPerLight = 2;
-	for (int i = 0; i < (int)m_lights.size(); ++i)
-	{
-		auto& nextLight = m_lights[i];
-
-		int nextLightLocation = lightLocation + numFieldsPerLight * i;
-
-		m_shader->bindUniform(nextLightLocation, nextLight->diffuse);
-		m_shader->bindUniform(nextLightLocation+1, nextLight->direction);
-	}
-
-	m_normalmapShader->bindUniform("LightDirection", m_lights[0]->direction);
-	m_normalmapShader->bindUniform("SpecularPower", m_soulspear->material.specularPower);
-
-	//Bind textures
+	//Fragment
 	m_soulspear->material.diffuseTexture.bind(0);
-	m_normalmapShader->bindUniform("DiffuseTexture", 0);
 	m_soulspear->material.normalTexture.bind(1);
-	m_normalmapShader->bindUniform("NormalTexture", 1);
 	m_soulspear->material.specularTexture.bind(2);
+	m_normalmapShader->bindUniform("DiffuseTexture", 0);
+	m_normalmapShader->bindUniform("NormalTexture", 1);
 	m_normalmapShader->bindUniform("SpecularTexture", 2);
 
+	m_normalmapShader->bindUniform("CameraPosition", c.camera->getPosition());
+
+	m_normalmapShader->bindUniform("SpecularPower", m_soulspear->material.specularPower);
+
+	m_normalmapShader->bindUniform("Ia", m_ambientLight->diffuse);
+	m_normalmapShader->bindUniform("Id", m_lights[0]->diffuse);
+	m_normalmapShader->bindUniform("Is", m_lights[0]->specular);
+	m_normalmapShader->bindUniform("LightDirection", m_lights[0]->direction);
+	
 	//Draw
 	m_soulspear->draw();
 }
 void Game::DrawAssessment()
 {
-	
+	////Shader bindings
+	m_shader->bind();
+	///Vertex
+	m_shader->bindUniform("Model", m_ferrari->transform);
+	m_shader->bindUniform("View", c.camera->getView());
+	m_shader->bindUniform("Projection", c.camera->getProjection());
+	///Fragment
+	m_shader->bindUniform("ViewPos", c.camera->getPosition());
+	//Material
+	BindMaterial(m_ferrari.get(), m_shader.get(), m_specularPower);
+	//Lights
+	BindLights(m_lights, m_shader.get());
+
+	m_ferrari->draw();
 }
+
+
+static void BindMaterial(aie::OBJMesh* const mesh, aie::ShaderProgram* const shader, float shininess)
+{
+	mesh->material.diffuseTexture.bind(0);
+	mesh->material.normalTexture.bind(1);
+	mesh->material.specularTexture.bind(2);
+
+	shader->bindUniform("material.Kd", 0);
+	shader->bindUniform("material.Ks", 2);
+	shader->bindUniform("material.Kn", 1);
+	shader->bindUniform("material.shininess", shininess);
+}
+
+static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* const shader) 
+{
+	//Pass through amount of lights
+	shader->bindUniform("NumOfLights", (int)lights.size());
+
+	std::string input;
+	//Pass through lights
+	for (int i = 0; i < lights.size(); ++i)
+	{
+		//Common
+		input = "Lights[" + std::to_string(i) + "].type";
+		shader->bindUniform(input.c_str(), lights[i]->type);
+
+		input = "Lights[" + std::to_string(i) + "].position";
+		shader->bindUniform(input.c_str(), lights[i]->position);
+
+		input = "Lights[" + std::to_string(i) + "].direction";
+		shader->bindUniform(input.c_str(), lights[i]->direction);
+
+		input = "Lights[" + std::to_string(i) + "].Ia";
+		shader->bindUniform(input.c_str(), lights[i]->ambient);
+
+		input = "Lights[" + std::to_string(i) + "].Id";
+		shader->bindUniform(input.c_str(), lights[i]->diffuse);
+
+		input = "Lights[" + std::to_string(i) + "].Is";
+		shader->bindUniform(input.c_str(), lights[i]->specular);
+
+		switch (lights[i]->type)
+		{
+		case pkr::eLightType::SPOT:
+			input = "Lights[" + std::to_string(i) + "].cutOff";
+			shader->bindUniform(input.c_str(), dynamic_cast<pkr::SpotLight*>(lights[i].get())->cutOff);
+
+			input = "Lights[" + std::to_string(i) + "].outerCutOff";
+			shader->bindUniform(input.c_str(), dynamic_cast<pkr::SpotLight*>(lights[i].get())->outerCutOff);
+
+		case pkr::eLightType::OMNI:
+			input = "Lights[" + std::to_string(i) + "].constant";
+			shader->bindUniform(input.c_str(), dynamic_cast<pkr::OmniLight*>(lights[i].get())->constant);
+
+			input = "Lights[" + std::to_string(i) + "].linear";
+			shader->bindUniform(input.c_str(), dynamic_cast<pkr::OmniLight*>(lights[i].get())->linear);
+
+			input = "Lights[" + std::to_string(i) + "].quadratic";
+			shader->bindUniform(input.c_str(), dynamic_cast<pkr::OmniLight*>(lights[i].get())->quadratic);
+			break;
+		}
+	}
+}
+
+
+////Jared's code... REVIEW!
+//int lightLocation = m_shader->getUniform("lights");
+//const int numFieldsPerLight = 2;
+//for (int i = 0; i < (int)m_lights.size(); ++i)
+//{
+//	auto& nextLight = m_lights[i];
+
+//	int nextLightLocation = lightLocation + numFieldsPerLight * i;
+
+//	m_shader->bindUniform(nextLightLocation, nextLight->diffuse);
+//	m_shader->bindUniform(nextLightLocation+1, nextLight->direction);
+
+//	lights[i]->bindUniform(const aie::ShaderProgram& shaderProgram);
+//}

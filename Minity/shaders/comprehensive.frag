@@ -1,64 +1,113 @@
 //Comprehensive shader with all combined capabilities based on the phong shader
 #version 410
-
-in vec4 vPosition;
-in vec3 vNormal;
-in vec2 vTexCoord;
-in vec3 vTangent;
-in vec3 vBiTangent;
-
-//Texture
-uniform sampler2D DiffuseTexture;
-uniform sampler2D SpecularTexture;
-uniform sampler2D NormalTexture;
-
-//Camera
-uniform vec3 CameraPosition;
-
-//Lights
-const unsigned int NUM_OF_LIGHTS = 32;
-struct Light {
-	vec3 Diffuse;
-	vec3 Direction;
-};
-uniform Light Lights[NUM_OF_LIGHTS];
-
-uniform vec3 Ia;    //Ambient
-uniform vec3 Id;    //Diffuse
-uniform vec3 Is;    //Specular
-//uniform vec3 LightDirection;
+out vec4 FragColour;
 
 //Material
-uniform vec3 Ka;	//Ambient
-uniform vec3 Kd;	//Diffuse
-uniform vec3 Ks;	//Specular
-uniform float SpecularPower;
+struct Material {
+	sampler2D Kd;	//diffuse
+	sampler2D Ks;	//specular
+	sampler2D Kn;	//normal
+	float shininess;	//aka specular power
+};
 
-out vec4 FragColour;
+//Lights
+const uint MAX_LIGHTS = 16;
+const uint DIRECTIONAL = 0;
+const uint OMNI = 1;
+const uint SPOT = 2;
+//#define MAX_LIGHTS 16
+struct Light {		//light 
+	//Common
+	uint type;
+	vec3 position;
+	vec3 direction;
+	vec3 Ia;	//ambient
+	vec3 Id;	//diffuse
+	vec3 Is;	//specular
+
+	//Point
+	float constant;
+	float linear;
+	float quadratic;
+
+	//Spot
+	float cutOff;
+	float outerCutOff;
+};
+
+//Inputs
+in vec3 FragPos;
+in vec3 Normal;
+in vec2 TexCoord;
+in vec3 Tangent;
+in vec3 BiTangent;
+
+//-------------- Uniforms ------------//
+uniform vec3 ViewPos;	//camera position
+uniform Material material;
+uniform uint NumOfLights;
+uniform Light Lights[MAX_LIGHTS];
+//------------------------------------//
+
+//Function prototypes
+vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
-    //Ensure normal and light direction are normalised
-    vec3 N = normalize(vNormal);
-    vec3 L = normalize(LightDirection);
+	//Ensure inputs are normalized
+	vec3 N = normalize(Normal);
+	vec3 T = normalize(Tangent);
+	vec3 B = normalize(BiTangent);
+	mat3 TBN = mat3(T, B, N);
 
-	vec3 texDiffuse = texture(DiffuseTexture, vTexCoord).rgb;
+	vec3 viewDir = normalize(ViewPos - FragPos);
 
-    //Calculate lambert term (negate light direction)
-    float lambertTerm = max(0, min(1, dot(N, -L)));
+	vec3 result = vec3(0);
+	
+	//Apply lighting from ALL lights of many types
+	for (int i = 0; i < NumOfLights; ++i)
+	{
+		result += CalcLight(Lights[i], N, FragPos, viewDir);
+	}
+	
+	FragColour = vec4(result, 1.0);
+}
 
-	//Calculate view vector and reflection vector
-	vec3 V = normalize(CameraPosition - vPosition.xyz);
-	vec3 R = reflect(L, N);
+//----- Functions Definitions -----
+//Calculates the color based on light type 
+vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+	vec3 lightDir;
+	float attenuation = 1.0;	//Default to 1 so that it won't affect Directional Lights
+	float intensity = 1.0;		//Default to 1 so that it won't affect Directional or Point lights
 
-	//Caulcate the specular term
-	float specularTerm = pow(max(0, dot(R, V)), SpecularPower);
+	////Common
+	lightDir = light.type == DIRECTIONAL ? normalize(-light.direction) : normalize(light.position - fragPos);
+	//Diffuse
+	float diffuseTerm = max(dot(normal, lightDir), 0.0);	//The diffuse is brighter if the light is more aligned toward's the surface's normal. If it's on the backside of the surface, nothing (0.0) will be shown
+	//Specular
+	vec3 reflectDir = reflect(-lightDir, normal);
+	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    //Calculate diffuse
-	vec3 ambient = Ia * Ka;
-	vec3 diffuse = Id * Kd * texDiffuse * lambertTerm;
-	vec3 specular = Is * Ks * specularTerm;
+	switch (light.type)
+	{
+	case SPOT:
+		float theta = dot(lightDir, normalize(-light.direction));
+		float epsilon = light.cutOff - light.outerCutOff;
+		intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+		//continue on to also calculate attentuation...
+	case OMNI:
+		float distance = length(light.position - fragPos);
+		attenuation = 1.0 / (light.constant + light.linear*distance + light.quadratic*(distance*distance));
+		break;
+	}
 
-    //Final output
-    FragColour = vec4(ambient + diffuse + specular, 1);
+	//Resultant
+	vec3 ambient = light.Ia * vec3(texture(material.Kd, TexCoord));
+	vec3 diffuse = light.Id * diffuseTerm * vec3(texture(material.Kd, TexCoord));
+	vec3 specular = light.Is * specularTerm * vec3(texture(material.Ks, TexCoord));
+	ambient *= attenuation * intensity;
+	diffuse *= attenuation * intensity;
+	specular *= attenuation * intensity;
+	return (ambient + diffuse + specular);
 }

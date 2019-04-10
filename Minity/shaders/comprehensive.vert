@@ -2,27 +2,28 @@
 #version 410
 
 layout(location = 0) in vec4 aPosition;
-layout(location = 1) in vec4 aNormal;
+layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aTexCoord;
 layout(location = 3) in vec4 aTangent;
 
-uniform mat4 Projection;
-uniform mat4 View;
-uniform mat4 Model;	//Need this matrix to transform the position
-uniform mat3 Normal;	//Need this matrix to tranform the normal
+out vec4 FragPos;
+out vec3 Normal;
+out vec2 TexCoord;
+out vec3 Tangent;
+out vec3 BiTangent;
 
-out vec4 vPosition;
-out vec3 vNormal;
-out vec2 vTexCoord;
-out vec3 vTangent;
-out vec3 vBiTangent;
+uniform mat4 Model;	//Need this matrix to transform the position
+uniform mat4 View;
+uniform mat4 Projection;
+	//Calculate the Normal by inverse transposing Model
 
 void main()
 {
-	vPosition = Model * aPosition;
-	vNormal = Normal * aNormal.xyz;
-	vTexCoord = aTexCoord;
-	vTangent = Normal * aTangent.xyz;
-	vBiTangent = cross(vNormal, vTangent) * aTangent.w;
-	gl_Position = Projection * View * vPosition;
+	FragPos = Model * aPosition;
+	Normal = mat3(transpose(inverse(Model))) * aNormal;
+	TexCoord = aTexCoord;
+	Tangent = Normal * aTangent.xyz;
+	BiTangent = cross(Normal, Tangent) * aTangent.w;
+
+	gl_Position = Projection * View * FragPos;
 }

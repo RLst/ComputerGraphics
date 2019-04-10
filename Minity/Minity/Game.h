@@ -103,11 +103,13 @@ private:
 	unique_ptr<aie::OBJMesh>						m_ferrari;
 	unique_ptr<aie::OBJMesh>						m_soulspear;
 
+	//Material
+
 	//Lights
-	const size_t									m_lightCount = 32;
-	unique_ptr<pkr::Light>							m_ambientLight;
+	const size_t									m_lightCount = 8;
+	unique_ptr<pkr::AmbientLight>					m_ambientLight;
 	typedef std::vector<unique_ptr<pkr::Light>>		Lights;
-	Lights											m_lights;
+	Lights											m_lights;	//First light is directional (sun)
 
 	//Direct lighting Tutorial
 	aie::ShaderProgram								m_phongShader;
@@ -116,7 +118,7 @@ private:
 	unique_ptr<aie::ShaderProgram>					m_normalmapShader;
 
 	//Multi-lights
-	unique_ptr<aie::OBJMesh>						m_model;
+	//unique_ptr<aie::OBJMesh>						m_ferrari;
 	float											m_specularPower;
 	unique_ptr<aie::ShaderProgram>					m_shader;	//Multi-light textured shader for assessment
 
@@ -152,3 +154,5 @@ public:
 	void DrawCamera();
 };
 
+static void BindMaterial(aie::OBJMesh* const mesh, aie::ShaderProgram* const shader, float shininess);
+static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* const shader);
