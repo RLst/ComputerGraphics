@@ -27,9 +27,9 @@ bool Game::Start()
 	StartLighting();
 
 	StartPlane();			//Material and textures tutorial
-	//StartFerrari();			//Direct Lighting tutorial
+	StartFerrari();			//Direct Lighting tutorial
 	//StartSoulspear();		//Advanced Texturing Tutorials
-	StartAssessment();
+	//StartAssessment();
 
 	StartCamera();
 	return true;
@@ -48,9 +48,9 @@ void Game::Draw()
 	DrawGridGizmo(50);
 
 	DrawPlane();
-	//DrawFerrari();
+	DrawFerrari();
 	//DrawSoulspear();
-	DrawAssessment();
+	//DrawAssessment();
 
 	DrawCamera();
 }
@@ -209,7 +209,8 @@ void Game::StartAssessment()
 	
 	m_model->transform = mat4(1) * glm::translate(vec3(0, 0, 0)) * glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
 	
-	if (m_model->load("./assets/LaFerrari.obj", true, false) == false) {
+	//Load mesh
+	if (m_model->load("./assets/LaFerrari.obj") == false) {
 		printf("Error loading mesh!\n");
 		assert(false);
 	}
@@ -418,8 +419,6 @@ void Game::DrawAssessment()
 
 	//Material
 	BindMaterial(m_model.get(), m_shader.get());
-	m_shader->bindUniform("Ks", m_lights[0]->specular);
-	m_shader->bindUniform("Kd", m_lights[0]->diffuse);
 
 	//Lights
 	BindLights(m_lights, m_shader.get());

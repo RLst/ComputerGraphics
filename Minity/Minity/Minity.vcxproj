@@ -237,8 +237,6 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\shaders\cartoon.frag" />
-    <None Include="..\shaders\cartoon.vert" />
     <None Include="..\shaders\comprehensive.frag" />
     <None Include="..\shaders\comprehensive.vert" />
     <None Include="..\shaders\flat.frag" />
