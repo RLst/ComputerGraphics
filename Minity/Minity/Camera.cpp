@@ -41,7 +41,6 @@ namespace pkr
 
 	const mat4 Camera::getView() const
 	{
-		//return glm::inverse(m_world);
 		return m_view;
 	}
 	void Camera::setLookAt(const vec3 & lookAt, const vec3& up)
