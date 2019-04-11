@@ -9,8 +9,8 @@
 #include "gl_core_4_4.h"
 #include "GLFW/glfw3.h"
 
-	#include <iostream>
 #ifdef _DEBUG
+	#include <iostream>
 #endif
 
 namespace pkr {
@@ -70,7 +70,9 @@ namespace pkr {
 
 	void glfwErrorCallback(int code, const char* msg)
 	{
+#ifdef _DEBUG
 		std::cout << "GLFW Error " << code << ": " << msg << std::endl;
+#endif
 	}
 
 	int App::CoreInit()

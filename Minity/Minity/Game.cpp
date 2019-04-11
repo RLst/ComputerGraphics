@@ -1,4 +1,4 @@
-//Tony Le
+ //Tony Le
 //21 Mar 2019
 
 #include "Game.h"
@@ -18,6 +18,8 @@
 #include "glm/gtx/transform.hpp"
 
 using namespace pkr;
+
+float Game::m_specularPower = 2;
 
 /////////// MAIN LOOP //////////////
 bool Game::Start()
@@ -88,15 +90,15 @@ void Game::StartLighting()
 
 	////CREATE
 	//Universal ambient light (is not part of m_lights)
-	m_ambientLight.diffuse = Colour::white() * 1.f;
+	m_ambientLight.diffuse = Colour::white() * 0.9f;
 
 	//Sun
 	m_lights.push_back(make_unique<DirectionalLight>());
 	vec3 randomDir = vec3(Random::range(-1, 1), Random::range(-1, 1), Random::range(-1, 1));
-	m_lights.back()->direction = -randomDir;
-	m_lights.back()->ambient = vec3(0.05f);
-	m_lights.back()->diffuse = Colour::shade(0.9f);
-	m_lights.back()->specular = vec3(0.5f);
+	m_lights[0]->direction = -randomDir;
+	m_lights[0]->ambient = vec3(0.5f);
+	m_lights[0]->diffuse = Colour::shade(0.9f);
+	m_lights[0]->specular = vec3(0.5f);
 
 	//Point lights
 	static float constant = 1.0f;
@@ -106,12 +108,13 @@ void Game::StartLighting()
 	{
 		//Random locations around origin, random colours
 		m_lights.push_back(make_unique<OmniLight>());
-		m_lights.back()->position = vec3(Random::range(-5, 5), Random::range(0, 2), Random::range(-5, 5));
+		static float lDist = 10;
+		m_lights.back()->position = vec3(Random::range(-lDist, lDist), Random::range(0, 2), Random::range(-lDist, lDist));
 		m_lights.back()->direction = vec3(0);	//Filler
 		m_lights.back()->ambient = vec3(0.05f);
 		m_lights.back()->diffuse = Colour::random();
 		m_lights.back()->specular = vec3(1.0f);
-		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->constant = 1.0f;
+		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->constant = 1.0f;	//Always 1
 		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->linear = Random::range(minLinear, maxLinear);
 		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->quadratic = Random::range(minLinear * quadFactor, maxLinear * quadFactor);
 	}
@@ -202,9 +205,9 @@ void Game::StartAssessment()
 	m_model->material.ambient = vec3(0.1f);
 	m_model->material.diffuse = vec3(0.9f);
 	m_model->material.specular = vec3(0.5f);
-	m_model->material.specularPower = 8.0f;
+	m_model->material.specularPower = 1.0f;
 	
-	m_model->transform = mat4(1) * glm::translate(vec3(10, 0, 0)) * glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
+	m_model->transform = mat4(1) * glm::translate(vec3(0, 0, 0)) * glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
 	
 	if (m_model->load("./assets/LaFerrari.obj", true, false) == false) {
 		printf("Error loading mesh!\n");
@@ -402,30 +405,15 @@ void Game::DrawAssessment()
 	m_shader->bindUniform("uModel", m_model->transform);
 	m_shader->bindUniform("uView", c.camera->getView());
 	m_shader->bindUniform("uProjection", c.camera->getProjection());
-	//m_shader->bindUniform("uProjectionViewModel", c.camera->getProjectionView() * m_model->transform);
-	//m_shader->bindUniform("uModel", m_model->transform);
-	//m_shader->bindUniform("uNormal", glm::inverseTranspose(glm::mat3(m_model->transform)));
 	///Fragment
 	m_shader->bindUniform("ViewPos", c.camera->getPosition());
 
 	//Material
 	BindMaterial(m_model.get(), m_shader.get());
-
-	m_shader->bindUniform("Ka", m_ambientLight.diffuse);
-	m_shader->bindUniform("Kd", m_model->material.diffuse);
-	m_shader->bindUniform("Ks", m_model->material.specular);
-	m_shader->bindUniform("specularPower", m_specularPower);
+	m_shader->bindUniform("Ks", m_lights[0]->specular);
+	m_shader->bindUniform("Kd", m_lights[0]->diffuse);
 
 	//Lights
-	//Pass through amount of lights
-	//m_shader->bindUniform("NumOfLights", 1);
-	//m_shader->bindUniform("lights[0].type", m_lights[0]->type);
-	//m_shader->bindUniform("lights[0].position", m_lights[0]->position);
-	//m_shader->bindUniform("lights[0].direction", m_lights[0]->direction);
-	//m_shader->bindUniform("lights[0].Ia", m_lights[0]->ambient);
-	//m_shader->bindUniform("lights[0].Id", m_lights[0]->diffuse);
-	//m_shader->bindUniform("lights[0].Is", m_lights[0]->specular);
-
 	BindLights(m_lights, m_shader.get());
 
 	m_model->draw();
@@ -439,14 +427,14 @@ void Game::DrawCamera()
 void Game::BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
 {
 	mesh->material.diffuseTexture.bind(0);
-	//mesh->material.normalTexture.bind(1);
+	mesh->material.normalTexture.bind(1);
 	mesh->material.specularTexture.bind(2);
 
-	//shader->bindUniform("Ka", mesh->material.ambient);
+	shader->bindUniform("Ka", mesh->material.ambient);
 	shader->bindUniform("material.diffuse", 0);
-	//shader->bindUniform("material.normal", 1);
+	shader->bindUniform("material.normal", 1);
 	shader->bindUniform("material.specular", 2);
-	shader->bindUniform("material.shininess", 32);	//TEST
+	shader->bindUniform("material.shininess", m_specularPower);	//TEST
 }
 
 void Game::BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader) 

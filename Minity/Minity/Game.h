@@ -38,8 +38,7 @@ private:
 		vec3 lookAt = vec3(0, 1, 2.5);
 		float speed = 30.0f;
 		//float smoothing = 0.25f;
-		float fov = 45.f;
-		//float fov = 25.f;
+		float fov = 25.f;
 		float aspect = 16 / 9.f;
 		float near = 0.1f;
 		float far = 1000.f;
@@ -53,9 +52,9 @@ private:
 
 	//Lights
 	typedef std::vector<unique_ptr<pkr::Light>>		Lights;
-	const size_t									m_lightCount = 6;
+	const size_t									m_lightCount = 10;
 	pkr::AmbientLight								m_ambientLight;
-	float											m_specularPower = 100;
+	static float									m_specularPower;
 	Lights											m_lights;	//First light is directional (sun)
 
 	//Shaders

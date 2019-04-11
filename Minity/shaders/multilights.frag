@@ -45,7 +45,7 @@ in vec3 BiTangent;
 //-------------- Uniforms ------------//
 uniform vec3 ViewPos;	//camera position
 
-//uniform Material material;
+uniform Material material;
 
 uniform vec3 Ka;
 uniform vec3 Kd;
@@ -93,8 +93,8 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	float diffuseTerm = max(dot(normal, lightDir), 0.0);	//The diffuse is brighter if the light is more aligned toward's the surface's normal. If it's on the backside of the surface, nothing (0.0) will be shown
 	//Specular
 	vec3 reflectDir = reflect(-lightDir, normal);
-	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), specularPower);
-//	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+//	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), specularPower);
+	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
 	float lambertTerm = max(0, min(1, dot(normal, -lightDir)));
 
@@ -112,12 +112,12 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	}
 
 	//Resultant
-	vec3 ambient = light.Ia * Ka;
-	vec3 diffuse = light.Id * diffuseTerm * Kd * lambertTerm;
-	vec3 specular = light.Is * specularTerm * Ks;	
-//	vec3 ambient = light.Ia * texture(material.diffuse, TexCoord).xyz;
-//	vec3 diffuse = light.Id * diffuseTerm * texture(material.diffuse, TexCoord).xyz * lambertTerm;
-//	vec3 specular = light.Is * specularTerm * texture(material.specular, TexCoord).xyz;
+	vec3 ambient = light.Ia * Ka * texture(material.diffuse, TexCoord).xyz;
+	vec3 diffuse = light.Id * Kd * diffuseTerm * texture(material.diffuse, TexCoord).xyz * lambertTerm;
+	vec3 specular = light.Is * Ks * specularTerm * texture(material.specular, TexCoord).xyz;
+//	vec3 ambient = light.Ia * Ka;
+//	vec3 diffuse = light.Id * diffuseTerm * Kd * lambertTerm;
+//	vec3 specular = light.Is * specularTerm * Ks;	
 	ambient *= attenuation * intensity;
 	diffuse *= attenuation * intensity;
 	specular *= attenuation * intensity;
