@@ -52,7 +52,7 @@ namespace pkr
 
 	const mat4 Camera::getProjection() const
 	{
-		return mat4();
+		return m_projection;
 	}
 	void Camera::setProjection(float fovAngDeg, float aspectRatio, float near, float far)
 	{

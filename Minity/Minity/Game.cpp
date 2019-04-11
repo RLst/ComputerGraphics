@@ -204,7 +204,7 @@ void Game::StartAssessment()
 	m_model->material.specular = vec3(0.5f);
 	m_model->material.specularPower = 8.0f;
 	
-	m_model->transform = mat4(1) * glm::translate(vec3(100, 0, 0)) * glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
+	m_model->transform = mat4(1) * glm::translate(vec3(10, 0, 0)) * glm::rotate(-glm::pi<float>() * 0.5f, vec3(1, 0, 0)) * glm::scale(vec3(0.1f));
 	
 	if (m_model->load("./assets/LaFerrari.obj", true, false) == false) {
 		printf("Error loading mesh!\n");
@@ -418,15 +418,15 @@ void Game::DrawAssessment()
 
 	//Lights
 	//Pass through amount of lights
-	m_shader->bindUniform("NumOfLights", 1);
-	m_shader->bindUniform("lights[0].type", m_lights[0]->type);
-	m_shader->bindUniform("lights[0].position", m_lights[0]->position);
-	m_shader->bindUniform("lights[0].direction", m_lights[0]->direction);
-	m_shader->bindUniform("lights[0].Ia", m_lights[0]->ambient);
-	m_shader->bindUniform("lights[0].Id", m_lights[0]->diffuse);
-	m_shader->bindUniform("lights[0].Is", m_lights[0]->specular);
+	//m_shader->bindUniform("NumOfLights", 1);
+	//m_shader->bindUniform("lights[0].type", m_lights[0]->type);
+	//m_shader->bindUniform("lights[0].position", m_lights[0]->position);
+	//m_shader->bindUniform("lights[0].direction", m_lights[0]->direction);
+	//m_shader->bindUniform("lights[0].Ia", m_lights[0]->ambient);
+	//m_shader->bindUniform("lights[0].Id", m_lights[0]->diffuse);
+	//m_shader->bindUniform("lights[0].Is", m_lights[0]->specular);
 
-	//BindLights(m_lights, m_shader.get());
+	BindLights(m_lights, m_shader.get());
 
 	m_model->draw();
 }

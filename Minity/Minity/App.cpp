@@ -9,8 +9,8 @@
 #include "gl_core_4_4.h"
 #include "GLFW/glfw3.h"
 
-#ifdef _DEBUG
 	#include <iostream>
+#ifdef _DEBUG
 #endif
 
 namespace pkr {
@@ -68,6 +68,11 @@ namespace pkr {
 		return 0;
 	}
 
+	void glfwErrorCallback(int code, const char* msg)
+	{
+		std::cout << "GLFW Error " << code << ": " << msg << std::endl;
+	}
+
 	int App::CoreInit()
 	{
 		////Pre
@@ -77,10 +82,18 @@ namespace pkr {
 		//Initialise GLFW
 		if (glfwInit() == GLFW_FALSE)
 			return -1;
+
+		glfwSetErrorCallback(glfwErrorCallback);
+
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 		//Create window
 		m_window = glfwCreateWindow(m_scrnWidth, m_scrnHeight, m_appTitle, (m_isFullscreen ? glfwGetPrimaryMonitor() : nullptr), nullptr);
 		if (m_window == nullptr)
 		{
+			
 			glfwTerminate();
 			return -2;
 		}

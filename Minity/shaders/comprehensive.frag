@@ -13,9 +13,9 @@ struct Material {
 
 //Lights
 const uint MAX_LIGHTS = 4;
-const uint DIRECTIONAL = 0;
-const uint OMNI = 1;
-const uint SPOT = 2;
+const int DIRECTIONAL = 0;
+const int OMNI = 1;
+const int SPOT = 2;
 //#define MAX_LIGHTS 16
 struct Light {		//light 
 	//Common

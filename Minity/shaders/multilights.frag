@@ -14,9 +14,9 @@ struct Material {
 //Lights
 const uint MAX_LIGHTS = 16;
 //enums
-const uint DIRECTIONAL = 0;
-const uint OMNI = 1;
-const uint SPOT = 2;
+const int DIRECTIONAL = 0;
+const int OMNI = 1;
+const int SPOT = 2;
 struct Light {		//light 
 	//Common
 	int type;
@@ -69,7 +69,7 @@ void main()
 
 	vec3 viewDir = normalize(ViewPos - FragPos.xyz);
 
-	vec3 result = vec3(1);
+	vec3 result = vec3(0);
 	
 	//Apply lighting from ALL lights of many types
 	for (int i = 0; i < NumOfLights; ++i)
