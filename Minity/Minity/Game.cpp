@@ -108,10 +108,10 @@ void Game::StartLighting()
 	{
 		//Random locations around origin, random colours
 		m_lights.push_back(make_unique<OmniLight>());
-		static float lDist = 10;
+		static float lDist = 20;
 		m_lights.back()->position = vec3(Random::range(-lDist, lDist), Random::range(0, 2), Random::range(-lDist, lDist));
 		m_lights.back()->direction = vec3(0);	//Filler
-		m_lights.back()->ambient = vec3(0.05f);
+		m_lights.back()->ambient = vec3(0.9f);
 		m_lights.back()->diffuse = Colour::random();
 		m_lights.back()->specular = vec3(1.0f);
 		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->constant = 1.0f;	//Always 1
@@ -215,18 +215,18 @@ void Game::StartAssessment()
 	}
 
 	//Load textures
-	if (m_model->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga") == false) {
-		printf("Error loading diffuse texture!\n");
-		assert(false);
-	}
-	if (m_model->material.specularTexture.load("./assets/Texture/soulspear_specular.tga") == false) {
-		printf("Error loading specular texture!\n");
-		assert(false);
-	}
-	if (m_model->material.normalTexture.load("./assets/Texture/soulspear_normal.tga") == false) {
-		printf("Error loading normal texture!\n");
-		assert(false);
-	}
+	//if (m_model->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga") == false) {
+	//	printf("Error loading diffuse texture!\n");
+	//	assert(false);
+	//}
+	//if (m_model->material.specularTexture.load("./assets/Texture/soulspear_specular.tga") == false) {
+	//	printf("Error loading specular texture!\n");
+	//	assert(false);
+	//}
+	//if (m_model->material.normalTexture.load("./assets/Texture/soulspear_normal.tga") == false) {
+	//	printf("Error loading normal texture!\n");
+	//	assert(false);
+	//}
 }
 void Game::StartCamera()
 {
@@ -262,12 +262,12 @@ void Game::UpdateLighting()
 	//Ambient
 	if (Input::getInstance()->isKeyDown(KeyCode::T))
 	{
-		m_ambientLight.diffuse += 0.01f;
+		m_lights[0]->ambient += 0.01f;
 		std::cout << "Ambient: " << m_ambientLight.diffuse[0] << std::endl;
 	}
 	if (Input::getInstance()->isKeyDown(KeyCode::G))
 	{
-		m_ambientLight.diffuse -= 0.01f;
+		m_lights[0]->ambient -= 0.01f;
 		std::cout << "Ambient: " << m_ambientLight.diffuse[0] << std::endl;
 	}
 	//Diffuse
@@ -297,10 +297,11 @@ void Game::UpdateLighting()
 	m_lights[0]->direction = glm::normalize(vec3(glm::cos(ang * 2), glm::sin(ang * 2), 0));
 
 	//Orbit point lights around origin
-	for (int i = 1; i < m_lights.size(); ++i)
-	{
-		m_lights[i]->position = glm::normalize(vec3(glm::cos(t * 2), m_lights[i]->position.y, glm::sin(t * 2)));
-	}
+	//static float lightDist = 15;
+	//for (int i = 1; i < m_lights.size(); ++i)
+	//{
+	//	m_lights[i]->position = glm::normalize(vec3(glm::cos(t * 2) * lightDist, m_lights[i]->position.y, glm::sin(t * 2) * lightDist));
+	//}
 }
 void Game::UpdateCamera()
 {
@@ -322,6 +323,13 @@ void Game::DrawGridGizmo(int size)
 	{
 		aie::Gizmos::addLine(vec3(-halfsize + i, 0, halfsize), vec3(-halfsize + i, 0, -halfsize), i == halfsize ? pkr::Colour::shade(0.85f) : pkr::Colour::shade(0.15f));
 		aie::Gizmos::addLine(vec3(halfsize, 0, -halfsize + i), vec3(-halfsize, 0, -halfsize + i), i == halfsize ? pkr::Colour::shade(0.85f) : pkr::Colour::shade(0.15f));
+	}
+}
+void Game::DrawLighting()
+{
+	for (int i = 0; i < m_lights.size(); i++)
+	{
+
 	}
 }
 void Game::DrawPlane()

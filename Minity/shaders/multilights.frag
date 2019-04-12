@@ -112,12 +112,13 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	}
 
 	//Resultant
-	vec3 ambient = light.Ia * Ka * texture(material.diffuse, TexCoord).xyz;
-	vec3 diffuse = light.Id * Kd * diffuseTerm * texture(material.diffuse, TexCoord).xyz * lambertTerm;
-	vec3 specular = light.Is * Ks * specularTerm * texture(material.specular, TexCoord).xyz;
-//	vec3 ambient = light.Ia * Ka;
-//	vec3 diffuse = light.Id * diffuseTerm * Kd * lambertTerm;
-//	vec3 specular = light.Is * specularTerm * Ks;	
+//	vec3 ambient = light.Ia * Ka * texture(material.diffuse, TexCoord).xyz;
+//	vec3 diffuse = light.Id * Kd * diffuseTerm * texture(material.diffuse, TexCoord).xyz * lambertTerm;
+//	vec3 specular = light.Is * Ks * specularTerm * texture(material.specular, TexCoord).xyz;
+	vec3 ambient = light.Ia * Ka;
+	vec3 diffuse = light.Id * diffuseTerm * Kd * lambertTerm;
+	vec3 specular = light.Is * specularTerm * Ks;	
+
 	ambient *= attenuation * intensity;
 	diffuse *= attenuation * intensity;
 	specular *= attenuation * intensity;

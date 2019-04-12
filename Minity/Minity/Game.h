@@ -80,6 +80,7 @@ public:
 	void UpdateLighting();
 	void UpdateCamera();
 
+	void DrawLighting();
 	void DrawGridGizmo(int size);
 	void DrawPlane();
 	void DrawFerrari();
