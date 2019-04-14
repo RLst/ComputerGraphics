@@ -59,8 +59,8 @@ private:
 	const size_t									m_spotLightCount = 5;
 
 	//Shaders
-	aie::ShaderProgram								m_planeShader;
-	aie::ShaderProgram								m_phongShader;
+	unique_ptr<aie::ShaderProgram>					m_planeShader;
+	unique_ptr<aie::ShaderProgram>					m_phongShader;
 	unique_ptr<aie::ShaderProgram>					m_normalmapShader;
 	unique_ptr<aie::ShaderProgram>					m_shader;	//Multi-light textured shader for assessment
 

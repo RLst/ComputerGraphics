@@ -380,11 +380,12 @@ void Game::StartCamera()
 void Game::StartPlane()
 {
 	//Setup shader
-	m_planeShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/textured.vert");
-	m_planeShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/textured.frag");
-	if (m_planeShader.link() == false)
+	m_planeShader = make_unique<aie::ShaderProgram>();
+	m_planeShader->loadShader(aie::eShaderStage::VERTEX, "./shaders/textured.vert");
+	m_planeShader->loadShader(aie::eShaderStage::FRAGMENT, "./shaders/textured.frag");
+	if (m_planeShader->link() == false)
 	{
-		printf("Shader Linking Error: %s\n", m_planeShader.getLastError());
+		printf("Shader Linking Error: %s\n", m_planeShader->getLastError());
 		assert(false);
 	}
 
@@ -402,11 +403,12 @@ void Game::StartPlane()
 void Game::StartFerrari()
 {
 	//Load shader
-	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
-	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
-	if (m_phongShader.link() == false)
+	m_phongShader = make_unique<aie::ShaderProgram>();
+	m_phongShader->loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
+	m_phongShader->loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
+	if (m_phongShader->link() == false)
 	{
-		printf("Shader Error: %s\n", m_phongShader.getLastError());
+		printf("Shader Error: %s\n", m_phongShader->getLastError());
 		assert(false);
 	}
 
@@ -479,12 +481,12 @@ void Game::DrawCamera()
 void Game::DrawPlane()
 {
 	//Shader Bindings
-	m_planeShader.bind();
-	m_planeShader.bindUniform("ProjectionViewModel", c.camera->getProjectionView() * m_plane->transform);
+	m_planeShader->bind();
+	m_planeShader->bindUniform("ProjectionViewModel", c.camera->getProjectionView() * m_plane->transform);
 
 	static float intensity = 0.4f;
-	m_planeShader.bindUniform("Intensity", intensity);
-	m_planeShader.bindUniform("DiffuseTexture", 0);
+	m_planeShader->bindUniform("Intensity", intensity);
+	m_planeShader->bindUniform("DiffuseTexture", 0);
 	m_plane->texture.bind(0);
 	//Draw plane
 	m_plane->draw();
@@ -493,28 +495,28 @@ void Game::DrawPlane()
 void Game::DrawFerrari()
 {
 	//bind shader	
-	m_phongShader.bind();
+	m_phongShader->bind();
 
 	//bind transform
-	m_phongShader.bindUniform("uProjectionViewModel", c.camera->getProjectionView() * m_ferrari->transform);
+	m_phongShader->bindUniform("uProjectionViewModel", c.camera->getProjectionView() * m_ferrari->transform);
 
 	//bind model matrix
-	m_phongShader.bindUniform("uModel", m_ferrari->transform);
+	m_phongShader->bindUniform("uModel", m_ferrari->transform);
 
 
 	//bind transform for lighting
-	m_phongShader.bindUniform("uNormal", glm::inverseTranspose(glm::mat3(m_ferrari->transform)));
+	m_phongShader->bindUniform("uNormal", glm::inverseTranspose(glm::mat3(m_ferrari->transform)));
 
 	//bind camera positions
-	m_phongShader.bindUniform("ViewPos", c.camera->getPosition());
+	m_phongShader->bindUniform("ViewPos", c.camera->getPosition());
 
 	//bind Light
-	m_phongShader.bindUniform("Ia", m_lights[0]->ambient);
-	m_phongShader.bindUniform("Id", m_lights[0]->diffuse);
-	m_phongShader.bindUniform("Is", m_lights[0]->specular);
-	m_phongShader.bindUniform("LightDirection", m_lights[0]->direction);
+	m_phongShader->bindUniform("Ia", m_lights[0]->ambient);
+	m_phongShader->bindUniform("Id", m_lights[0]->diffuse);
+	m_phongShader->bindUniform("Is", m_lights[0]->specular);
+	m_phongShader->bindUniform("LightDirection", m_lights[0]->direction);
 
-	m_phongShader.bindUniform("specularPower", m_ferrari->material.specularPower);
+	m_phongShader->bindUniform("specularPower", m_ferrari->material.specularPower);
 
 	//draw object
 	m_ferrari->draw();
