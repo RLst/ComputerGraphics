@@ -167,44 +167,42 @@ class Input
 public:
 
 	// returns access to the singleton instance
-	static Input* getInstance() { return m_instance;  }
-
-	//Like Unity
-	bool GetKeyDown(int inputKeyID);
-	bool GetKeyUp(int binputKeyID);
+	static Input* getInstance() { return m_instance;  }		//No singleton
 
 	// query the keyboard state
-	bool isKeyDown(int inputKeyID);
-	bool isKeyUp(int inputKeyID);
+	bool isKeyDown(int inputKeyID);		//static bool GetKey(KeyCode) == true
+	bool isKeyUp(int inputKeyID);		//static bool GetKey(KeyCode) == false
 
 	// returns true if the key was pressed / released this frame
-	bool wasKeyPressed(int inputKeyID);
-	bool wasKeyReleased(int inputKeyID);
+	bool wasKeyPressed(int inputKeyID);			//static bool GetKeyDown(KeyCode)
+	bool wasKeyReleased(int inputKeyID);		//static bool GetKeyUp(KeyCode)
 
 	// returns access to all keys that are currently pressed
-	const std::vector<int>& getPressedKeys() const;
+	const std::vector<int>& getPressedKeys() const;						//Might not need these
 	const std::vector<unsigned int>& getPressedCharacters() const;
 
 	// query the mouse button state
-	bool isMouseButtonDown(int inputMouseID);
-	bool isMouseButtonUp(int inputMouseID);
+	bool isMouseButtonDown(int inputMouseID);		//static bool GetMouseButton(KeyCode)
+	bool isMouseButtonUp(int inputMouseID);			//static bool GetMouseButton(KeyCode)
 
 	// returns true if the button was pressed / released this frame
-	bool wasMouseButtonPressed(int inputMouseID);
-	bool wasMouseButtonReleased(int inputMouseID);
+	bool wasMouseButtonPressed(int inputMouseID);		//static bool GetMouseButtonDown(KeyCode)
+	bool wasMouseButtonReleased(int inputMouseID);		//static bool GetMouseButtonUp(KeyCode)
 
 	// query the mouse position
-	int getMouseX();
+	int getMouseX();		//static Vector3 mousePosition
 	int getMouseY();
 	void getMouseXY(int* x, int* y);
 
 	// query mouse movement
-	int getMouseDeltaX();
+	int getMouseDeltaX();		
 	int getMouseDeltaY();
 	void getMouseDelta(int* x, int* y);
+		//static Vector3 GetAxis(InputAxis);
+		//static Vector3 GetAxisRaw(InputAxis);
 
 	// query how far the mouse wheel has been moved 
-	double getMouseScroll();
+	double getMouseScroll();		//static Vector2 mouseScrollDelta();
 
 	// delgates for attaching input observers to the Input class
 	typedef std::function<void(GLFWwindow* window, int key, int scancode, int action, int mods)> KeyCallback;

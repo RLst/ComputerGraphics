@@ -18,6 +18,15 @@
     <Filter Include="Source Files\silver">
       <UniqueIdentifier>{f936c26f-0bf7-4fa3-92ee-1de6284a5216}</UniqueIdentifier>
     </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{eb51c3ec-21e8-4c50-bf54-c224e3d8681c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gl3w">
+      <UniqueIdentifier>{dec24f6d-0df4-49df-a734-ea9aea13cf04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tinyobjloader">
+      <UniqueIdentifier>{6de61e0f-4be8-4902-bf39-a8f79879e06a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -74,12 +83,6 @@
     <ClInclude Include="..\dpd\aie\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\gl_core_4_4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tiny_obj_loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\dpd\aie\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -97,6 +100,39 @@
     </ClInclude>
     <ClInclude Include="Type.h">
       <Filter>Header Files\silver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\gl3w\GL\gl3w.h">
+      <Filter>gl3w</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\gl3w\GL\glcorearb.h">
+      <Filter>gl3w</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tiny_obj_loader.h">
+      <Filter>tinyobjloader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\imgui\examples\imgui_impl_opengl3.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dpd\imgui\examples\imgui_impl_glfw.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -154,9 +190,6 @@
     <ClCompile Include="..\dpd\aie\Gizmos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\gl_core_4_4.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\dpd\aie\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,6 +207,27 @@
     </ClCompile>
     <ClCompile Include="Type.cpp">
       <Filter>Source Files\silver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dpd\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dpd\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dpd\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dpd\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dpd\gl3w\GL\gl3w.c">
+      <Filter>gl3w</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dpd\imgui\examples\imgui_impl_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dpd\imgui\examples\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

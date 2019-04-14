@@ -1,4 +1,5 @@
-#include "gl_core_4_4.h"
+//#include "gl_core_4_4.h"
+#include "GL/gl3w.h"
 #include "Texture.h"
 
 #define STB_IMAGE_IMPLEMENTATION

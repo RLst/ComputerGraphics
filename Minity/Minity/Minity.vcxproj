@@ -104,14 +104,15 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)dpd\aie;$(SolutionDir)dpd\glm;$(SolutionDir)dpd\glfw\include;$(SolutionDir)dpd\imgui;$(SolutionDir)dpd\stb;$(SolutionDir)src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dpd\aie;$(SolutionDir)dpd\glm;$(SolutionDir)dpd\glfw\include;$(SolutionDir)dpd\imgui;$(SolutionDir)dpd\stb;$(SolutionDir)src\;$(SolutionDir)dpd\imgui\examples;$(SolutionDir)dpd\gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dpd\glfw\lib-vc2015</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dpd\glfw\lib-vc2010-32</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -124,14 +125,15 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)dpd\aie;$(SolutionDir)dpd\glm;$(SolutionDir)dpd\glfw\include;$(SolutionDir)dpd\imgui;$(SolutionDir)dpd\stb;$(SolutionDir)src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dpd\aie;$(SolutionDir)dpd\glm;$(SolutionDir)dpd\glfw\include;$(SolutionDir)dpd\imgui;$(SolutionDir)dpd\stb;$(SolutionDir)src\;$(SolutionDir)dpd\imgui\examples;$(SolutionDir)dpd\gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>x64\glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dpd\glfw\lib-vc2015</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dpd\glfw\lib-vc2010-64</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,7 +148,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)dpd\aie;$(SolutionDir)dpd\glm;$(SolutionDir)dpd\glfw\include;$(SolutionDir)dpd\imgui;$(SolutionDir)dpd\stb;$(SolutionDir)src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dpd\aie;$(SolutionDir)dpd\glm;$(SolutionDir)dpd\glfw\include;$(SolutionDir)dpd\imgui;$(SolutionDir)dpd\stb;$(SolutionDir)src\;$(SolutionDir)dpd\imgui\examples;$(SolutionDir)dpd\gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -155,7 +157,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dpd\glfw\lib-vc2015</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dpd\glfw\lib-vc2010-32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -170,22 +172,31 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)dpd\aie;$(SolutionDir)dpd\glm;$(SolutionDir)dpd\glfw\include;$(SolutionDir)dpd\imgui;$(SolutionDir)dpd\stb;$(SolutionDir)src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dpd\aie;$(SolutionDir)dpd\glm;$(SolutionDir)dpd\glfw\include;$(SolutionDir)dpd\imgui;$(SolutionDir)dpd\stb;$(SolutionDir)src\;$(SolutionDir)dpd\imgui\examples;$(SolutionDir)dpd\gl3w;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>x64\glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)dpd\glfw\lib-vc2015</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dpd\glfw\lib-vc2010-64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\dpd\aie\Gizmos.h" />
     <ClInclude Include="..\dpd\aie\Input.h" />
     <ClInclude Include="..\dpd\aie\Texture.h" />
-    <ClInclude Include="..\src\gl_core_4_4.h" />
+    <ClInclude Include="..\dpd\gl3w\GL\gl3w.h" />
+    <ClInclude Include="..\dpd\gl3w\GL\glcorearb.h" />
+    <ClInclude Include="..\dpd\imgui\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="..\dpd\imgui\examples\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\dpd\imgui\imconfig.h" />
+    <ClInclude Include="..\dpd\imgui\imgui.h" />
+    <ClInclude Include="..\dpd\imgui\imgui_internal.h" />
+    <ClInclude Include="..\dpd\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\dpd\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\dpd\imgui\imstb_truetype.h" />
     <ClInclude Include="..\src\tiny_obj_loader.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="Behaviour.h" />
@@ -213,7 +224,13 @@
     <ClCompile Include="..\dpd\aie\Gizmos.cpp" />
     <ClCompile Include="..\dpd\aie\Input.cpp" />
     <ClCompile Include="..\dpd\aie\Texture.cpp" />
-    <ClCompile Include="..\src\gl_core_4_4.c" />
+    <ClCompile Include="..\dpd\gl3w\GL\gl3w.c" />
+    <ClCompile Include="..\dpd\imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\dpd\imgui\examples\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\dpd\imgui\imgui.cpp" />
+    <ClCompile Include="..\dpd\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\dpd\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\dpd\imgui\imgui_widgets.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Behaviour.cpp" />
     <ClCompile Include="Camera.cpp" />
