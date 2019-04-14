@@ -44,7 +44,7 @@ private:
 
 	//Window
 	const char*		m_appTitle;
-	unsigned int	m_scrnWidth, m_scrnHeight;
+	int	m_scrnWidth, m_scrnHeight;
 	vec4			m_bgCol;
 	 bool			m_isFullscreen;
 
@@ -53,7 +53,7 @@ private:
 	GLFWwindow *	m_window;
 
 	//These hide core administrative logic that needs to run
-	int				CoreInit();
+	int				CoreInit();											
 	void			CoreUpdate();
 	void			CoreDraw();
 	bool			CoreEnd();
@@ -66,8 +66,8 @@ public:
 	virtual ~App();		//??? Why virtual?
 
 	//Not copyable or [implicitly] not moveable
-	App(const App&) = delete;
-	App& operator=(const App&) = delete;
+		App(const App&) = delete;
+			App& operator=(const App&) = delete;
 
 	//User must run these to configure the engine
 	void			WindowConfig(const char* appTitle,
