@@ -52,10 +52,11 @@ private:
 
 	//Lights
 	typedef std::vector<unique_ptr<pkr::Light>>		Lights;
-	const size_t									m_lightCount = 10;
-	pkr::AmbientLight								m_ambientLight;
-	static float									m_specularPower;
 	Lights											m_lights;	//First light is directional (sun)
+
+	const size_t									m_dirLightCount = 1;
+	const size_t									m_omniLightCount = 10;
+	const size_t									m_spotLightCount = 5;
 
 	//Shaders
 	aie::ShaderProgram								m_planeShader;
@@ -76,11 +77,10 @@ public:
 	void StartAssessment();
 	void StartCamera();
 
-	void UpdateObjects();
 	void UpdateLighting();
 	void UpdateCamera();
 
-	void DrawLighting();
+	void DrawLightingGizmos();
 	void DrawGridGizmo(int size);
 	void DrawPlane();
 	void DrawFerrari();

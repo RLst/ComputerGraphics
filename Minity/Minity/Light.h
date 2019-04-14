@@ -4,6 +4,10 @@
 
 #include "Component.h"
 
+using glm::vec3;
+using glm::vec4;
+using glm::mat4;
+
 namespace aie
 {
 	class ShaderProgram;
@@ -52,6 +56,8 @@ namespace pkr
 
 	class OmniLight : public Light
 	{
+	protected:
+		OmniLight(eLightType lightType, bool isVisualised = true);
 	public:
 		OmniLight(bool isVisualised = true);
 		float constant;
@@ -64,7 +70,10 @@ namespace pkr
 	class SpotLight : public OmniLight
 	{
 	public:
+		SpotLight(bool isVisualised = true);
 		float cutOff;
 		float outerCutOff;
+
+		void DrawVisualisation() override;
 	};
 }

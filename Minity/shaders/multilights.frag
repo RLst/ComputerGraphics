@@ -7,12 +7,12 @@ out vec4 FragColour;
 struct Material {
 	sampler2D diffuse;	//diffuse
 	sampler2D specular;	//specular
-//	sampler2D normal;	//normal
+	sampler2D normal;	//normal
 	float shininess;	//aka specular power
 };
 
 //Lights
-const uint MAX_LIGHTS = 16;
+const uint MAX_LIGHTS = 32;
 //enums
 const int DIRECTIONAL = 0;
 const int OMNI = 1;
@@ -88,7 +88,7 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	float intensity = 1.0;		//Default to 1 so that it won't affect Directional or Point lights
 
 	////Common
-	lightDir = light.type == DIRECTIONAL ? normalize(-light.direction) : normalize(light.position - fragPos);
+	lightDir = light.type == DIRECTIONAL || light.type == SPOT ? normalize(-light.direction) : normalize(light.position - fragPos);
 	//Diffuse
 	float diffuseTerm = max(dot(normal, lightDir), 0.0);	//The diffuse is brighter if the light is more aligned toward's the surface's normal. If it's on the backside of the surface, nothing (0.0) will be shown
 	//Specular
@@ -111,13 +111,19 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 		break;
 	}
 
+	vec3 testKa = Ka;
+	vec3 testKd = Kd;
+	vec3 testKs = Ks;
+//	diffuseTerm = 0.3;
+//	specularTerm = 0.2;
+
 	//Resultant
-//	vec3 ambient = light.Ia * Ka * texture(material.diffuse, TexCoord).xyz;
-//	vec3 diffuse = light.Id * Kd * diffuseTerm * texture(material.diffuse, TexCoord).xyz * lambertTerm;
-//	vec3 specular = light.Is * Ks * specularTerm * texture(material.specular, TexCoord).xyz;
-	vec3 ambient = light.Ia * Ka;
-	vec3 diffuse = light.Id * diffuseTerm * Kd * lambertTerm;
-	vec3 specular = light.Is * specularTerm * Ks;	
+//	vec3 ambient = light.Ia * testKa * texture(material.diffuse, TexCoord).xyz;
+//	vec3 diffuse = light.Id * testKd * diffuseTerm * texture(material.diffuse, TexCoord).xyz; // * lambertTerm;
+//	vec3 specular = light.Is * testKs * specularTerm * texture(material.specular, TexCoord).xyz;
+	vec3 ambient = light.Ia * testKa;
+	vec3 diffuse = light.Id * diffuseTerm * testKd * lambertTerm;
+	vec3 specular = light.Is * specularTerm * testKs;	
 
 	ambient *= attenuation * intensity;
 	diffuse *= attenuation * intensity;
