@@ -52,6 +52,9 @@ private:
 
 	GLFWwindow *	m_window;
 
+	//ImGui
+	bool			showImGuiDemo = false;
+
 	//These hide core administrative logic that needs to run
 	int				CoreInit();											
 	void			CoreUpdate();
@@ -59,6 +62,7 @@ private:
 	bool			CoreEnd();
 
 protected:
+	void			ShowImguiDemoWindow() {	showImGuiDemo = true; }
 	void			clearScreen() const;
 	
 public:

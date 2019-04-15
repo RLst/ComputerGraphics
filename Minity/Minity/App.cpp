@@ -224,9 +224,8 @@ namespace pkr {
 		ImGui::NewFrame();
 		
 		//DEMO
-		bool show_demo_window = true;
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
+		if (showImGuiDemo)
+			ImGui::ShowDemoWindow(&showImGuiDemo);
 		//====================== USER =======================//
 
 		Update();
@@ -247,7 +246,7 @@ namespace pkr {
 
 		glClearColor(m_bgCol.r, m_bgCol.g, m_bgCol.b, m_bgCol.a);	//Original clear
 		glEnable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		//===================== USER ==========================//
 
 		Draw();

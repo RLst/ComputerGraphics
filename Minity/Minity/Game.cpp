@@ -13,6 +13,7 @@
 #include "Input.h"
 #include "OBJMesh.h"
 #include "Random.h"
+#include "imgui.h"
 
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/transform.hpp"
@@ -22,6 +23,13 @@ using namespace pkr;
 /////////// MAIN LOOP //////////////
 bool Game::Start()
 {
+	//Init IMGUI
+	//ImGui::Begin("Computer Graphics");
+	//ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+
+	//Init Input manager
+	m_input = Input::getInstance();
+
 	StartLighting();
 
 	StartPlane();			//Material and textures tutorial
@@ -55,6 +63,9 @@ void Game::Draw()
 
 bool Game::End()
 {
+	//Shutdown ImGUI
+	//ImGui::End();
+
 	return true;
 }
 //////////////////////////////////////////////
@@ -64,13 +75,15 @@ bool Game::End()
 void Game::StartLighting()
 {
 	//Good light settings: diffuse = 0.95, specular = 0.12-0.2, specularPower = 0.00000001 (this should have a range between 0-128. Check shader code)
+	////WET CAR LOOK
+	//m_ambientLight->diffuse = glm::vec3(0.2f); m_lights[0]->diffuse = glm::vec3(0.6f); m_lights[0]->specular = glm::vec3(0.21f); m_specularPower = 0.0001f;
 
 	float Ca = 0.2f;
 	float Cd = 0.6f;
 	float Cs = 0.21f;
 	float SP = 0.00001f;
 
-	//Sun
+	//---- Sun ----
 	for (int i = 0; i < m_dirLightCount; ++i)
 	{
 		m_lights.push_back(make_unique<DirectionalLight>());
@@ -82,26 +95,23 @@ void Game::StartLighting()
 		m_lights.back()->specular = vec3(Cs);
 	}
 
-	//Point lights
-	static float constant = 1.0f;
-	static float minLinear = 0.01f, maxLinear = 0.05f;
-	static float quadFactor = 1.8f;
-	static float lDist = 1;
-
+	//---- Omni Lights ----
 	for (int i = 0; i < m_omniLightCount; ++i)
 	{
+		static float orbitradius = 4.f;
+		static float constant = 1.0f;
+		static float minlinear = 0.01f, maxlinear = 0.05f;
+		static float quadFactor = 1.5f;
+
 		//type
 		m_lights.push_back(make_unique<OmniLight>());
 
 		//position
-		vec3 randomDirection(glm::normalize(vec3(Random::range(-1.f, 1.f), Random::range(-1.f, 1.f), Random::range(-1.f, 1.f))));
-		m_lights.back()->position.x = Random::range(-1.f, 1.f);
-		m_lights.back()->position.y = Random::range(-1.f, 1.f);
-		m_lights.back()->position.z = Random::range(-1.f, 1.f);
-		m_lights.back()->position = glm::normalize(m_lights.back()->position) * lDist;
+		vec3 randPos(glm::normalize(vec3(Random::range(-1.f, 1.f), Random::range(-1.f, 1.f), Random::range(-1.f, 1.f))));
+		m_lights.back()->position = glm::normalize(randPos) * orbitradius;
 
 		//direction (point lights don't have direction)
-		//m_lights.back()->direction = vec3(0);
+		m_lights.back()->direction = vec3(0);
 
 		//Ia, ambient
 		m_lights.back()->ambient = vec3(Ca);
@@ -112,23 +122,62 @@ void Game::StartLighting()
 		//Is, specular
 		m_lights.back()->specular = vec3(Cs);
 
-		//constant (always 1.0f)a
-		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->constant = 1.0f;
+		//constant (always 1.0f)
+		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->constant = constant;
 
 		//linear
-		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->linear = Random::range(minLinear, maxLinear);
+		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->linear = Random::range(minlinear, maxlinear);
 
 		//quadratic
-		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->quadratic = Random::range(minLinear * quadFactor, maxLinear * quadFactor);
+		dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->quadratic = Random::range(minlinear * quadFactor, maxlinear * quadFactor);
 	}
 
-	//Spot Lights
+	//---- Spot lights ----
+	for (int i = 0; i < m_omniLightCount; ++i)
+	{
+		static float orbitradius = 5.f;
+		static float constant = 1.0f;
+		static float minlinear = 0.01f, maxlinear = 0.05f;
+		static float quadfactor = 1.8f;
+		static float mincutoff = 0, maxcutoff = glm::pi<float>();
+		//static float minoutcutoff = 0, maxoutcutoff = glm::pi<float>();
 
-	////WET CAR LOOK
-	//m_ambientLight->diffuse = glm::vec3(0.2f);
-	//m_lights[0]->diffuse = glm::vec3(0.6f);
-	//m_lights[0]->specular = glm::vec3(0.21f);
-	//m_specularPower = 0.0001f;
+		//type
+		m_lights.push_back(make_unique<SpotLight>());
+
+		//position
+		vec3 randPos(glm::normalize(vec3(Random::range(-1.f, 1.f), Random::range(-1.f, 1.f), Random::range(-1.f, 1.f))));
+		m_lights.back()->position = glm::normalize(randPos) * orbitradius;
+
+		//direction
+		vec3 randDir(glm::normalize(vec3(Random::range(-1.f, 1.f), Random::range(-1.f, 1.f), Random::range(-1.f, 1.f))));
+		m_lights.back()->direction = glm::normalize(randDir);
+
+		//Ia, ambient
+		m_lights.back()->ambient = vec3(Ca);
+
+		//Id, diffuse
+		m_lights.back()->diffuse = Colour::random();
+
+		//Is, specular
+		m_lights.back()->specular = vec3(Cs);
+
+		//constant (always 1.0f)
+		dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->constant = constant;
+
+		//linear
+		dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->linear = Random::range(minlinear, maxlinear);
+
+		//quadratic
+		dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->quadratic = Random::range(minlinear * quadfactor, maxlinear * quadfactor);		
+		
+		//cutoff
+		float randcutoff = Random::range(mincutoff, maxcutoff);
+		dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->cutOff = randcutoff;
+
+		//outcutoff
+		dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->outerCutOff = randcutoff;
+	}
 }
 
 void Game::StartAssessment()
@@ -170,64 +219,114 @@ void Game::StartAssessment()
 //UPDATES
 void Game::UpdateLighting()
 {
-	auto input = Input::getInstance();
-
 	//query time since application started
 	float t = (float)Time::time() * 0.5f;
 
-	static float rads = 2.f;
-	if (input->isKeyDown(KeyCode::LeftArrow))
-		rads += 0.01f;
-	if (input->isKeyDown(KeyCode::RightArrow))
-		rads -= 0.01f;
-	std::cout << "Angle: " << rads << std::endl;
-	
-	////Adjust light properties
-	//Ambient
-	if (input->isKeyDown(KeyCode::T))
+	ImGui::Begin("Computer Graphics");
 	{
-		m_lights[0]->ambient += 0.01f;
-		std::cout << "Ambient: " << m_lights[0]->ambient[0] << std::endl;
-	}
-	if (input->isKeyDown(KeyCode::G))
-	{
-		m_lights[0]->ambient -= 0.01f;
-		std::cout << "Ambient: " << m_lights[0]->ambient[0] << std::endl;
-	}
-	//Diffuse
-	if (input->isKeyDown(KeyCode::Y))
-	{
-		m_lights[0]->diffuse += 0.01f;
-		std::cout << "Diffuse: " << m_lights[0]->diffuse[0] << std::endl;
-	}
-	if (input->isKeyDown(KeyCode::H))
-	{
-		m_lights[0]->diffuse -= 0.01f;
-		std::cout << "Diffuse: " << m_lights[0]->diffuse[0] << std::endl;
-	}
-	//Specular
-	if (input->isKeyDown(KeyCode::U))
-	{
-		m_lights[0]->specular += 0.01f;
-		std::cout << "Specular: " << m_lights[0]->specular[0] << std::endl;
-	}
-	if (input->isKeyDown(KeyCode::J))
-	{
-		m_lights[0]->specular -= 0.01f;
-		std::cout << "Specular: " << m_lights[0]->specular[0] << std::endl;
-	}
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
+		{
+			//Loop through all lights
+			//for (auto& light : m_lights)
+			for (int i = 0; i < m_lights.size(); ++i)
+			{
+		ImGui::BeginChild("Lights");
+				ImGui::Text("Light Type: "); ImGui::SameLine();
+				//Display type of light
+				switch (m_lights[i]->type)
+				{
+				case LightType::DIRECTIONAL: ImGui::Text("Directional"); break;
+				case LightType::OMNI: ImGui::Text("Omni"); break;
+				case LightType::SPOT: ImGui::Text("Spot"); break;
+				}
+				ImGui::Text("#%d", i);
 
-	//Move sun
-	m_lights[0]->direction = glm::normalize(vec3(glm::cos(rads * 2), glm::sin(rads * 2), 0));
-	//std::cout << "Dir: " << m_lights[0]->direction.x << ", " << m_lights[0]->direction.y << ", " << m_lights[0]->direction.z << std::endl;
+				//Display controls
+				switch (m_lights[i]->type)
+				{
+				case LightType::SPOT:
+					//+cutoff, outercutoff
+					ImGui::SliderAngle("Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->cutOff, 0, 90);
+					ImGui::SliderAngle("Outer Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->outerCutOff, 0, 90);
 
-	//Orbit pdoint lights around origin
-	//static float lightDist = 3.f;
-	//for (int i = 1; i < m_omniLightCount; ++i)
+				case LightType::OMNI:
+					//+constant, linear, quadratic
+					ImGui::Text("Constant: %f", dynamic_cast<OmniLight*>(m_lights[i].get())->constant);
+					ImGui::SliderFloat("Linear", &dynamic_cast<OmniLight*>(m_lights[i].get())->linear, 0.00001f, 1.f);
+					ImGui::SliderFloat("Quadratic", &dynamic_cast<OmniLight*>(m_lights[i].get())->quadratic, 0.001f, 3.f);
+
+				case LightType::DIRECTIONAL:
+					static float lposrange = 10.f;
+					//direction, ambient, diffuse, specular and position (for the gizmo)
+					ImGui::SliderFloat3("Ambient", glm::value_ptr(m_lights[i]->ambient), 0, 1.f);
+					ImGui::SliderFloat3("Diffuse", glm::value_ptr(m_lights[i]->diffuse), 0, 1.f);
+					ImGui::SliderFloat3("Specular", glm::value_ptr(m_lights[i]->specular), 0, 1.f);
+					ImGui::SliderFloat3("Direction", glm::value_ptr(m_lights[i]->direction), -1.f, 1.f);
+					ImGui::SliderFloat3("Position", glm::value_ptr(m_lights[i]->position), -lposrange, lposrange);
+				}
+		ImGui::EndChild();
+			}
+		}
+		ImGui::PopStyleVar();
+	}
+	ImGui::End();
+
 	//{
-	//	m_lights[i]->position = 
-	//		glm::normalize(vec3(glm::cos(t * 2), /*m_lights[i]->position.y*/ 2 , glm::sin(t * 2))) * lightDist;
+	//	static float rads = 2.f;
+	//	ImGui::SliderAngle("A")
 	//}
+	//static float rads = 2.f;
+	//if (input->isKeyDown(KeyCode::LeftArrow))
+	//	rads += 0.01f;
+	//if (input->isKeyDown(KeyCode::RightArrow))
+	//	rads -= 0.01f;
+	//
+	//////Adjust light properties
+	////Ambient
+	//if (input->isKeyDown(KeyCode::T))
+	//{
+	//	m_lights[0]->ambient += 0.01f;
+	//	std::cout << "Ambient: " << m_lights[0]->ambient[0] << std::endl;
+	//}
+	//if (input->isKeyDown(KeyCode::G))
+	//{
+	//	m_lights[0]->ambient -= 0.01f;
+	//	std::cout << "Ambient: " << m_lights[0]->ambient[0] << std::endl;
+	//}
+	////Diffuse
+	//if (input->isKeyDown(KeyCode::Y))
+	//{
+	//	m_lights[0]->diffuse += 0.01f;
+	//	std::cout << "Diffuse: " << m_lights[0]->diffuse[0] << std::endl;
+	//}
+	//if (input->isKeyDown(KeyCode::H))
+	//{
+	//	m_lights[0]->diffuse -= 0.01f;
+	//	std::cout << "Diffuse: " << m_lights[0]->diffuse[0] << std::endl;
+	//}
+	////Specular
+	//if (input->isKeyDown(KeyCode::U))
+	//{
+	//	m_lights[0]->specular += 0.01f;
+	//	std::cout << "Specular: " << m_lights[0]->specular[0] << std::endl;
+	//}
+	//if (input->isKeyDown(KeyCode::J))
+	//{
+	//	m_lights[0]->specular -= 0.01f;
+	//	std::cout << "Specular: " << m_lights[0]->specular[0] << std::endl;
+	//}
+
+	////Move sun
+	//m_lights[0]->direction = glm::normalize(vec3(glm::cos(rads * 2), glm::sin(rads * 2), 0));
+	////std::cout << "Dir: " << m_lights[0]->direction.x << ", " << m_lights[0]->direction.y << ", " << m_lights[0]->direction.z << std::endl;
+
+	////Orbit pdoint lights around origin
+	////static float lightDist = 3.f;
+	////for (int i = 1; i < m_omniLightCount; ++i)
+	////{
+	////	m_lights[i]->position = 
+	////		glm::normalize(vec3(glm::cos(t * 2), /*m_lights[i]->position.y*/ 2 , glm::sin(t * 2))) * lightDist;
+	////}
 }
 
 //DRAWS
@@ -302,14 +401,14 @@ void Game::BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::Sh
 
 		switch (lights[i]->type)
 		{
-		case pkr::eLightType::SPOT:
+		case pkr::LightType::SPOT:
 			uniform = "lights[" + std::to_string(i) + "].cutOff";
 			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::SpotLight*>(lights[i].get())->cutOff);
 
 			uniform = "lights[" + std::to_string(i) + "].outerCutOff";
 			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::SpotLight*>(lights[i].get())->outerCutOff);
 
-		case pkr::eLightType::OMNI:
+		case pkr::LightType::OMNI:
 			uniform = "lights[" + std::to_string(i) + "].constant";
 			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::OmniLight*>(lights[i].get())->constant);
 

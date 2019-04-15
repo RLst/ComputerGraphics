@@ -29,7 +29,11 @@ using std::make_shared;
 
 class Game : public pkr::App
 {
+	typedef std::vector<unique_ptr<pkr::Light>> Lights;
 private:
+
+	//Input
+	pkr::Input*								m_input;
 
 	////Camera
 	struct {
@@ -45,24 +49,23 @@ private:
 	} c;
 
 	//Geometry
-	unique_ptr<pkr::Mesh>							m_plane;
-	unique_ptr<aie::OBJMesh>						m_ferrari;
-	unique_ptr<aie::OBJMesh>						m_soulspear;
-	unique_ptr<aie::OBJMesh>						m_model;
+	unique_ptr<pkr::Mesh>					m_plane;
+	unique_ptr<aie::OBJMesh>				m_ferrari;
+	unique_ptr<aie::OBJMesh>				m_soulspear;
+	unique_ptr<aie::OBJMesh>				m_model;
 
 	//Lights
-	typedef std::vector<unique_ptr<pkr::Light>>		Lights;
-	Lights											m_lights;	//First light is directional (sun)
-
-	const size_t									m_dirLightCount = 1;
-	const size_t									m_omniLightCount = 10;
-	const size_t									m_spotLightCount = 5;
+	std::vector<float>					   m_lightAngle;
+	Lights								   m_lights;
+	const size_t						   m_dirLightCount = 1;
+	const size_t						   m_omniLightCount = 5;
+	const size_t						   m_spotLightCount = 5;
 
 	//Shaders
-	unique_ptr<aie::ShaderProgram>					m_planeShader;
-	unique_ptr<aie::ShaderProgram>					m_phongShader;
-	unique_ptr<aie::ShaderProgram>					m_normalmapShader;
-	unique_ptr<aie::ShaderProgram>					m_shader;	//Multi-light textured shader for assessment
+	unique_ptr<aie::ShaderProgram>		   m_planeShader;
+	unique_ptr<aie::ShaderProgram>		   m_phongShader;
+	unique_ptr<aie::ShaderProgram>		   m_normalmapShader;
+	unique_ptr<aie::ShaderProgram>		   m_shader;	//Multi-light textured shader for assessment
 
 public:
 	bool Start() override;

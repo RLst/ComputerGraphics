@@ -15,7 +15,7 @@ namespace aie
 
 namespace pkr
 {
-	enum eLightType
+	enum LightType
 	{
 		DIRECTIONAL,
 		OMNI,
@@ -32,11 +32,11 @@ namespace pkr
 	{
 	public:
 		Light() = delete;
-		Light(eLightType lightType, bool a_isVisualised = true);
+		Light(LightType lightType, bool a_isVisualised = true);
 
 		//Common
 		bool		isVisualised = true;	//Gizmo shown, Omni = Sphere, Spot = Cylinder, Directional = Thick line
-		eLightType	type;
+		LightType	type;
 		glm::vec3	position;
 		glm::vec3	direction;
 		glm::vec3	ambient;
@@ -57,7 +57,7 @@ namespace pkr
 	class OmniLight : public Light
 	{
 	protected:
-		OmniLight(eLightType lightType, bool isVisualised = true);
+		OmniLight(LightType lightType, bool isVisualised = true);
 	public:
 		OmniLight(bool isVisualised = true);
 		float constant;
