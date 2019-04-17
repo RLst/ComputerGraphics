@@ -103,7 +103,7 @@ namespace pkr {
 	{
 		///------------------ PRE --------------------///
 		//------------------ OPENGL --------------------/
-		https://www.glfw.org/docs/latest/quick.html
+		//https://www.glfw.org/docs/latest/quick.html
 		//0. Create and set error call backs with glfwSetErrorCallback()
 		//1. glfwInit() to init OpenGL
 		//2. glfwCreateWindow() to create window and assign to pointer
@@ -133,8 +133,8 @@ namespace pkr {
 #else
 	// GL 3.0 + GLSL 130
 		const char* glsl_version = "#version 130";
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
 		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
@@ -224,9 +224,8 @@ namespace pkr {
 		ImGui::NewFrame();
 		
 		//DEMO
-		bool show_demo_window = true;
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
+		if (showImGuiDemo)
+			ImGui::ShowDemoWindow(&showImGuiDemo);
 		//====================== USER =======================//
 
 		Update();
@@ -247,7 +246,7 @@ namespace pkr {
 
 		glClearColor(m_bgCol.r, m_bgCol.g, m_bgCol.b, m_bgCol.a);	//Original clear
 		glEnable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		//===================== USER ==========================//
 
 		Draw();

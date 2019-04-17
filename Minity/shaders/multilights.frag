@@ -12,7 +12,7 @@ struct Material {
 };
 
 //Lights
-const uint MAX_LIGHTS = 32;
+const uint MAX_LIGHTS = 16;
 //enums
 const int DIRECTIONAL = 0;
 const int OMNI = 1;
@@ -45,12 +45,13 @@ in vec3 BiTangent;
 //-------------- Uniforms ------------//
 uniform vec3 ViewPos;	//camera position
 
-uniform Material material;
+//uniform Material material;
 
 uniform vec3 Ka;
 uniform vec3 Kd;
 uniform vec3 Ks;
-uniform float specularPower;
+float specularPower = 0.0001;		//WET CAR LOOK JUST FOR THE FERRARI
+//uniform float specularPower;
 
 uniform int NumOfLights;
 uniform Light lights[MAX_LIGHTS];
@@ -87,14 +88,16 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	float attenuation = 1.0;	//Default to 1 so that it won't affect Directional Lights
 	float intensity = 1.0;		//Default to 1 so that it won't affect Directional or Point lights
 
-	////Common
+	//------- Common -------
 	lightDir = light.type == DIRECTIONAL || light.type == SPOT ? normalize(-light.direction) : normalize(light.position - fragPos);
-	//Diffuse
+	
+	//------- Diffuse -------
 	float diffuseTerm = max(dot(normal, lightDir), 0.0);	//The diffuse is brighter if the light is more aligned toward's the surface's normal. If it's on the backside of the surface, nothing (0.0) will be shown
-	//Specular
+	
+	//------ Specular -------
 	vec3 reflectDir = reflect(-lightDir, normal);
-//	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), specularPower);
-	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), specularPower);
+//	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
 	float lambertTerm = max(0, min(1, dot(normal, -lightDir)));
 
@@ -111,9 +114,9 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 		break;
 	}
 
-	vec3 testKa = Ka;
-	vec3 testKd = Kd;
-	vec3 testKs = Ks;
+//	vec3 testKa = Ka;
+//	vec3 testKd = Kd;
+//	vec3 testKs = Ks;
 //	diffuseTerm = 0.3;
 //	specularTerm = 0.2;
 
@@ -121,9 +124,9 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 //	vec3 ambient = light.Ia * testKa * texture(material.diffuse, TexCoord).xyz;
 //	vec3 diffuse = light.Id * testKd * diffuseTerm * texture(material.diffuse, TexCoord).xyz; // * lambertTerm;
 //	vec3 specular = light.Is * testKs * specularTerm * texture(material.specular, TexCoord).xyz;
-	vec3 ambient = light.Ia * testKa;
-	vec3 diffuse = light.Id * diffuseTerm * testKd * lambertTerm;
-	vec3 specular = light.Is * specularTerm * testKs;	
+	vec3 ambient = light.Ia * Ka;
+	vec3 diffuse = light.Id * diffuseTerm * Kd; //* lambertTerm;
+	vec3 specular = light.Is * specularTerm * Ks;	
 
 	ambient *= attenuation * intensity;
 	diffuse *= attenuation * intensity;

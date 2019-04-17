@@ -259,9 +259,6 @@
     <None Include="..\shaders\simplediffuse.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\shaders\phongTex2Lights.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\shaders\comprehensive.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -269,6 +266,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\shaders\multilights.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\shaders\extratextured.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

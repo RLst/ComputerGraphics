@@ -29,13 +29,17 @@ using std::make_shared;
 
 class Game : public pkr::App
 {
+	typedef std::vector<unique_ptr<pkr::Light>> Lights;
 private:
+
+	//Input
+	pkr::Input*								m_input;
 
 	////Camera
 	struct {
 		std::unique_ptr<pkr::Camera> camera;
-		vec3 position = vec3(8, 4, 16);
-		vec3 lookAt = vec3(0, 1, 2.5);
+		vec3 position = vec3(10, 5, 20);
+		vec3 lookAt = vec3(0, 2, 2.5);
 		float speed = 30.0f;
 		//float smoothing = 0.25f;
 		float fov = 25.f;
@@ -45,24 +49,22 @@ private:
 	} c;
 
 	//Geometry
-	unique_ptr<pkr::Mesh>							m_plane;
-	unique_ptr<aie::OBJMesh>						m_ferrari;
-	unique_ptr<aie::OBJMesh>						m_soulspear;
-	unique_ptr<aie::OBJMesh>						m_model;
+	unique_ptr<pkr::Mesh>					m_plane;
+	unique_ptr<aie::OBJMesh>				m_soulspear;
+	unique_ptr<aie::OBJMesh>				m_model;
 
 	//Lights
-	typedef std::vector<unique_ptr<pkr::Light>>		Lights;
-	Lights											m_lights;	//First light is directional (sun)
+	std::vector<float>					   m_lightAngle;
+	Lights								   m_lights;
+	const size_t						   m_dirLightCount = 1;
+	const size_t						   m_omniLightCount = 3;
+	const size_t						   m_spotLightCount = 1;
 
-	const size_t									m_dirLightCount = 1;
-	const size_t									m_omniLightCount = 10;
-	const size_t									m_spotLightCount = 5;
 
 	//Shaders
-	aie::ShaderProgram								m_planeShader;
-	aie::ShaderProgram								m_phongShader;
-	unique_ptr<aie::ShaderProgram>					m_normalmapShader;
-	unique_ptr<aie::ShaderProgram>					m_shader;	//Multi-light textured shader for assessment
+	unique_ptr<aie::ShaderProgram>		   m_planeShader;
+	unique_ptr<aie::ShaderProgram>		   m_spearShader;
+	unique_ptr<aie::ShaderProgram>		   m_shader;	//Multi-light textured shader for assessment
 
 public:
 	bool Start() override;
@@ -72,7 +74,6 @@ public:
 
 	void StartLighting();
 	void StartPlane();
-	void StartFerrari();
 	void StartSoulspear();
 	void StartAssessment();
 	void StartCamera();
@@ -83,7 +84,6 @@ public:
 	void DrawLightingGizmos();
 	void DrawGridGizmo(int size);
 	void DrawPlane();
-	void DrawFerrari();
 	void DrawSoulspear();
 	void DrawAssessment();
 	void DrawCamera();

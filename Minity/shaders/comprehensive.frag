@@ -85,32 +85,40 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	float attenuation = 1.0;	//Default to 1 so that it won't affect Directional Lights
 	float intensity = 1.0;		//Default to 1 so that it won't affect Directional or Point lights
 
-	////Common
-	lightDir = light.type == DIRECTIONAL ? normalize(-light.direction) : normalize(light.position - fragPos);
+	//Ambient
+	vec3 ambient = light.Ia * texture(Kd, TexCoord).rgb;
+
 	//Diffuse
+//	lightDir = light.type == DIRECTIONAL ? normalize(-light.direction) : normalize(light.position - fragPos);
+	if (light.type == DIRECTIONAL)		//Test to see if ternary operator is the culprit
+		lightDir = normalize(-light.direction);
+	else
+		lightDir = normalize(light.position - fragPos);
+
 	float diffuseTerm = max(dot(normal, lightDir), 0.0);	//The diffuse is brighter if the light is more aligned toward's the surface's normal. If it's on the backside of the surface, nothing (0.0) will be shown
+	vec3 diffuse = light.Id * diffuseTerm * texture(Kd, TexCoord).rgb;
+
 	//Specular
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), specularPower);
+	vec3 specular = light.Is * specularTerm * texture(Ks, TexCoord).rgb;
+//	float specularTerm = pow(max(dot(viewDir, reflectDir), 0.0), material.specularPower);
 
+	//Intensity and Attenuation for Omni and Spot Lights
 	switch (light.type)
 	{
 	case SPOT:
 		float theta = dot(lightDir, normalize(-light.direction));
-		float epsilon = light.cutOff - light.outerCutOff;
+		float epsilon = (light.cutOff - light.outerCutOff);
 		intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 		//continue on to also calculate attentuation...
 	case OMNI:
 		float distance = length(light.position - fragPos);
 		attenuation = 1.0 / (light.constant + light.linear*distance + light.quadratic*(distance*distance));
-		break;
 	}
 
 	//Resultant
-	vec3 ambient = light.Ia * vec3(texture(Kd, TexCoord));
-	vec3 diffuse = light.Id * diffuseTerm * vec3(texture(Kd, TexCoord));
-	vec3 specular = light.Is * specularTerm * vec3(texture(Ks, TexCoord));
-	ambient *= attenuation * intensity;
+	ambient *= attenuation;
 	diffuse *= attenuation * intensity;
 	specular *= attenuation * intensity;
 	return (ambient + diffuse + specular);
