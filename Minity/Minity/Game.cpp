@@ -27,7 +27,7 @@ bool Game::Start()
 	m_input = Input::getInstance();
 
 	StartLighting();
-	StartPlane();			
+	StartPlane();
 	StartSoulspear();		//Advanced Texturing Tutorials
 	StartAssessment();
 	StartCamera();
@@ -121,7 +121,7 @@ void Game::StartLighting()
 	//---- Spot lights ----
 	for (int i = 0; i < m_spotLightCount; ++i)
 	{
-		static float orbRad = 10.f;
+		static float orbRad = 7.f;
 		static float constant = 1.0f;
 		static float minlinear = 0.01f, maxlinear = 0.05f;
 		static float quadfactor = 1.5f;
@@ -266,20 +266,38 @@ void Game::StartCamera()
 //UPDATES
 void Game::UpdateLighting()
 {
+	Input* input = Input::getInstance();
+
 	//query time since application started
 	float t = (float)Time::time() * 0.5f;
 
-	ImGui::Begin("Computer Graphics", 0);
+	static int selectedLight = 1;	//-1 = No light selected
+	static int editMode = 0;	//0 = position, 1 = direction
+	static float editMultiplier = 0.005f;
+	static float positionRange = 20.0f;
+	static bool simplifiedColors = true;
+
+	ImGui::Begin("Computer Graphics");
 	ImGui::PushStyleVar(ImGuiStyleVar_ChildWindowRounding, 5.0f);
 	{
+		ImGui::TextWrapped("Select light to edit, choose edit mode, left click and move mouse to edit XZ. Left click + Shift to edit Y axis.");
+		ImGui::Text("Edit Mode: "); ImGui::SameLine();
+		ImGui::RadioButton("None", &editMode, -1); ImGui::SameLine();
+		ImGui::RadioButton("Position", &editMode, 0); ImGui::SameLine(); 
+		ImGui::RadioButton("Direction", &editMode, 1);
+		ImGui::Checkbox("Simplified Colors", &simplifiedColors);
+		ImGui::Separator();
+
 		//Loop through all lights
 		for (int i = 0; i < m_lights.size(); ++i)
 		{
 			ImGui::PushID(i);	//Required otherwise each imgui control will be linked together
 
-			//ImGui::BeginChild(i, ImVec2(0, 100), true, ImGuiWindowFlags_AlwaysAutoResize);
-			ImGui::Text("Light %d, ", i); ImGui::SameLine();
-			//Display type of light
+			//Display light number and type of light
+			char label[32];
+			sprintf_s(label, "Light %d", i);
+			if (ImGui::Selectable(label, selectedLight == i)) selectedLight = i;
+			ImGui::SameLine();
 			switch (m_lights[i]->type)
 			{
 			case LightType::DIRECTIONAL: ImGui::Text("Directional"); break;
@@ -287,37 +305,123 @@ void Game::UpdateLighting()
 			case LightType::SPOT: ImGui::Text("Spot"); break;
 			}
 
-			//Display controls
-			switch (m_lights[i]->type)
+			//--------- Edit light positions and direction ---------------
+			if (i == selectedLight)
 			{
-			case LightType::SPOT:
-				//+cutoff, outercutoff
-				ImGui::SliderAngle("Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->cutOff, 0, 90);
-				ImGui::SliderAngle("Outer Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->outerCutOff, 0, 90);
+				//ImGui::GetIO().WantCaptureMouse = true;
+				if (!ImGui::IsMouseHoveringAnyWindow())	//This will be false if you drag a widget
+				{
+					if (input->isMouseButtonDown(pkr::Mouse0))
+					{
+						float xInput, yInput, zInput;
+						if (input->isKeyDown(pkr::LeftShift))
+						{
+							yInput = input->getMouseDeltaY() * editMultiplier;
+						}
+						else
+						{
+							xInput = input->getMouseDeltaX() * editMultiplier;
+							zInput = input->getMouseDeltaY() * editMultiplier;
+						}
 
-			case LightType::OMNI:
-				//+constant, linear, quadratic
+						if (editMode == 0)	//Position
+						{
+							m_lights[selectedLight]->position.x += xInput;
+							m_lights[selectedLight]->position.y += yInput;
+							m_lights[selectedLight]->position.z -= zInput;
+						}
+						else if (editMode == 1)	//Direction
+						{
+							m_lights[selectedLight]->direction.x += xInput;
+							m_lights[selectedLight]->direction.y += yInput;
+							m_lights[selectedLight]->direction.z -= zInput;
+							m_lights[selectedLight]->direction = glm::normalize(m_lights[selectedLight]->direction);
+						}
+					}
+				}
+			}
+
+			//----------- Display light modifiables ----------------
+			//Position
+			ImGui::SliderFloat3("Position", glm::value_ptr(m_lights[i]->position), -positionRange, positionRange);
+			//Direction
+			if (m_lights[i]->type != LightType::OMNI)
+				ImGui::SliderFloat3("Direction", glm::value_ptr(m_lights[i]->direction), -1.0f, 1.0f);
+			if (simplifiedColors)
+			{
+				if (ImGui::ColorEdit3("Color", glm::value_ptr(m_lights[i]->ambient))) { //Simplified, combined all colors into one
+					m_lights[i]->diffuse = m_lights[i]->ambient;
+					m_lights[i]->specular = m_lights[i]->ambient;
+				}
+			}
+			else
+			{
+				ImGui::ColorEdit3("Ambient", glm::value_ptr(m_lights[i]->ambient));
+				ImGui::ColorEdit3("Diffuse", glm::value_ptr(m_lights[i]->diffuse));
+				ImGui::ColorEdit3("Specular", glm::value_ptr(m_lights[i]->specular));
+			}
+			if (m_lights[i]->type == LightType::OMNI || m_lights[i]->type == LightType::SPOT)
+			{
 				ImGui::Text("Constant: %f", dynamic_cast<OmniLight*>(m_lights[i].get())->constant);
 				ImGui::SliderFloat("Linear", &dynamic_cast<OmniLight*>(m_lights[i].get())->linear, 0.000001f, 0.3f);
 				ImGui::SliderFloat("Quadratic", &dynamic_cast<OmniLight*>(m_lights[i].get())->quadratic, 0.001f, 3.f);
-
-			case LightType::DIRECTIONAL:
-				static float lposrange = 10.f;
-				//direction, ambient, diffuse, specular and position (for the gizmo)
-				ImGui::SliderFloat3("Ambient", glm::value_ptr(m_lights[i]->ambient), 0, 1.f);
-				ImGui::SliderFloat3("Diffuse", glm::value_ptr(m_lights[i]->diffuse), 0, 1.f);
-				ImGui::SliderFloat3("Specular", glm::value_ptr(m_lights[i]->specular), 0, 1.f);
-				ImGui::SliderFloat3("Direction", glm::value_ptr(m_lights[i]->direction), -1.f, 1.f);
-				ImGui::SliderFloat3("Position", glm::value_ptr(m_lights[i]->position), -lposrange, lposrange);
 			}
-			//ImGui::EndChild();
-			ImGui::Spacing();
+			if (m_lights[i]->type == LightType::SPOT)
+			{
+				ImGui::SliderFloat("Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->cutOff, 0, 30);
+				ImGui::SliderFloat("Outer Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->outerCutOff, 0, 30);
+			}
+
+
+			//Display controls
+			//switch (m_lights[i]->type)
+			//{
+			//case LightType::DIRECTIONAL:
+			//	ImGui::DragFloat3("Direction", glm::value_ptr(m_lights[i]->direction), -1.f, 1.f);
+			//	//direction, ambient, diffuse, specular and position (for the gizmo)
+			//	if (ImGui::ColorEdit3("Color", glm::value_ptr(m_lights[i]->ambient))) { //Simplified, combined all colors into one
+			//		m_lights[i]->diffuse = m_lights[i]->ambient;
+			//		m_lights[i]->specular = m_lights[i]->ambient;
+			//	}
+			//	//ImGui::ColorEdit3("Diffuse", glm::value_ptr(m_lights[i]->diffuse), ImGuiColorEditFlags_NoInputs);
+			//	//ImGui::ColorEdit3("Specular", glm::value_ptr(m_lights[i]->specular), ImGuiColorEditFlags_NoInputs);
+			//case LightType::OMNI:
+			//	//+constant, linear, quadratic
+			//	ImGui::Text("Constant: %f", dynamic_cast<OmniLight*>(m_lights[i].get())->constant);
+			//	ImGui::SliderFloat("Linear", &dynamic_cast<OmniLight*>(m_lights[i].get())->linear, 0.000001f, 0.3f);
+			//	ImGui::SliderFloat("Quadratic", &dynamic_cast<OmniLight*>(m_lights[i].get())->quadratic, 0.001f, 3.f);
+			//case LightType::SPOT:
+			//	//+cutoff, outercutoff
+			//	ImGui::SliderFloat("Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->cutOff, 0, 30);
+			//	ImGui::SliderFloat("Outer Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->outerCutOff, 0, 30);
+			//}
+
+			ImGui::Separator();
 
 			ImGui::PopID();
 		}
 	}
 	//ImGui::PopStyleVar();
 	ImGui::End();
+
+	//If it is the currently selected light then start editing
+	//for 
+	//if (i == selectedLight)
+	//{
+	//	if (editMode == 0)	//Position
+	//	{
+	//		//Y
+	//		if (input->isKeyDown(pkr::LeftShift))
+	//		{
+	//			m_lights[selectedLight]->position.y += input->getMouseDeltaY();
+	//		}
+	//		//XZ
+	//		{
+	//			m_lights[selectedLight]->position.x += input->getMouseDeltaX();
+	//			m_lights[selectedLight]->position.z += input->getMouseDeltaY();
+	//		}
+	//	}
+	//}
 
 	//{
 	//	static float rads = 2.f;
@@ -519,10 +623,10 @@ void Game::BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::Sh
 		{
 		case pkr::LightType::SPOT:
 			uniform = "lights[" + std::to_string(i) + "].cutOff";
-			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::SpotLight*>(lights[i].get())->cutOff);
+			shader->bindUniform(uniform.c_str(), glm::cos(glm::radians(dynamic_cast<pkr::SpotLight*>(lights[i].get())->cutOff)));
 
 			uniform = "lights[" + std::to_string(i) + "].outerCutOff";
-			shader->bindUniform(uniform.c_str(), dynamic_cast<pkr::SpotLight*>(lights[i].get())->outerCutOff);
+			shader->bindUniform(uniform.c_str(), glm::cos(glm::radians(dynamic_cast<pkr::SpotLight*>(lights[i].get())->outerCutOff)));
 
 		case pkr::LightType::OMNI:
 			uniform = "lights[" + std::to_string(i) + "].constant";
