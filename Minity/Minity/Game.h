@@ -29,6 +29,21 @@ using std::make_shared;
 
 class Game : public pkr::App
 {
+//SINGLETON (LAZY. BAD)
+public:
+	Game(Game const&) = delete;
+	void operator=(Game const&) = delete;
+	static Game* instance()
+	{
+		if (!s_instance)
+		{
+			s_instance = new Game;
+		}
+
+		return s_instance;
+	}
+private:
+	static Game* s_instance;
 	typedef std::vector<unique_ptr<pkr::Light>> Lights;
 private:
 
@@ -67,6 +82,8 @@ private:
 	unique_ptr<aie::ShaderProgram>		   m_shader;	//Multi-light textured shader for assessment
 
 public:
+	Game() = default;
+
 	bool Start() override;
 	void Update() override;
 	void Draw() override;

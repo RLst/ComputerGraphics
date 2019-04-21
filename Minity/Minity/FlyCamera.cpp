@@ -7,6 +7,10 @@
 #include "Time.h"	//Coupled to Time system
 #include "Texture.h"
 
+//BAD
+//#include "Game.h"
+//#include "GLFW/glfw3.h"
+
 using namespace pkr;
 
 FlyCamera::FlyCamera(vec3 position, vec3 lookAt, float speed, float fovAngle, float aspect, float near, float far) :
@@ -26,6 +30,8 @@ void FlyCamera::update()
 	if (input->isMouseButtonDown(KeyCode::Mouse1) ||
 		input->isKeyDown(KeyCode::Space))
 	{
+		//glfwSetInputMode(Game::instance()->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 		//Move faster if holding shift
 		if (input->isKeyDown(KeyCode::LeftShift))
 			workingSpeed = m_speed * m_fastSpeedFactor;
@@ -44,13 +50,18 @@ void FlyCamera::update()
 
 		//Up and down
 		if (input->isKeyDown(KeyCode::E))
-			translate(up() * workingSpeed * (float)Time::deltaTime());		
+			translate(up() * workingSpeed * (float)Time::deltaTime());
 		if (input->isKeyDown(KeyCode::Q))
 			translate(down() * workingSpeed * (float)Time::deltaTime());
 
 		//Look around
 		adjustYaw(-input->getMouseDeltaX() * m_fovAngle * m_lookSpeed);
 		adjustPitch(input->getMouseDeltaY() * m_fovAngle * m_lookSpeed);
+	}
+	else if (input->isMouseButtonUp(KeyCode::Mouse1) ||
+		input->isKeyUp(KeyCode::Space))
+	{
+		//glfwSetInputMode(Game::instance()->getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 	updateProjectionView();
 }

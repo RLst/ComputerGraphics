@@ -91,6 +91,28 @@ namespace pkr
 		setPosition(getPosition() + translation);
 	}
 
+	const vec3 Camera::getRotation() const
+	{
+		//https://gamedev.stackexchange.com/questions/50963/how-to-extract-euler-angles-from-transformation-matrix
+		if (m_world[0][0] == 1.0f)
+		{
+			float yaw = atan2f(m_world[0][2], m_world[2][3]);
+			return vec3(0, yaw, 0);
+		}
+		else if (m_world[0][0] == -1.0f)
+		{
+			float yaw = atan2f(m_world[0][2], m_world[2][3]);
+			return vec3(0, yaw, 0);
+		}
+		else
+		{
+			float yaw = atan2(-m_world[2][0], m_world[0][0]);
+			float pitch = asin(m_world[1][0]);
+			float roll = atan2(-m_world[1][2], m_world[1][1]);
+			return vec3(pitch, yaw, roll);
+		}
+	}
+
 	const vec3 Camera::up() const
 	{
 		return m_world[1];

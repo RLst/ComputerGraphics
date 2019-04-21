@@ -87,6 +87,7 @@ public:
 	//void			hideFPS() const;
 	unsigned int	getScreenWidth() const;
 	unsigned int	getScreenHeight() const;
+	GLFWwindow*		getWindow() const { return m_window; }
 
 	//Runs the entire engine
 	int				Run();

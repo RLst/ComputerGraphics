@@ -8,6 +8,7 @@ int main()
 {
 	//Initialize main app and configure settings
 	auto game = new Game();
+	//auto game = Game::instance();
 
 	game->WindowConfig("Minity", 1440, 900, pkr::Colour::shade(0.3f), false);
 	game->GizmoConfig(10000, 10000, 10000, 10000);

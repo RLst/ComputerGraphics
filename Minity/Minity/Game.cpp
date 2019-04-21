@@ -17,8 +17,11 @@
 
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/transform.hpp"
+#include "GLFW/glfw3.h"
 
 using namespace pkr;
+
+Game* Game::s_instance = nullptr;
 
 /////////// MAIN LOOP //////////////
 bool Game::Start()
@@ -272,18 +275,22 @@ void Game::UpdateLighting()
 	float t = (float)Time::time() * 0.5f;
 
 	static int selectedLight = 1;	//-1 = No light selected
-	static int editMode = 0;	//0 = position, 1 = direction
-	static float editMultiplier = 0.005f;
+	static int adjustMode = 0;	//0 = position, 1 = direction
+	static float adjustSpeedFactor = 0.008f;
 	static float positionRange = 20.0f;
 	static bool simplifiedColors = true;
 
 	ImGui::Begin("Computer Graphics");
 	{
-		ImGui::TextWrapped("Select light to edit, choose edit mode, left click and move mouse to edit XZ. Left click + Shift to edit Y axis.");
-		ImGui::Text("Edit Mode: "); ImGui::SameLine();
-		ImGui::RadioButton("None", &editMode, -1); ImGui::SameLine();
-		ImGui::RadioButton("Position", &editMode, 0); ImGui::SameLine(); 
-		ImGui::RadioButton("Direction", &editMode, 1);
+		ImGui::TextColored(ImVec4(1, 0.5, 0, 1), "Adjust light position and direction");
+		ImGui::TextWrapped("Select adjust mode; Select a light to modify (click on light label); [Left Click] + [Move Mouse] Adjust XZ axes; [Left Click] + [Shift] Adjust Y axis");
+		ImGui::TextColored(ImVec4(1, 0.5, 0, 1), "Camera controls");
+		ImGui::TextWrapped("[Right Click] OR [Space] + [Move Mouse] Free Look; [WASD] Fly; [QE] Fly Up/Down; [Shift] Faster; [Ctrl] Slower");
+		ImGui::Separator();
+		ImGui::Text("Adjust Mode: "); ImGui::SameLine();
+		ImGui::RadioButton("None", &adjustMode, -1); ImGui::SameLine();
+		ImGui::RadioButton("Position", &adjustMode, 0); ImGui::SameLine(); 
+		ImGui::RadioButton("Direction", &adjustMode, 1);
 		ImGui::Checkbox("Simplified Colors", &simplifiedColors);
 		ImGui::Separator();
 
@@ -308,28 +315,31 @@ void Game::UpdateLighting()
 			if (i == selectedLight)
 			{
 				//ImGui::GetIO().WantCaptureMouse = true;
-				if (!ImGui::IsMouseHoveringAnyWindow())	//This will be false if you drag a widget
-				{
-					if (input->isMouseButtonDown(pkr::Mouse0))
+				//if (!ImGui::IsMouseHoveringAnyWindow())	//This will be false if you drag a widget
+				//{
+					if (input->isMouseButtonDown(pkr::Mouse0) && !ImGui::IsMouseHoveringAnyWindow())
 					{
-						float xInput, yInput, zInput;
+						//Disable cursor
+						glfwSetInputMode(getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+						float xInput = 0, yInput = 0, zInput = 0;
 						if (input->isKeyDown(pkr::LeftShift))
 						{
-							yInput = input->getMouseDeltaY() * editMultiplier;
+							yInput = input->getMouseDeltaY() * adjustSpeedFactor;
 						}
 						else
 						{
-							xInput = input->getMouseDeltaX() * editMultiplier;
-							zInput = input->getMouseDeltaY() * editMultiplier;
+							xInput = input->getMouseDeltaX() * adjustSpeedFactor;
+							zInput = input->getMouseDeltaY() * adjustSpeedFactor;
 						}
 
-						if (editMode == 0)	//Position
+						if (adjustMode == 0)	//Position
 						{
-							m_lights[selectedLight]->position.x += xInput;
+							m_lights[selectedLight]->position.x += xInput * glm::cos(c.camera->getRotation().y) + zInput * glm::sin(c.camera->getRotation().y);
 							m_lights[selectedLight]->position.y += yInput;
-							m_lights[selectedLight]->position.z -= zInput;
+							m_lights[selectedLight]->position.z -= zInput * glm::cos(c.camera->getRotation().y) - xInput * glm::sin(c.camera->getRotation().y);
 						}
-						else if (editMode == 1)	//Direction
+						else if (adjustMode == 1)	//Direction
 						{
 							m_lights[selectedLight]->direction.x += xInput;
 							m_lights[selectedLight]->direction.y += yInput;
@@ -337,7 +347,12 @@ void Game::UpdateLighting()
 							m_lights[selectedLight]->direction = glm::normalize(m_lights[selectedLight]->direction);
 						}
 					}
-				}
+					else if (input->isMouseButtonUp(pkr::Mouse0))
+					{
+						//Re-enable cursor
+						glfwSetInputMode(getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+					}
+				//}
 			}
 
 			//----------- Display light modifiables ----------------
@@ -380,6 +395,11 @@ void Game::UpdateLighting()
 }
 void Game::UpdateCamera()
 {
+	//ImGui::Begin("Camera Debug");
+	//ImGui::Text("Camera UP: %f, %f, %f", c.camera->up().x, c.camera->up().y, c.camera->up().z);
+	//vec3 cang = c.camera->getRotation();
+	//ImGui::Text("camera.getRotation(): %f, %f, %f", cang.x, cang.y, cang.z);
+	//ImGui::End();
 	c.camera->update();
 }
 
