@@ -194,20 +194,6 @@ void Game::StartAssessment()
 		printf("Error loading mesh!\n");
 		assert(false);
 	}
-
-	//Load textures
-	//if (m_model->material.diffuseTexture.load("./assets/Texture/numbered_grid.tga") == false) {
-	//	printf("Error loading diffuse texture!\n");
-	//	assert(false);
-	//}
-	//if (m_model->material.specularTexture.load("./assets/Texture/soulspear_specular.tga") == false) {
-	//	printf("Error loading specular texture!\n");
-	//	assert(false);
-	//}
-	//if (m_model->material.normalTexture.load("./assets/Texture/soulspear_normal.tga") == false) {
-	//	printf("Error loading normal texture!\n");
-	//	assert(false);
-	//}
 }
 void Game::StartCamera()
 {
@@ -232,11 +218,14 @@ void Game::UpdateLighting()
 	ImGui::Begin("Computer Graphics");
 	{
 		ImGui::TextColored(ImVec4(1, 0.5, 0, 1), "Adjust light position and direction");
-		ImGui::TextWrapped("Select adjust mode; Select a light to modify (click on light label); [Left Click] + [Move Mouse] Adjust XZ axes; [Left Click] + [Shift] Adjust Y axis");
+		ImGui::TextWrapped("Select a light to modify (click on light label); Choose adjust mode: [Z] None [X] Position [C] Direction, [Left Click] + [Move Mouse] Adjust XZ axes; [Left Click] + [Shift] Adjust Y axis");
 		ImGui::TextColored(ImVec4(1, 0.5, 0, 1), "Camera controls");
 		ImGui::TextWrapped("[Right Click] OR [Space] + [Move Mouse] Free Look; [WASD] Fly; [QE] Fly Up/Down; [Shift] Faster; [Ctrl] Slower");
 		ImGui::Separator();
 		ImGui::Text("Adjust Mode: "); ImGui::SameLine();
+		if (input->wasKeyPressed(pkr::KeyCode::Z)) adjustMode = -1;
+		else if (input->wasKeyPressed(pkr::KeyCode::X)) adjustMode = 0;
+		else if (input->wasKeyPressed(pkr::KeyCode::C)) adjustMode = 1;
 		ImGui::RadioButton("None", &adjustMode, -1); ImGui::SameLine();
 		ImGui::RadioButton("Position", &adjustMode, 0); ImGui::SameLine();
 		ImGui::RadioButton("Direction", &adjustMode, 1);
@@ -290,9 +279,9 @@ void Game::UpdateLighting()
 					}
 					else if (adjustMode == 1)	//Direction
 					{
-						m_lights[selectedLight]->direction.x += xInput;
+						m_lights[selectedLight]->direction.x += xInput * glm::cos(c.camera->getRotation().y) + zInput * glm::sin(c.camera->getRotation().y);
 						m_lights[selectedLight]->direction.y += yInput;
-						m_lights[selectedLight]->direction.z -= zInput;
+						m_lights[selectedLight]->direction.z -= zInput * glm::cos(c.camera->getRotation().y) - xInput * glm::sin(c.camera->getRotation().y);
 						m_lights[selectedLight]->direction = glm::normalize(m_lights[selectedLight]->direction);
 					}
 				}
