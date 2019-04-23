@@ -94,7 +94,7 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 //	vec3 ambient = light.Ia * texture(material.diffuse, TexCoord).rgb
 
 	//------- Diffuse -------
-	lightDir = light.type == DIRECTIONAL || light.type == SPOT ? normalize(-light.direction) : normalize(light.position - fragPos);
+	lightDir = light.type == DIRECTIONAL ? normalize(-light.direction) : normalize(light.position - fragPos);	//THIS WAS WHERE THE CULPRIT FOR THE SPOT LIGHT BUG WAS!!!
 	float diffuseTerm = max(dot(normal, lightDir), 0.0);	//The diffuse is brighter if the light is more aligned toward's the surface's normal. If it's on the backside of the surface, nothing (0.0) will be shown
 	vec3 diffuse = light.Id * diffuseTerm * Kd;// * lambertTerm;
 //	vec3 diffuse = light.Id * diffuseTerm * texture(material.diffuse, TexCoord).rgb;
@@ -118,7 +118,7 @@ vec3 CalcLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	}
 
 	//Resultant
-	ambient *= attenuation * intensity;
+	ambient *= attenuation;// * intensity; //leave ambient unaffected so we always have a little light
 	diffuse *= attenuation * intensity;
 	specular *= attenuation * intensity;
 

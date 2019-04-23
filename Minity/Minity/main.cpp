@@ -10,7 +10,7 @@ int main()
 	auto game = new Game();
 	//auto game = Game::instance();
 
-	game->WindowConfig("Minity", 1440, 900, pkr::Colour::shade(0.3f), false);
+	game->WindowConfig("Computer Graphics OpenGL App", 1440, 900, pkr::Colour::shade(0.3f), false);
 	game->GizmoConfig(10000, 10000, 10000, 10000);
 
 	//Run it

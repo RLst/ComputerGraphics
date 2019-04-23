@@ -156,11 +156,6 @@ namespace Core
         }
 
     public:
-        GameObject()
-        {
-            addComponent(new Transform());
-        }
-
         void addedToScene(const Scene& scene)
         {
             m_scene = scene;
@@ -199,9 +194,11 @@ namespace Core
     };
 
     /////////
-    class World
+    class Scene
     {
-        std::vector<GameObject> gameObjects;
+	private:
+		GameObject rootObj;
+	public:
         EventDispatcher* m_eventDispatcher;
         WorldRenderer* m_worldRenderer;
     };
@@ -211,13 +208,15 @@ namespace Core
     class GameObject //: Object
     {
     private:
-        std::vector<Component> m_components;
+		std::vector<GameObject*> m_gameObjects;
+        std::vector<Component*> m_components;
+		const Transform* transform;
     public:
         GameObject()
         {
-
+            addComponent(new Transform());
+			transform = m_components.back();
         }
-
         int layer;
         bool active;
         bool isStatic;

@@ -72,8 +72,8 @@ private:
 	std::vector<float>					   m_lightAngle;
 	Lights								   m_lights;
 	const size_t						   m_dirLightCount = 1;
-	const size_t						   m_omniLightCount = 3;
-	const size_t						   m_spotLightCount = 1;
+	const size_t						   m_omniLightCount = 2;
+	const size_t						   m_spotLightCount = 2;
 
 
 	//Shaders
@@ -89,7 +89,7 @@ public:
 	void Draw() override;
 	bool End() override;
 
-	void StartLighting();
+	void SetupLighting();
 	void StartPlane();
 	void StartSoulspear();
 	void StartAssessment();
