@@ -10,23 +10,22 @@ using glm::quat;
 
 namespace pkr
 {
+
+//Abstract camera class
 class Camera
 {
 protected:
-	//TODO Implement quaternions later, might make lerping easier
-	//vec3			m_position;
-	//quat			m_rotation;
-
+	//Core
 	mat4			m_world;
 	mat4			m_view;
 	mat4			m_projection;
 	mat4			m_projectionView;
 
-	vec3 m_lookAt;
+	vec3			m_lookAt;
 
-	float m_fovAngle = 50.f;
-	float m_aspect = 16 / 9.0f;
-	float m_near = 0.1f, m_far = 1000;
+	float			m_fovAngle = 50.f;
+	float			m_aspect = 16 / 9.0f;
+	float			m_near = 0.1f, m_far = 1000;
 
 public:
 	Camera();
@@ -36,6 +35,7 @@ public:
 
 	void virtual	update() = 0;
 
+	//Propertie accessors
 	const mat4		getView() const;
 	void			setLookAt(const vec3& lookAt, const vec3& up);
 
@@ -53,6 +53,7 @@ public:
 
 	const vec3		getRotation() const;
 
+	//Basic vector values
 	const vec3		up() const;
 	const vec3		right() const;
 	const vec3		forward() const;

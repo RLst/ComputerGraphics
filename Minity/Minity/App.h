@@ -43,19 +43,17 @@ private:
 	std::vector<GameObject*> gameObjects;
 
 	//Window
-	const char*		m_appTitle;
-	int	m_scrnWidth, m_scrnHeight;
-	vec4			m_bgCol;
-	 bool			m_isFullscreen;
-
-	unsigned int	m_fps;
-
 	GLFWwindow *	m_window;
+	const char*		m_appTitle;
+	int				m_scrnWidth, m_scrnHeight;
+	vec4			m_bgCol;
+	bool			m_isFullscreen;
+	unsigned int	m_fps;
 
 	//ImGui
 	bool			showImGuiDemo = false;
 
-	//These hide core administrative logic that needs to run
+	//Hidden core logic that needs to run to start engine
 	int				CoreInit();											
 	void			CoreUpdate();
 	void			CoreDraw();
@@ -63,17 +61,24 @@ private:
 
 protected:
 	void			ShowImguiDemoWindow() {	showImGuiDemo = true; }
-	void			clearScreen() const;
 	
 public:
 	App();
-	virtual ~App();		//??? Why virtual?
+	virtual ~App();
 
-	//Not copyable or [implicitly] not moveable
-		App(const App&) = delete;
-			App& operator=(const App&) = delete;
+	//Singleton stuff. Not copyable or [implicitly] not moveable
+	App(const App&) = delete;
+	App& operator=(const App&) = delete;
 
-	//User must run these to configure the engine
+	int				Run();		//Engine entry point
+
+	//Overridable User Methods
+	virtual bool	Start() = 0;	//For now is abstract/interface and must be derived
+	virtual void	Update() {}
+	virtual void	Draw() {}
+	virtual bool	End() { return true; }
+
+	//MUST RUN THESE TO configure the engine
 	void			WindowConfig(const char* appTitle,
 								unsigned int screenWidth, unsigned int screenHeight,
 								vec4 backgroundColor,
@@ -81,23 +86,11 @@ public:
 	void			GizmoConfig	(unsigned int maxLines, unsigned int maxTris,
 								unsigned int max2DLines, unsigned int max2DTris);
 
-	//Utility
+	//Utility functions
 	unsigned int	getFPS() const;
-	//void			showFPS() const;
-	//void			hideFPS() const;
 	unsigned int	getScreenWidth() const;
 	unsigned int	getScreenHeight() const;
 	GLFWwindow*		getWindow() const { return m_window; }
-
-	//Runs the entire engine
-	int				Run();
-	
-	//User
-	virtual bool	Start() = 0;	//For now is abstract/interface and must be derived
-	virtual void	Update() {}
-	virtual void	Draw() {}
-	virtual bool	End() { return true; }
-
 } App;
 
 }

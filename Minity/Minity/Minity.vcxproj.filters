@@ -12,12 +12,6 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{a03d2d39-7b30-4337-bfe1-f16c0144c033}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\silver">
-      <UniqueIdentifier>{1ae7dd54-d63d-4d0e-93e6-f6d72e091b63}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\silver">
-      <UniqueIdentifier>{f936c26f-0bf7-4fa3-92ee-1de6284a5216}</UniqueIdentifier>
-    </Filter>
     <Filter Include="imgui">
       <UniqueIdentifier>{eb51c3ec-21e8-4c50-bf54-c224e3d8681c}</UniqueIdentifier>
     </Filter>
@@ -26,6 +20,12 @@
     </Filter>
     <Filter Include="tinyobjloader">
       <UniqueIdentifier>{6de61e0f-4be8-4902-bf39-a8f79879e06a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\enginedraft">
+      <UniqueIdentifier>{f936c26f-0bf7-4fa3-92ee-1de6284a5216}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\enginedraft">
+      <UniqueIdentifier>{1ae7dd54-d63d-4d0e-93e6-f6d72e091b63}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -63,19 +63,19 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
-      <Filter>Header Files\silver</Filter>
+      <Filter>Header Files\enginedraft</Filter>
     </ClInclude>
     <ClInclude Include="Vector.h">
-      <Filter>Header Files\silver</Filter>
+      <Filter>Header Files\enginedraft</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Header Files\silver</Filter>
+      <Filter>Header Files\enginedraft</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>Header Files\silver</Filter>
+      <Filter>Header Files\enginedraft</Filter>
     </ClInclude>
     <ClInclude Include="Core.h">
-      <Filter>Header Files\silver</Filter>
+      <Filter>Header Files\enginedraft</Filter>
     </ClInclude>
     <ClInclude Include="..\dpd\aie\Gizmos.h">
       <Filter>Header Files</Filter>
@@ -87,19 +87,16 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="World.h">
-      <Filter>Header Files\silver</Filter>
+      <Filter>Header Files\enginedraft</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Behaviour.h">
-      <Filter>Header Files\silver</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\enginedraft</Filter>
     </ClInclude>
     <ClInclude Include="Type.h">
-      <Filter>Header Files\silver</Filter>
+      <Filter>Header Files\enginedraft</Filter>
     </ClInclude>
     <ClInclude Include="..\dpd\imgui\imconfig.h">
       <Filter>imgui</Filter>
@@ -133,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="..\dpd\imgui\examples\imgui_impl_glfw.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\enginedraft</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -173,16 +173,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core.cpp">
-      <Filter>Source Files\silver</Filter>
+      <Filter>Source Files\enginedraft</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
-      <Filter>Source Files\silver</Filter>
+      <Filter>Source Files\enginedraft</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>Source Files\silver</Filter>
+      <Filter>Source Files\enginedraft</Filter>
     </ClCompile>
     <ClCompile Include="Vertex.cpp">
-      <Filter>Source Files\silver</Filter>
+      <Filter>Source Files\enginedraft</Filter>
     </ClCompile>
     <ClCompile Include="..\dpd\aie\Input.cpp">
       <Filter>Source Files</Filter>
@@ -194,19 +194,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="World.cpp">
-      <Filter>Source Files\silver</Filter>
+      <Filter>Source Files\enginedraft</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Behaviour.cpp">
-      <Filter>Source Files\silver</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\enginedraft</Filter>
     </ClCompile>
     <ClCompile Include="Type.cpp">
-      <Filter>Source Files\silver</Filter>
+      <Filter>Source Files\enginedraft</Filter>
     </ClCompile>
     <ClCompile Include="..\dpd\imgui\imgui.cpp">
       <Filter>imgui</Filter>
@@ -228,6 +225,9 @@
     </ClCompile>
     <ClCompile Include="..\dpd\imgui\examples\imgui_impl_opengl3.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\enginedraft</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

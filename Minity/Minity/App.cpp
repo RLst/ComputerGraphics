@@ -91,7 +91,6 @@ int App::Run()
 	return 0;
 }
 
-
 static void glfwErrorCallback(int code, const char* msg)
 {
 #ifdef _DEBUG
@@ -289,7 +288,6 @@ bool App::CoreEnd()
 
 	return true;
 }
-
 
 
 unsigned int App::getFPS() const

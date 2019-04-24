@@ -6,11 +6,12 @@ using glm::vec4;
 
 namespace pkr
 {
+	//Static colour submodule. Has some key colours and random colours
 	class Colour : public glm::vec4
 	{
 	public:
-		//static vec4 random();			//Random colour from full palette
-		static vec4 random();		//Random colour from nice palette
+		static vec4 random();					//Random colour from a select nice palette
+
 		static vec4 shade(float intensity);		//input of 0.5f will return vec4(0.5f, 0.5f, 0.5f, 1);
 
 		static vec4 white() { return vec4(1, 1, 1, 1); }

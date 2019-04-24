@@ -75,7 +75,6 @@ private:
 	const size_t						   m_omniLightCount = 2;
 	const size_t						   m_spotLightCount = 2;
 
-
 	//Shaders
 	unique_ptr<aie::ShaderProgram>		   m_planeShader;
 	unique_ptr<aie::ShaderProgram>		   m_spearShader;
@@ -84,27 +83,31 @@ private:
 public:
 	Game() = default;
 
+	//Main game loop functions
 	bool Start() override;
 	void Update() override;
 	void Draw() override;
 	bool End() override;
 
-	void SetupLighting();
-	void StartPlane();
-	void StartSoulspear();
-	void StartAssessment();
-	void StartCamera();
+	//Starts
+	void CreateAndSetupLighting();		//Create and setup lights
+	void InitGroundPlane();
+	void InitSoulspear();
+	void InitDemoScene();		//Init meshes and objects for assessment
+	void InitCamera();			
 
+	//Updates
 	void UpdateLighting();
 	void UpdateCamera();
 
+	//Draws
+	void DrawGrid(int size);
 	void DrawLightingGizmos();
-	void DrawGridGizmo(int size);
 	void DrawPlane();
 	void DrawSoulspear();
-	void DrawAssessment();
+	void DrawDemoScene();
 	void DrawCamera();
 
-	static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader);
-	static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader);
+	//static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader);
+	//static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader);
 };

@@ -7,10 +7,6 @@
 #include "Time.h"	//Coupled to Time system
 #include "Texture.h"
 
-//BAD
-//#include "Game.h"
-//#include "GLFW/glfw3.h"
-
 using namespace pkr;
 
 FlyCamera::FlyCamera(vec3 position, vec3 lookAt, float speed, float fovAngle, float aspect, float near, float far) :
@@ -30,7 +26,7 @@ void FlyCamera::update()
 	if (input->isMouseButtonDown(KeyCode::Mouse1) ||
 		input->isKeyDown(KeyCode::Space))
 	{
-		//glfwSetInputMode(Game::instance()->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		//glfwSetInLLputMode(Game::instance()->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		//Move faster if holding shift
 		if (input->isKeyDown(KeyCode::LeftShift))
@@ -87,7 +83,5 @@ void FlyCamera::adjustPitch(float angle)
 
 	m_world = m_world * pitch;
 	m_view = glm::inverse(m_world);	
-	//m_view = m_view * pitch;
-	//m_world = glm::inverse(m_view);
 	updateProjectionView();
 }

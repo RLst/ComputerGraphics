@@ -4,12 +4,6 @@
 
 namespace pkr
 {
-	//vec4 Colour::random()
-	//{
-	//	int rnd = pkr::Random::range(0, eColours::COLOUR_COUNT - 1);
-	//	return get((eColours)rnd);
-	//}
-
 	vec4 Colour::random()
 	{
 		int rnd = pkr::Random::range(0, 6);

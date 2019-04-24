@@ -4,6 +4,7 @@
 
 namespace pkr
 {
+	//Basic mesh class
 	class Mesh
 	{
 	protected:
@@ -26,7 +27,10 @@ namespace pkr
 			glm::vec2 texCoord;
 		};
 
+		//Create a mesh out of input vertex and buffer objects
 		void initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, unsigned int* indices = nullptr);
+
+		//Manually created quad
 		void initialiseQuad();
 		
 		virtual void draw();

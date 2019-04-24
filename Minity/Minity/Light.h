@@ -20,14 +20,15 @@ namespace pkr
 		DIRECTIONAL,
 		OMNI,
 		SPOT,
-		AMBIENT
+		LIGHT_TYPE_COUNT
 	};
 
-	struct AmbientLight
-	{
-		glm::vec3	diffuse;
-	};
+	//struct AmbientLight
+	//{
+	//	glm::vec3	diffuse;
+	//};
 
+	//Abstarct light class. All lights must derive from this
 	class Light
 	{
 	public:
@@ -43,10 +44,10 @@ namespace pkr
 		glm::vec3	diffuse;
 		glm::vec3	specular;
 
-		//void Update();
 		virtual void DrawVisualisation() = 0;
 	};
 
+	//Orthogonal light with direction. Generally used as a sun.
 	class DirectionalLight : public Light
 	{
 	public:
@@ -54,26 +55,49 @@ namespace pkr
 		void DrawVisualisation() override;
 	};
 
+	//Point light where the light attenuates the further away the light is
 	class OmniLight : public Light
 	{
+		//Settings for gizmos
+		unsigned int gz_segments = 12;
+		float minLinearValue = 0.001f, maxLinearValue = 1.5f;
+		float gz_minSize = 0.1f, gz_maxSize = 0.5f;
+
+	private:
+		float lin2quadFactor = 1;		//Multiplier between linear and quadratic values
+
 	protected:
+		//Only used by SpotLight during construction
 		OmniLight(LightType lightType, bool isVisualised = true);
+
 	public:
-		OmniLight(bool isVisualised = true);
+		OmniLight(bool isVisualised = true);		//Set values manually later
+		OmniLight(float a_constant, float a_linear, float a_quadratic, bool isVisualised = true);
+
+		//Call this if you want to auto calculate quadratic
+		virtual void RecalcQuadraticValue();
+
+		//Draw the gizmo for this light
+		void DrawVisualisation() override;
+
+	public:
 		float constant;
 		float linear;
 		float quadratic;
-
-		void DrawVisualisation() override;
 	};
 
+	//Omni light with directional cone of focus
 	class SpotLight : public OmniLight
 	{
 	public:
+		//Constructor will auto calculate quadFactor
 		SpotLight(bool isVisualised = true);
-		float cutOff;
-		float outerCutOff;
+		SpotLight(float constant, float linear, float quadratic, float cutOff, float outerCutOff, bool isVisualised = true);
 
 		void DrawVisualisation() override;
+
+	public:
+		float cutOff;
+		float outerCutOff;
 	};
 }

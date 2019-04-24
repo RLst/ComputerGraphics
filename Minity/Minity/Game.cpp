@@ -29,11 +29,11 @@ bool Game::Start()
 	//Init Input manager
 	m_input = Input::getInstance();
 
-	SetupLighting();
-	StartPlane();
-	StartSoulspear();		//Advanced Texturing Tutorials
-	StartAssessment();
-	StartCamera();
+	CreateAndSetupLighting();
+	InitGroundPlane();
+	InitSoulspear();		//Advanced Texturing Tutorials
+	InitDemoScene();
+	InitCamera();
 	return true;
 }
 
@@ -45,11 +45,11 @@ void Game::Update()
 
 void Game::Draw()
 {
-	DrawGridGizmo(50);
+	DrawGrid(50);
 	DrawLightingGizmos();
 	DrawPlane();
 	DrawSoulspear();
-	DrawAssessment();
+	DrawDemoScene();
 	DrawCamera();
 }
 
@@ -61,9 +61,13 @@ bool Game::End()
 
 
 //STARTS
-void Game::SetupLighting()
+void Game::CreateAndSetupLighting()
 {
 	float sunColor = 0.15f;
+	float constant = 1.0f;		//Spot light constant
+	float linear = 0.190f;
+	float lin2quadFactor = 1.5f;		//Factor to multiply linear value of spot light by to get the quadratic value
+
 	//---- Sun ----
 	for (int i = 0; i < m_dirLightCount; ++i)
 	{
@@ -73,24 +77,17 @@ void Game::SetupLighting()
 		m_lights.back()->ambient = m_lights.back()->diffuse = m_lights.back()->specular = vec3(sunColor);
 	}
 
-	static float constant = 1.0f;
-	static float quadFactor = 1.5f;
 	//---- Omni Lights ----
 	//Red
-	m_lights.push_back(make_unique<OmniLight>());
+	m_lights.push_back(make_unique<OmniLight>(constant, linear, linear * lin2quadFactor));
 	m_lights.back()->position = vec3(-2.5f, 1.1f, 2.55f);
 	m_lights.back()->ambient = m_lights.back()->diffuse = m_lights.back()->specular = vec3(0.91f, 0.316f, 0.316f);
-	dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->constant = constant;
-	dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->linear = 0.190f;
-	dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->quadratic = 0.190f * quadFactor;
 	
 	//Green
-	m_lights.push_back(make_unique<OmniLight>());
+	linear = 0.3f;
+	m_lights.push_back(make_unique<OmniLight>(constant, linear, linear * lin2quadFactor));
 	m_lights.back()->position = vec3(2.7f, 2.1f, 3.7f);
 	m_lights.back()->ambient = m_lights.back()->diffuse = m_lights.back()->specular = vec3(0.5f, 1.f, 0.277f);
-	dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->constant = constant;
-	dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->linear = 0.3f;
-	dynamic_cast<pkr::OmniLight*>(m_lights.back().get())->quadratic = 0.3f * quadFactor;
 
 	//---- Spot lights ----
 	//Blue
@@ -100,7 +97,7 @@ void Game::SetupLighting()
 	m_lights.back()->ambient = m_lights.back()->diffuse = m_lights.back()->specular = vec3(0, 0.644f, 1.0f);
 	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->constant = constant;
 	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->linear = 0.072f;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->quadratic = 0.072f * quadFactor;
+	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->quadratic = 0.072f * lin2quadFactor;
 	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->cutOff = glm::pi<float>()/180.f * 26;
 	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->outerCutOff = glm::pi<float>()/180.f * 32;
 
@@ -111,12 +108,12 @@ void Game::SetupLighting()
 	m_lights.back()->ambient = m_lights.back()->diffuse = m_lights.back()->specular = vec3(0.675f, 0, 1.0f);
 	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->constant = constant;
 	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->linear = 0.211;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->quadratic = 0.211 * quadFactor;
+	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->quadratic = 0.211 * lin2quadFactor;
 	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->cutOff = glm::pi<float>()/180.f * 29;
 	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->outerCutOff = glm::pi<float>()/180.f * 29;
 }
 
-void Game::StartPlane()
+void Game::InitGroundPlane()
 {
 	//Setup shader
 	m_planeShader = make_unique<aie::ShaderProgram>();
@@ -138,7 +135,7 @@ void Game::StartPlane()
 	m_plane->transform = glm::scale(vec3(50));
 	m_plane->initialiseQuad();
 }
-void Game::StartSoulspear()
+void Game::InitSoulspear()
 {
 	//Load normal map texture
 	m_spearShader = std::make_unique<aie::ShaderProgram>(); //Allocate
@@ -174,7 +171,7 @@ void Game::StartSoulspear()
 		assert(false);
 	}
 }
-void Game::StartAssessment()
+void Game::InitDemoScene()
 {
 	//Init shader program
 	m_shader = make_unique<aie::ShaderProgram>();
@@ -195,7 +192,7 @@ void Game::StartAssessment()
 		assert(false);
 	}
 }
-void Game::StartCamera()
+void Game::InitCamera()
 {
 	c.camera = make_unique<FlyCamera>(c.position, c.lookAt, c.speed, c.fov, c.aspect, c.near, c.far);
 }
@@ -215,13 +212,17 @@ void Game::UpdateLighting()
 	static bool simplifiedColors = true;
 	static float spotLightMaxAngle = 45.f;
 
+	//Draw GUI
 	ImGui::Begin("Computer Graphics");
 	{
+		//Instructions
 		ImGui::TextColored(ImVec4(1, 0.5, 0, 1), "Adjust light position and direction");
 		ImGui::TextWrapped("Select a light to modify (click on light label); Choose adjust mode: [Z] None [X] Position [C] Direction, [Left Click] + [Move Mouse] Adjust XZ axes; [Left Click] + [Shift] Adjust Y axis");
 		ImGui::TextColored(ImVec4(1, 0.5, 0, 1), "Camera controls");
 		ImGui::TextWrapped("[Right Click] OR [Space] + [Move Mouse] Free Look; [WASD] Fly; [QE] Fly Up/Down; [Shift] Faster; [Ctrl] Slower");
 		ImGui::Separator();
+
+		//Adjust Mode
 		ImGui::Text("Adjust Mode: "); ImGui::SameLine();
 		if (input->wasKeyPressed(pkr::KeyCode::Z)) adjustMode = -1;
 		else if (input->wasKeyPressed(pkr::KeyCode::X)) adjustMode = 0;
@@ -232,9 +233,11 @@ void Game::UpdateLighting()
 		ImGui::Checkbox("Simplified Colors", &simplifiedColors);
 		ImGui::Separator();
 
-		//Loop through all lights
+		//Display a control panel section for each light
 		for (int i = 0; i < m_lights.size(); ++i)
 		{
+			//Also update spot and 
+
 			ImGui::PushID(i);	//Required otherwise each imgui control will be linked together
 
 			//Display light number and type of light
@@ -249,15 +252,50 @@ void Game::UpdateLighting()
 			case LightType::SPOT: ImGui::Text("Spot"); break;
 			}
 
-			//--------- Edit light positions and direction ---------------
+			//Display light modifiables on GUI Panel
+			///Position
+			ImGui::SliderFloat3("Position", glm::value_ptr(m_lights[i]->position), -positionRange, positionRange);
+			///Direction
+			if (m_lights[i]->type != LightType::OMNI)
+				ImGui::SliderFloat3("Direction", glm::value_ptr(m_lights[i]->direction), -1.0f, 1.0f);
+			if (simplifiedColors)
+			{
+				if (ImGui::ColorEdit3("Color", glm::value_ptr(m_lights[i]->ambient))) { //Simplified, combined all colors into one
+					m_lights[i]->diffuse = m_lights[i]->ambient;
+					m_lights[i]->specular = m_lights[i]->ambient;
+				}
+			}
+			else
+			{
+				ImGui::ColorEdit3("Ambient", glm::value_ptr(m_lights[i]->ambient));
+				ImGui::ColorEdit3("Diffuse", glm::value_ptr(m_lights[i]->diffuse));
+				ImGui::ColorEdit3("Specular", glm::value_ptr(m_lights[i]->specular));
+			}
+			if (m_lights[i]->type == LightType::OMNI || m_lights[i]->type == LightType::SPOT)
+			{
+				//!!!----------- ALSO AUTO ADJUST QUADRATIC -----------//
+				dynamic_cast<OmniLight*>(m_lights[i].get())->RecalcQuadraticValue();
+
+				ImGui::Text("Constant: %f", dynamic_cast<OmniLight*>(m_lights[i].get())->constant);
+				ImGui::SliderFloat("Linear", &dynamic_cast<OmniLight*>(m_lights[i].get())->linear, 0.001f, 1.5f);
+				ImGui::SliderFloat("Quadratic", &dynamic_cast<OmniLight*>(m_lights[i].get())->quadratic, 0.000001f, 2.f);
+			}
+			if (m_lights[i]->type == LightType::SPOT)
+			{
+				ImGui::SliderAngle("Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->cutOff, 0, spotLightMaxAngle);
+				ImGui::SliderAngle("Outer Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->outerCutOff, 0, spotLightMaxAngle);
+			}
+
+			ImGui::Separator();
+
+			ImGui::PopID();
+
+			//Edit light positions and direction
 			if (i == selectedLight)
 			{
-				//ImGui::GetIO().WantCaptureMouse = true;
-				//if (!ImGui::IsMouseHoveringAnyWindow())	//This will be false if you drag a widget
-				//{
 				if (input->isMouseButtonDown(pkr::Mouse0) && !ImGui::IsMouseHoveringAnyWindow())
 				{
-					//Disable cursor
+					//Disable cursor upon editing
 					glfwSetInputMode(getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 					float xInput = 0, yInput = 0, zInput = 0;
@@ -287,62 +325,21 @@ void Game::UpdateLighting()
 				}
 				else if (input->isMouseButtonUp(pkr::Mouse0))
 				{
-					//Re-enable cursor
+					//Re-enable cursor 
 					glfwSetInputMode(getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 				}
-				//}
 			}
-
-			//----------- Display light modifiables ----------------
-			//Position
-			ImGui::SliderFloat3("Position", glm::value_ptr(m_lights[i]->position), -positionRange, positionRange);
-			//Direction
-			if (m_lights[i]->type != LightType::OMNI)
-				ImGui::SliderFloat3("Direction", glm::value_ptr(m_lights[i]->direction), -1.0f, 1.0f);
-			if (simplifiedColors)
-			{
-				if (ImGui::ColorEdit3("Color", glm::value_ptr(m_lights[i]->ambient))) { //Simplified, combined all colors into one
-					m_lights[i]->diffuse = m_lights[i]->ambient;
-					m_lights[i]->specular = m_lights[i]->ambient;
-				}
-			}
-			else
-			{
-				ImGui::ColorEdit3("Ambient", glm::value_ptr(m_lights[i]->ambient));
-				ImGui::ColorEdit3("Diffuse", glm::value_ptr(m_lights[i]->diffuse));
-				ImGui::ColorEdit3("Specular", glm::value_ptr(m_lights[i]->specular));
-			}
-			if (m_lights[i]->type == LightType::OMNI || m_lights[i]->type == LightType::SPOT)
-			{
-				ImGui::Text("Constant: %f", dynamic_cast<OmniLight*>(m_lights[i].get())->constant);
-				ImGui::SliderFloat("Linear", &dynamic_cast<OmniLight*>(m_lights[i].get())->linear, 0.000001f, 0.5f);
-				ImGui::SliderFloat("Quadratic", &dynamic_cast<OmniLight*>(m_lights[i].get())->quadratic, 0.001f, 3.f);
-			}
-			if (m_lights[i]->type == LightType::SPOT)
-			{
-				ImGui::SliderAngle("Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->cutOff, 0, spotLightMaxAngle);
-				ImGui::SliderAngle("Outer Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->outerCutOff, 0, spotLightMaxAngle);
-			}
-
-			ImGui::Separator();
-
-			ImGui::PopID();
 		}
 	}
 	ImGui::End();
 }
 void Game::UpdateCamera()
 {
-	//ImGui::Begin("Camera Debug");
-	//ImGui::Text("Camera UP: %f, %f, %f", c.camera->up().x, c.camera->up().y, c.camera->up().z);
-	//vec3 cang = c.camera->getRotation();
-	//ImGui::Text("camera.getRotation(): %f, %f, %f", cang.x, cang.y, cang.z);
-	//ImGui::End();
 	c.camera->update();
 }
 
 //DRAWS
-void Game::DrawGridGizmo(int size)
+void Game::DrawGrid(int size)
 {
 	aie::Gizmos::addTransform(mat4(1), 15.f);	//Draw the little tri coloured gizmo at the centre
 
@@ -413,7 +410,7 @@ void Game::DrawSoulspear()
 	//Draw
 	m_soulspear->draw();
 }
-void Game::DrawAssessment()
+void Game::DrawDemoScene()
 {
 	////Shader bindings
 	m_shader->bind();
@@ -432,7 +429,8 @@ void Game::DrawAssessment()
 
 	m_model->draw();
 }
-void Game::BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
+static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
+//void Game::BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
 {
 	mesh->material.diffuseTexture.bind(0);
 	mesh->material.normalTexture.bind(1);
@@ -443,7 +441,7 @@ void Game::BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
 	shader->bindUniform("material.specular", 2);
 	shader->bindUniform("material.shininess", mesh->material.specularPower);
 }
-void Game::BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader)
+static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader)
 {
 	//Pass through amount of lights
 	shader->bindUniform("NumOfLights", (int)lights.size());
@@ -471,6 +469,7 @@ void Game::BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::Sh
 		uniform = "lights[" + std::to_string(i) + "].Is";
 		shader->bindUniform(uniform.c_str(), lights[i]->specular);
 
+		//Extra properties for spot and omni lights
 		switch (lights[i]->type)
 		{
 		case pkr::LightType::SPOT:
