@@ -108,6 +108,6 @@ public:
 	void DrawDemoScene();
 	void DrawCamera();
 
-	//static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader);
-	//static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader);
+	static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader);
+	static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader);
 };

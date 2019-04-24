@@ -23,11 +23,6 @@ namespace pkr
 		LIGHT_TYPE_COUNT
 	};
 
-	//struct AmbientLight
-	//{
-	//	glm::vec3	diffuse;
-	//};
-
 	//Abstarct light class. All lights must derive from this
 	class Light
 	{
@@ -58,15 +53,16 @@ namespace pkr
 	//Point light where the light attenuates the further away the light is
 	class OmniLight : public Light
 	{
-		//Settings for gizmos
-		unsigned int gz_segments = 12;
-		float minLinearValue = 0.001f, maxLinearValue = 1.5f;
-		float gz_minSize = 0.1f, gz_maxSize = 0.5f;
-
-	private:
-		float lin2quadFactor = 1;		//Multiplier between linear and quadratic values
 
 	protected:
+		//Settings for gizmos
+		unsigned int gz_segments = 12;
+		float gz_minSize = 0.1f, gz_maxSize = 0.5f;
+
+		//Light setting limits
+		float minLinearValue = 0.001f, maxLinearValue = 1.5f;
+		float lin2quadFactor = 1;		//Multiplier between linear and quadratic values
+
 		//Only used by SpotLight during construction
 		OmniLight(LightType lightType, bool isVisualised = true);
 
@@ -89,6 +85,7 @@ namespace pkr
 	//Omni light with directional cone of focus
 	class SpotLight : public OmniLight
 	{
+		
 	public:
 		//Constructor will auto calculate quadFactor
 		SpotLight(bool isVisualised = true);

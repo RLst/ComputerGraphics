@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 
+#include "Math.h"
 #include "Gizmos.h"
 #include "FlyCamera.h"
 #include "Vector.h"
@@ -67,6 +68,7 @@ void Game::CreateAndSetupLighting()
 	float constant = 1.0f;		//Spot light constant
 	float linear = 0.190f;
 	float lin2quadFactor = 1.5f;		//Factor to multiply linear value of spot light by to get the quadratic value
+	float cutOff, outerCutOff;
 
 	//---- Sun ----
 	for (int i = 0; i < m_dirLightCount; ++i)
@@ -91,26 +93,22 @@ void Game::CreateAndSetupLighting()
 
 	//---- Spot lights ----
 	//Blue
-	m_lights.push_back(make_unique<SpotLight>());
+	linear = 0.072f;
+	cutOff = pkr::Math::DegsToRads(25.f);
+	outerCutOff = pkr::Math::DegsToRads(35.f);
+	m_lights.push_back(make_unique<SpotLight>(constant, linear, linear * lin2quadFactor, cutOff, outerCutOff));
 	m_lights.back()->position = vec3(5, 3.6f, -3.7f);
 	m_lights.back()->direction = vec3(-0.776f, -0.62f, 0.115f);
 	m_lights.back()->ambient = m_lights.back()->diffuse = m_lights.back()->specular = vec3(0, 0.644f, 1.0f);
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->constant = constant;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->linear = 0.072f;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->quadratic = 0.072f * lin2quadFactor;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->cutOff = glm::pi<float>()/180.f * 26;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->outerCutOff = glm::pi<float>()/180.f * 32;
 
 	//Purple
-	m_lights.push_back(make_unique<SpotLight>());
+	linear = 0.211;
+	cutOff = pkr::Math::DegsToRads(15.f);
+	outerCutOff = pkr::Math::DegsToRads(17.f);
+	m_lights.push_back(make_unique<SpotLight>(constant, linear, linear * lin2quadFactor, cutOff, outerCutOff));
 	m_lights.back()->position = vec3(0.034f, 6, 0.483f);
 	m_lights.back()->direction = vec3(0, -1, 0);
 	m_lights.back()->ambient = m_lights.back()->diffuse = m_lights.back()->specular = vec3(0.675f, 0, 1.0f);
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->constant = constant;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->linear = 0.211;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->quadratic = 0.211 * lin2quadFactor;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->cutOff = glm::pi<float>()/180.f * 29;
-	dynamic_cast<pkr::SpotLight*>(m_lights.back().get())->outerCutOff = glm::pi<float>()/180.f * 29;
 }
 
 void Game::InitGroundPlane()
@@ -386,27 +384,6 @@ void Game::DrawSoulspear()
 	m_spearShader->bindUniform("DiffuseTexture", 0);
 	m_soulspear->material.diffuseTexture.bind(0);
 
-	//Vertex
-	//m_spearShader->bindUniform("uProjectionViewModel", c.camera->getProjectionView() * m_soulspear->transform);
-	//m_spearShader->bindUniform("uModel", m_soulspear->transform);
-	//m_spearShader->bindUniform("uNormal", glm::inverseTranspose(glm::mat3(m_soulspear->transform)));
-	//Fragment
-	//m_soulspear->material.diffuseTexture.bind(0);
-	//m_soulspear->material.normalTexture.bind(1);
-	//m_soulspear->material.specularTexture.bind(2);
-	//m_spearShader->bindUniform("diffuseTexture", 0);
-	//m_spearShader->bindUniform("normalTexture", 1);
-	//m_spearShader->bindUniform("specularTexture", 2);
-	//m_spearShader->bindUniform("ViewPos", c.camera->getPosition());
-	////m_spearShader->bindUniform("Ka", vec3(0.2f));
-	////m_spearShader->bindUniform("Kd", vec3(0.6f));
-	////m_spearShader->bindUniform("Ks", vec3(0.2f));
-	//m_spearShader->bindUniform("specularPower", m_soulspear->material.specularPower);
-	//m_spearShader->bindUniform("Ia", m_lights[0]->ambient);
-	//m_spearShader->bindUniform("Id", m_lights[0]->diffuse);
-	//m_spearShader->bindUniform("Is", m_lights[0]->specular);
-	//m_spearShader->bindUniform("LightDirection", m_lights[0]->direction);
-
 	//Draw
 	m_soulspear->draw();
 }
@@ -429,8 +406,7 @@ void Game::DrawDemoScene()
 
 	m_model->draw();
 }
-static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
-//void Game::BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
+void Game::BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
 {
 	mesh->material.diffuseTexture.bind(0);
 	mesh->material.normalTexture.bind(1);
@@ -441,7 +417,7 @@ static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader)
 	shader->bindUniform("material.specular", 2);
 	shader->bindUniform("material.shininess", mesh->material.specularPower);
 }
-static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader)
+void Game::BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader)
 {
 	//Pass through amount of lights
 	shader->bindUniform("NumOfLights", (int)lights.size());
