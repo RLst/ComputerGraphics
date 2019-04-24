@@ -67,13 +67,39 @@ private:
 	unique_ptr<pkr::Mesh>					m_plane;
 	unique_ptr<aie::OBJMesh>				m_soulspear;
 	unique_ptr<aie::OBJMesh>				m_model;
-
+	
 	//Lights
 	std::vector<float>					   m_lightAngle;
 	Lights								   m_lights;
 	const size_t						   m_dirLightCount = 1;
 	const size_t						   m_omniLightCount = 2;
 	const size_t						   m_spotLightCount = 2;
+
+	//Light editing
+	struct {
+		int		currentLight = 0;				//currently selected light
+		int		mode = -1;						//-1 = None, 0 = Position, 1 = Direction
+		float	speedFactor = 0.008f;			//editing speed fine tune
+		bool	simplifiedColours = true;		//if true adjusts all colour values at once
+	} edit;
+
+	struct {
+		float positionRange = 20.f;		//GUI position slider range
+
+		struct {
+				//GUI slider linear ranges
+			float minLinear = 0.001f;	
+			float maxLinear = 1.5f;
+				//GUI slider quadratic ranges
+			float minQuad = 0.00001f;
+			float maxQuad = 2.f;
+		} omni;
+
+		struct {
+			float maxAngle = 45.f;		//degrees (imgui::sliderangle will auto convert to radians)
+		} spot;
+
+	} gui;
 
 	//Shaders
 	unique_ptr<aie::ShaderProgram>		   m_planeShader;
@@ -108,6 +134,7 @@ public:
 	void DrawDemoScene();
 	void DrawCamera();
 
+	//Helpers
 	static void BindMaterial(aie::OBJMesh* mesh, aie::ShaderProgram* shader);
 	static void BindLights(const std::vector<unique_ptr<pkr::Light>>& lights, aie::ShaderProgram* shader);
 };

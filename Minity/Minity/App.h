@@ -5,6 +5,7 @@
 #include "Time.h"
 
 #include "glm/ext.hpp"
+#include "Colour.h"
 
 using glm::vec4;
 
@@ -91,6 +92,8 @@ public:
 	unsigned int	getScreenWidth() const;
 	unsigned int	getScreenHeight() const;
 	GLFWwindow*		getWindow() const { return m_window; }
+	vec4			getBackgroundColour() const;
+	void			setBackgroundColour(const vec4& colour);
 } App;
 
 }

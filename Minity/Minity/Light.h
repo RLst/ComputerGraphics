@@ -26,6 +26,11 @@ namespace pkr
 	//Abstarct light class. All lights must derive from this
 	class Light
 	{
+	protected:
+		//Settings for gizmos
+		unsigned int gizSegments = 10;
+		float gizMinSize = 0.1f, gizMaxSize = 0.75f;	//In units
+
 	public:
 		Light() = delete;
 		Light(LightType lightType, bool a_isVisualised = true);
@@ -39,12 +44,16 @@ namespace pkr
 		glm::vec3	diffuse;
 		glm::vec3	specular;
 
-		virtual void DrawVisualisation() = 0;
+		virtual void DrawVisualisation() = 0;	//Should eventually be incorporated into some kind of update/draw function
 	};
 
 	//Orthogonal light with direction. Generally used as a sun.
 	class DirectionalLight : public Light
 	{
+	private:
+		//Draw the directional light as short and stubby cylinder
+		float gizDirLightLengthFactor = 0.75f;
+		float gizDirLightWidthFactor = 1.5f;
 	public:
 		DirectionalLight(bool isVisualised = true);
 		void DrawVisualisation() override;
@@ -53,15 +62,10 @@ namespace pkr
 	//Point light where the light attenuates the further away the light is
 	class OmniLight : public Light
 	{
-
 	protected:
-		//Settings for gizmos
-		unsigned int gz_segments = 12;
-		float gz_minSize = 0.1f, gz_maxSize = 0.5f;
-
 		//Light setting limits
 		float minLinearValue = 0.001f, maxLinearValue = 1.5f;
-		float lin2quadFactor = 1;		//Multiplier between linear and quadratic values
+		float lin2quadFactor = 1.f;		//Multiplier between linear and quadratic values
 
 		//Only used by SpotLight during construction
 		OmniLight(LightType lightType, bool isVisualised = true);
@@ -85,7 +89,8 @@ namespace pkr
 	//Omni light with directional cone of focus
 	class SpotLight : public OmniLight
 	{
-		
+		float coneFactor = 1;		//Cone size multiplier (no resize is perfect)
+		float outerCutOffLengthFactor = 0.60f;
 	public:
 		//Constructor will auto calculate quadFactor
 		SpotLight(bool isVisualised = true);

@@ -3,9 +3,6 @@
 
 #include "Game.h"
 
-#include <iostream>
-#include <string>
-
 #include "Math.h"
 #include "Gizmos.h"
 #include "FlyCamera.h"
@@ -24,11 +21,11 @@ using namespace pkr;
 
 Game* Game::s_instance = nullptr;
 
-/////////// MAIN LOOP //////////////
+//--------------- MAIN LOOP -----------------
 bool Game::Start()
 {
 	//Init Input manager
-	m_input = Input::getInstance();
+	//m_input = Input::getInstance();
 
 	CreateAndSetupLighting();
 	InitGroundPlane();
@@ -46,6 +43,9 @@ void Game::Update()
 
 void Game::Draw()
 {
+	if (m_lights[0] != NULL)
+		setBackgroundColour(vec4(m_lights[0]->diffuse, 1));
+
 	DrawGrid(50);
 	DrawLightingGizmos();
 	DrawPlane();
@@ -58,7 +58,7 @@ bool Game::End()
 {
 	return true;
 }
-//////////////////////////////////////////////
+//-----------------------------------------------
 
 
 //STARTS
@@ -106,7 +106,7 @@ void Game::CreateAndSetupLighting()
 	cutOff = pkr::Math::DegsToRads(15.f);
 	outerCutOff = pkr::Math::DegsToRads(17.f);
 	m_lights.push_back(make_unique<SpotLight>(constant, linear, linear * lin2quadFactor, cutOff, outerCutOff));
-	m_lights.back()->position = vec3(0.034f, 6, 0.483f);
+	m_lights.back()->position = vec3(0.034f, 6, 2.483f);
 	m_lights.back()->direction = vec3(0, -1, 0);
 	m_lights.back()->ambient = m_lights.back()->diffuse = m_lights.back()->specular = vec3(0.675f, 0, 1.0f);
 }
@@ -203,45 +203,45 @@ void Game::UpdateLighting()
 	//query time since application started
 	float t = (float)Time::time() * 0.5f;
 
-	static int selectedLight = 1;	//-1 = No light selected
-	static int adjustMode = 0;	//0 = position, 1 = direction
-	static float adjustSpeedFactor = 0.008f;
-	static float positionRange = 20.0f;
-	static bool simplifiedColors = true;
-	static float spotLightMaxAngle = 45.f;
-
 	//Draw GUI
 	ImGui::Begin("Computer Graphics");
 	{
 		//Instructions
-		ImGui::TextColored(ImVec4(1, 0.5, 0, 1), "Adjust light position and direction");
-		ImGui::TextWrapped("Select a light to modify (click on light label); Choose adjust mode: [Z] None [X] Position [C] Direction, [Left Click] + [Move Mouse] Adjust XZ axes; [Left Click] + [Shift] Adjust Y axis");
+		ImGui::TextColored(ImVec4(1, 0.5, 0, 1), "Edit light position and direction");
+		ImGui::TextWrapped("> Select a light to modify (click on light label)");
+		ImGui::TextWrapped("> Choose edit mode: [Z] None [X] Position [C] Direction");
+		ImGui::TextWrapped("> Adjust XZ axes: [Left Click] + [Move Mouse]");
+		ImGui::TextWrapped("> Adjust Y axis: [Left Click] + [Shift]");
 		ImGui::TextColored(ImVec4(1, 0.5, 0, 1), "Camera controls");
-		ImGui::TextWrapped("[Right Click] OR [Space] + [Move Mouse] Free Look; [WASD] Fly; [QE] Fly Up/Down; [Shift] Faster; [Ctrl] Slower");
+		ImGui::TextWrapped("> Free Look: [Right Click] OR [Space] + [Move Mouse]");
+		ImGui::TextWrapped("> Fly [WASD]; Fly Up/Down [QE]; Faster [Shift]; Slower [Ctrl]");
 		ImGui::Separator();
 
-		//Adjust Mode
-		ImGui::Text("Adjust Mode: "); ImGui::SameLine();
-		if (input->wasKeyPressed(pkr::KeyCode::Z)) adjustMode = -1;
-		else if (input->wasKeyPressed(pkr::KeyCode::X)) adjustMode = 0;
-		else if (input->wasKeyPressed(pkr::KeyCode::C)) adjustMode = 1;
-		ImGui::RadioButton("None", &adjustMode, -1); ImGui::SameLine();
-		ImGui::RadioButton("Position", &adjustMode, 0); ImGui::SameLine();
-		ImGui::RadioButton("Direction", &adjustMode, 1);
-		ImGui::Checkbox("Simplified Colors", &simplifiedColors);
+		//Edit Mode
+		///Hotkeys
+		if (input->wasKeyPressed(pkr::KeyCode::Z)) edit.mode = -1;
+		else if (input->wasKeyPressed(pkr::KeyCode::X)) edit.mode = 0;
+		else if (input->wasKeyPressed(pkr::KeyCode::C)) edit.mode = 1;
+		///GUI
+		ImGui::Text("Edit Mode: ");
+		ImGui::RadioButton("None", &edit.mode, -1); ImGui::SameLine();
+		ImGui::RadioButton("Position", &edit.mode, 0); ImGui::SameLine();
+		ImGui::RadioButton("Direction", &edit.mode, 1);
+		ImGui::Separator();
+		
+		//Simplified colours
+		ImGui::Checkbox("Simplified Colors", &edit.simplifiedColours);
 		ImGui::Separator();
 
 		//Display a control panel section for each light
 		for (int i = 0; i < m_lights.size(); ++i)
 		{
-			//Also update spot and 
-
 			ImGui::PushID(i);	//Required otherwise each imgui control will be linked together
 
 			//Display light number and type of light
 			char label[32];
 			sprintf_s(label, "Light %d", i);
-			if (ImGui::Selectable(label, selectedLight == i)) selectedLight = i;
+			if (ImGui::Selectable(label, edit.currentLight == i)) edit.currentLight = i;
 			ImGui::SameLine();
 			switch (m_lights[i]->type)
 			{
@@ -252,11 +252,11 @@ void Game::UpdateLighting()
 
 			//Display light modifiables on GUI Panel
 			///Position
-			ImGui::SliderFloat3("Position", glm::value_ptr(m_lights[i]->position), -positionRange, positionRange);
+			ImGui::SliderFloat3("Position", glm::value_ptr(m_lights[i]->position), -gui.positionRange, gui.positionRange);
 			///Direction
 			if (m_lights[i]->type != LightType::OMNI)
 				ImGui::SliderFloat3("Direction", glm::value_ptr(m_lights[i]->direction), -1.0f, 1.0f);
-			if (simplifiedColors)
+			if (edit.simplifiedColours)
 			{
 				if (ImGui::ColorEdit3("Color", glm::value_ptr(m_lights[i]->ambient))) { //Simplified, combined all colors into one
 					m_lights[i]->diffuse = m_lights[i]->ambient;
@@ -275,21 +275,21 @@ void Game::UpdateLighting()
 				dynamic_cast<OmniLight*>(m_lights[i].get())->RecalcQuadraticValue();
 
 				ImGui::Text("Constant: %f", dynamic_cast<OmniLight*>(m_lights[i].get())->constant);
-				ImGui::SliderFloat("Linear", &dynamic_cast<OmniLight*>(m_lights[i].get())->linear, 0.001f, 1.5f);
-				ImGui::SliderFloat("Quadratic", &dynamic_cast<OmniLight*>(m_lights[i].get())->quadratic, 0.000001f, 2.f);
+				ImGui::SliderFloat("Linear", &dynamic_cast<OmniLight*>(m_lights[i].get())->linear, gui.omni.minLinear, gui.omni.maxLinear);
+				ImGui::SliderFloat("Quadratic", &dynamic_cast<OmniLight*>(m_lights[i].get())->quadratic, gui.omni.minQuad, gui.omni.maxQuad);
 			}
 			if (m_lights[i]->type == LightType::SPOT)
 			{
-				ImGui::SliderAngle("Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->cutOff, 0, spotLightMaxAngle);
-				ImGui::SliderAngle("Outer Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->outerCutOff, 0, spotLightMaxAngle);
+				ImGui::SliderAngle("Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->cutOff, 0, gui.spot.maxAngle);
+				ImGui::SliderAngle("Outer Cut Off", &dynamic_cast<SpotLight*>(m_lights[i].get())->outerCutOff, 0, gui.spot.maxAngle);
 			}
 
 			ImGui::Separator();
 
 			ImGui::PopID();
 
-			//Edit light positions and direction
-			if (i == selectedLight)
+			//------------- Logic that actually edits the lights ------------------------//
+			if (i == edit.currentLight)
 			{
 				if (input->isMouseButtonDown(pkr::Mouse0) && !ImGui::IsMouseHoveringAnyWindow())
 				{
@@ -299,26 +299,26 @@ void Game::UpdateLighting()
 					float xInput = 0, yInput = 0, zInput = 0;
 					if (input->isKeyDown(pkr::LeftShift))
 					{
-						yInput = input->getMouseDeltaY() * adjustSpeedFactor;
+						yInput = input->getMouseDeltaY() * edit.speedFactor;
 					}
 					else
 					{
-						xInput = input->getMouseDeltaX() * adjustSpeedFactor;
-						zInput = input->getMouseDeltaY() * adjustSpeedFactor;
+						xInput = input->getMouseDeltaX() * edit.speedFactor;
+						zInput = input->getMouseDeltaY() * edit.speedFactor;
 					}
 
-					if (adjustMode == 0)	//Position
+					if (edit.mode == 0)	//Position
 					{
-						m_lights[selectedLight]->position.x += xInput * glm::cos(c.camera->getRotation().y) + zInput * glm::sin(c.camera->getRotation().y);
-						m_lights[selectedLight]->position.y += yInput;
-						m_lights[selectedLight]->position.z -= zInput * glm::cos(c.camera->getRotation().y) - xInput * glm::sin(c.camera->getRotation().y);
+						m_lights[edit.currentLight]->position.x += xInput * glm::cos(c.camera->getRotation().y) + zInput * glm::sin(c.camera->getRotation().y);
+						m_lights[edit.currentLight]->position.y += yInput;
+						m_lights[edit.currentLight]->position.z -= zInput * glm::cos(c.camera->getRotation().y) - xInput * glm::sin(c.camera->getRotation().y);
 					}
-					else if (adjustMode == 1)	//Direction
+					else if (edit.mode == 1)	//Direction
 					{
-						m_lights[selectedLight]->direction.x += xInput * glm::cos(c.camera->getRotation().y) + zInput * glm::sin(c.camera->getRotation().y);
-						m_lights[selectedLight]->direction.y += yInput;
-						m_lights[selectedLight]->direction.z -= zInput * glm::cos(c.camera->getRotation().y) - xInput * glm::sin(c.camera->getRotation().y);
-						m_lights[selectedLight]->direction = glm::normalize(m_lights[selectedLight]->direction);
+						m_lights[edit.currentLight]->direction.x += xInput * glm::cos(c.camera->getRotation().y) + zInput * glm::sin(c.camera->getRotation().y);
+						m_lights[edit.currentLight]->direction.y += yInput;
+						m_lights[edit.currentLight]->direction.z -= zInput * glm::cos(c.camera->getRotation().y) - xInput * glm::sin(c.camera->getRotation().y);
+						m_lights[edit.currentLight]->direction = glm::normalize(m_lights[edit.currentLight]->direction);
 					}
 				}
 				else if (input->isMouseButtonUp(pkr::Mouse0))

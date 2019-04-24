@@ -309,4 +309,14 @@ unsigned int App::getScreenHeight() const
 	return h;
 }
 
+vec4 App::getBackgroundColour() const
+{
+	return m_bgCol;
+}
+
+void App::setBackgroundColour(const vec4& bgCol)
+{
+	m_bgCol = bgCol;
+}
+
 }
