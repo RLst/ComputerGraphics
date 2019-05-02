@@ -1,9 +1,0 @@
-[submodule "Minity/dpd/imgui"]
-	path = Minity/dpd/imgui
-	url = https://github.com/ocornut/imgui.git
-[submodule "Minity/dpd/glm"]
-	path = Minity/dpd/glm
-	url = https://github.com/g-truc/glm.git
-[submodule "Minity/dpd/stb"]
-	path = Minity/dpd/stb
-	url = https://github.com/nothings/stb.git
